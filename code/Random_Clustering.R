@@ -120,6 +120,10 @@ random.casecon <- function(prevalence, n_total, n_case, n_control, k_case, k_con
 
 ### NOTE: Sample sizes, prevalence, and kappa are all interlinked and requires tuning
 
+# Set seed for reproducibility
+set.seed(1234)
+
+# Simulate relative clustering
 rand_pts <- random.casecon(prevalence = 0.2, 
                            n_total = 1000,
                            n_case = 50,
@@ -134,8 +138,8 @@ rand_pts <- random.casecon(prevalence = 0.2,
                            win = spatstat::unit.square()
 )
 
-rand_pts$n # double check sample size
-table(rand_pts$marks) # double check prevalence
+lapply(rand_pts, FUN = function(x) {x$n}) # double check sample size
+lapply(rand_pts, FUN = function(x) {table(x$marks)}) # double check prevalence
 
 ## Data Visualization
 plot(rand_pts, pch = 1, cex = c(0.5,0.1), cols = c("red", "blue"), main = "Random Simulation")
