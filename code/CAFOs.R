@@ -154,9 +154,11 @@ points(p_sp[!p_out,], col='red', cex=5, pch=20)
 
 
 # Relative Risk
-obs_lrr <- sparr::risk(ppp_all, adapt = T, tolerate = T)
+obs_lrr <- sparr::risk(ppp_all, adapt = T, tolerate = T, resolution = 2)
 plot(obs_lrr)
 plot(obs_lrr$P)
+
+obs_lrr$P$v
 
 rx <- rep(obs_lrr$rr$xcol, length(obs_lrr$rr$yrow))
 for(i in 1:length(obs_lrr$rr$yrow)){
