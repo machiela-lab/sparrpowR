@@ -4,8 +4,8 @@
 # Created by: Ian Buller, Ph.D., M.A. (GitHub: @idblr)
 # Created on: April 7, 2020
 #
-# Recently modified by:
-# Recently modified on:
+# Recently modified by: @idblr
+# Recently modified on: April 8, 2020
 #
 # Notes:
 # A) 4/7/20 (IB) - Potential simulation scheme for sparrpoweR package 0.0.0.9000
@@ -13,8 +13,7 @@
 # C) 4/7/20 (IB) - rNeymanScott helpfile: https://www.rdocumentation.org/packages/spatstat/versions/1.62-2/topics/rNeymanScott
 # D) 4/7/20 (IB) - Allows functionality for user-specified prevalence 
 # E) 4/7/20 (IB) - Allows functionality for user-specified, consistent sample sizes 
-# F) 4/7/20 (IB) - To-do: 
-#       1. Simulate dataset iteratively, spatstat has this functionalty within each function
+# F) 4/8/20 (IB) - Added functionality for iterative simulations
 # ------------------------------------------ #
 
 ############
@@ -28,51 +27,66 @@ library(spatstat)
 # CUSTOM FUNCTION #
 ###################
 
-random.casecon <- function(prevalence, n_total, n_case, n_control, k_case, k_control, e_case, e_control, r_case, r_control,...) {
+random.casecon <- function(prevalence, n_total, n_case, n_control, k_case, k_control, e_case, e_control, r_case, r_control, sim_total, ...) {
   
+  # marked Neyman-Scott process with a consistent sample size
+  random.cluster <- function(n_cluster, ...) {
+    repeat {
+      x <- spatstat::rNeymanScott(...)
+      if (x$n == n_cluster) break
+      }
+    return(x)
+  }
+  
+  # marked daughter ppp for cases
   rcluster_case <- function(x0, y0, radius, n, types = "case") {
     X <- spatstat::runifdisc(n, radius, centre=c(x0, y0))
     spatstat::marks(X) <- types
     return(X)
   }
   
+  # marked daughter ppp for controls
   rcluster_control <- function(x0, y0, radius, n, types = "control") {
     X <- spatstat::runifdisc(n, radius, centre=c(x0, y0))
     spatstat::marks(X) <- types
     return(X)
   }
   
-  random.cluster <- function(n_cluster, ...) {
-    repeat {
-      # do something
-      x <- spatstat::rNeymanScott(...)
-      # exit if the condition is met
-      if (x$n == n_cluster) break
-    }
-    return(x)
-  }
+  pppList <- vector('list', length(sim_total)) # create empty list
   
-  repeat {
+  # Simulate marked ppp for each iteration
+  for(i in 1:sim_total) {
+    
+    # Create random cluster of cases
     x <- random.cluster(kappa = k_case,
                         expand = e_case,
                         rcluster = rcluster_case, 
                         n = n_case,
                         radius = r_case,
-                        n_cluster = prevalence*n_total
-    )
+                        n_cluster = prevalence*n_total,
+                        ...
+                        )
     
+    # Create random cluster of controls
     y <- random.cluster(kappa = k_control,
                         expand = e_control,
                         rcluster = rcluster_control, 
                         n = n_control,
                         radius = r_control,
-                        n_cluster = (1-prevalence)*n_total
-    )
+                        n_cluster = (1-prevalence)*n_total,
+                        ...
+                        )
     
+    # Combine random clusters of cases and controls into one marked ppp
     z <- spatstat::superimpose(x, y)
     
-    return(z)
+    # Compile ppp into list
+    pppList[[i]] <- z
+    pppList[[i]]
   }
+  class(pppList) <- c("ppplist", "solist",  "anylist", "listof", "list")
+  
+  return(pppList)
 }
 
 ######################
@@ -90,6 +104,7 @@ random.casecon <- function(prevalence, n_total, n_case, n_control, k_case, k_con
 ## e_control: expansion of all control clusters
 ## r_case: radius of all case clusters
 ## r_control: radius of all control clusters
+## sim_total: number of simulation iterations
 ## Other arguments passed to rNeymanScott() function in "spatstat" package (e.g., win, lmax)
 
 # Example
@@ -115,6 +130,7 @@ rand_pts <- random.casecon(prevalence = 0.2,
                            e_control = 0, 
                            r_case = 0.1, 
                            r_control = 0.5,
+                           sim_total = 4,
                            win = spatstat::unit.square()
 )
 
@@ -122,6 +138,6 @@ rand_pts$n # double check sample size
 table(rand_pts$marks) # double check prevalence
 
 ## Data Visualization
-plot(rand_pts, pch = 1, cols = c("red", "blue"), main = "Random Simulation")
+plot(rand_pts, pch = 1, cex = c(0.5,0.1), cols = c("red", "blue"), main = "Random Simulation")
 
 # -------------------- END OF CODE -------------------- #

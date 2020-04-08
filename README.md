@@ -4,7 +4,7 @@
 
 ### Simulation study and environmental cancer epidemiologic case study 
 
-Created by: Derek Brown (@derekbrown12) and Ian Buller (@idblr)
+Created by: Derek Brown ([@derekbrown12](https://github.com/derekbrown12)) and Ian Buller ([@idblr](https://github.com/idblr))
 
 Created on: April, 2020
 
