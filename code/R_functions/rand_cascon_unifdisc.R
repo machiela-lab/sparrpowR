@@ -17,9 +17,21 @@
 # G) 4/8/20 (IB) - Added functionality for stratified random control locations. This is very similar to CSR, so likely not necessary
 # H) 4/8/20 (IB) - Added functionality for inhomogenous Poisson control locations
 # I) 4/9/20 (IB) - Added functionality for clustered control locations
+# J) 4/9/20 (IB) - Added functionality for case Poisson clustering within a disc (homogenous and inhomogeneous)
+# K) 4/9/20 (IB) - Renamed and reorganized function
 # ------------------------------------------ #
 
-rand_cascon_unifdisc <- function(x_case, y_case, n_case, n_control, n_cluster, r_case, r_control, sim_total, type_sampling = c("CSR", "systematic", "stratified", "IPP", "clustered"), n_knot, l_control, e_control, same_n = FALSE, ...) {
+rand_cascon <- function(x_case, y_case,
+                        n_case = NULL, n_control, n_cluster, n_knot,
+                        r_case, r_control,
+                        l_control, l_case = NULL,
+                        e_control,
+                        sim_total,
+                        samp_case = c("uniform", "Poisson"),
+                        samp_control = c("CSR", "systematic", "stratified",
+                                         "IPP", "clustered"
+                                          ),
+                        same_n = FALSE, ...) {
   
   # Packages
   require(spatstat)
@@ -33,44 +45,66 @@ rand_cascon_unifdisc <- function(x_case, y_case, n_case, n_control, n_cluster, r
     stop("There is at least one radius (r_case) missing")
   }
   
-  if (length(x_case) != length(n_case) | length(y_case) != length(n_case)) {
-    stop("There is at least one case cluster sample size (n_case) missing")
+  if (samp_case == "Poisson" & length(l_case) == 1) {
+    l_list <- vector('list', length(x_case))
+    for (l in 1:length(x_case)) {
+      l_list[[l]] <- l_case
+    }
   }
-  
+
   # marked uniform disc ppp with user-specified radius for cases
-  rcluster_case <- function(x0, y0, radius, n, types = "case", ...) {
+  rcluster_case <- function(x0, y0, radius, n = NULL, types = "case", lambda = NULL, win = NULL, ...) {
+    
+    if (samp_case == "uniform"){
+      
+      if (length(x_case) != length(n_case)) {
+        stop("There is at least one case cluster sample size (n_case) missing")
+      }
+      
     repeat {  
-      x <- spatstat::runifdisc(n, radius, centre=c(x0, y0), ...)
+      x <- spatstat::runifdisc(n, radius, centre = c(x0, y0), ...)
     if (x$n == n) break
     }
+    }  
+    
+    if (samp_case == "Poisson"){
+      
+      win_case <- spatstat::disc(radius, centre = c(0.5, 0.5), ...)
+      # repeat { 
+      x <- spatstat::rpoispp(lambda, win = win_case, ...)
+      x <- spatstat::shift(x, c(x0 - 0.5, y0 - 0.5))
+      # if (x$n == n) break
+      # }
+    }
+    
     spatstat::marks(x) <- types
     return(x)
   }
   
   # marked uniform ppp for controls
   rcluster_control <- function(n, types = "control", ...) {
-    if (type_sampling == "CSR") {
+    if (samp_control == "CSR") {
     repeat {  
       x <- spatstat::rpoispp(lambda = n, ...)
       if (x$n == n) break
       }
       }
       
-    if (type_sampling == "systematic") {
+    if (samp_control == "systematic") {
       # repeat { 
       x <- spatstat::rsyst(nx = sqrt(n), ...)
       # if (x$n == n) break
       # }
     }
       
-    if (type_sampling == "stratified") {
-      # repeat {  
+    if (samp_control == "stratified") {
+      # repeat {
       x <- spatstat::rstrat(nx = round(sqrt(n_knot)), k = round(n/n_knot), ...)
       # if (x$n == n) break
       # }
     }
     
-    if (type_sampling == "IPP") {
+    if (samp_control == "IPP") {
       if (class(l_control) != "function") {
         stop("The argument 'lambda' should be an intensity function")
       }
@@ -80,7 +114,7 @@ rand_cascon_unifdisc <- function(x_case, y_case, n_case, n_control, n_cluster, r
        # }
     }
     
-    if (type_sampling == "clustered") {
+    if (samp_control == "clustered") {
       
       rcluster_control <- function(x0, y0, radius, n) {
         X <- spatstat::runifdisc(n, radius, centre=c(x0, y0))
@@ -116,7 +150,25 @@ rand_cascon_unifdisc <- function(x_case, y_case, n_case, n_control, n_cluster, r
   
   # Create a consistent random cluster of cases (uniform around user-specified centroid)
   for (i in 1:length(x_case)){
-    x1 <- rcluster_case(x0 = x_case[i], y0 = y_case[i], radius = r_case[i], n = n_case[i], ...)
+    if(samp_case == "uniform"){
+    x1 <- rcluster_case(x0 = x_case[i], y0 = y_case[i],
+                        radius = r_case[i], n = n_case[i],
+                        lambda = NULL, ...)
+    }
+    
+    if(samp_case == "Poisson"){
+      
+      if (length(l_case) == 1) {
+      x1 <- rcluster_case(x0 = x_case[i], y0 = y_case[i],
+                          radius = r_case[i], n = NULL,
+                          lambda = l_list[[i]], ...)
+    } else {
+      x1 <- rcluster_case(x0 = x_case[i], y0 = y_case[i],
+                          radius = r_case[i], n = NULL,
+                          lambda = l_case[[i]], ...)
+    }
+    }
+    
     pppCase[[i]] <- x1
   }
   class(pppCase) <- c("ppplist", "solist",  "anylist", "listof", "list")
