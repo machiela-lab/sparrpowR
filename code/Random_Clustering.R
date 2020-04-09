@@ -29,10 +29,13 @@ library(spatstat)
 ###################
 
 source(file = paste(getwd(), "/code/R_functions/rand_cascon_neymscot.R", sep = ""))
+source(file = paste(getwd(), "/code/R_functions/rand_cascon_unifdisc.R", sep = ""))
 
-######################
-# EXAMPLE SIMULATION #
-######################
+#######################
+# EXAMPLE SIMULATIONS #
+#######################
+
+# Example 1: Random cases and random controls using two Neyman-Scott Processes
 
 # Arguments 
 ## Prevlance: Proportion of cases
@@ -65,7 +68,7 @@ source(file = paste(getwd(), "/code/R_functions/rand_cascon_neymscot.R", sep = "
 set.seed(1234)
 
 # Simulate relative clustering
-rand_pts <- rand_cascon_neymscot(prevalence = 0.2, 
+rand_pts1 <- rand_cascon_neymscot(prevalence = 0.2, 
                            n_total = 1000,
                            n_case = 50,
                            n_control = 200,
@@ -79,10 +82,48 @@ rand_pts <- rand_cascon_neymscot(prevalence = 0.2,
                            win = spatstat::unit.square()
 )
 
-lapply(rand_pts, FUN = function(x) {x$n}) # double check sample size
-lapply(rand_pts, FUN = function(x) {table(x$marks)}) # double check prevalence
+lapply(rand_pts1, FUN = function(x) {x$n}) # double check sample size
+lapply(rand_pts1, FUN = function(x) {table(x$marks)}) # double check prevalence
 
 ## Data Visualization
-plot(rand_pts, pch = 1, cex = c(0.5,0.1), cols = c("red", "blue"), main = "Random Simulation")
+plot(rand_pts1, pch = 1, cex = c(0.5,0.1), cols = c("red", "blue"), main = "Random Neyman-Scott Simulation")
+
+# Example 2: Consistent random uniform disc of cases and complete spatial random controls
+
+# Arguments 
+## x_case: x-coordinate of case cluster centroid
+## y_case: y-coordinate of case cluster centroid
+## n_case: Sample size of cases within the simulated case cluster
+## n_control: Sample size of controls within window
+## r_case: radius of case cluster
+## sim_total: number of simulation iterations
+## Other arguments passed to runifdisc() and rpoint() functions in "spatstat" package (e.g., win)
+
+# Example
+## 1000 total points
+## 200 case points within cluster
+## 800 control points within window
+## 0.1 units for radius of case cluster
+## within a unit square window (0,1),(0,1)
+## case cluster centroid located at center of window (0.5, 0.5)
+
+# Set seed for reproducibility
+set.seed(1234)
+
+# Simulate relative clustering
+rand_pts2 <- rand_cascon_unif(x_case = 0.5,
+                             y_case = 0.5,
+                             n_case = 200,
+                             n_control = 800,
+                             r_case = 0.1,
+                             sim_total = 4,
+                             win = spatstat::unit.square()
+)
+
+lapply(rand_pts2, FUN = function(x) {x$n}) # double check sample size
+lapply(rand_pts2, FUN = function(x) {table(x$marks)}) # double check prevalence
+
+## Data Visualization
+plot(rand_pts2, pch = 1, cex = c(0.5,0.1), cols = c("red", "blue"), main = "Random Uniform Simulation")
 
 # -------------------- END OF CODE -------------------- #
