@@ -5,7 +5,7 @@
 # Created on: April 7, 2020
 #
 # Recently modified by: @idblr
-# Recently modified on: April 8, 2020
+# Recently modified on: April 9, 2020
 #
 # Notes:
 # A) 4/7/20 (IB) - Potential simulation scheme for sparrpowR package 0.0.0.9000
@@ -15,7 +15,8 @@
 # E) 4/7/20 (IB) - Allows functionality for user-specified, consistent sample sizes 
 # F) 4/8/20 (IB) - Added functionality for iterative simulations
 # G) 4/8/20 (IB) - Moved custom function to companion file "/R_functions/rand_cascon_neymscot.R"
-# H) 4/8/20 (IB) - Added functionality for uniform random sampling of controls with consistent case clusters of uniform disc of user-specified radii and centroids. Companion file "/R_functions/rand_cascon_unifdisc.R"
+# H) 4/8/20 (IB) - Added functionality for uniform random sampling of controls (via various sampling schemes) with consistent case clusters of uniform disc of user-specified radii and centroids. Companion file "/R_functions/rand_cascon_unifdisc.R"
+# I) 4/9/20 (IB) - Added examples for the various random control location sampling
 # ------------------------------------------ #
 
 ############
@@ -130,9 +131,9 @@ lapply(rand_pts2, FUN = function(x) {x$n}) # double check sample size
 lapply(rand_pts2, FUN = function(x) {table(x$marks)}) # double check prevalence
 
 ## Data Visualization
-plot(rand_pts2, pch = 1, cex = c(0.5,0.1), cols = c("red", "blue"), main = "CSR Uniform Simulation")
+plot(rand_pts2, pch = 1, cex = c(0.5,0.1), cols = c("red", "blue"), main = "CSR Sampling Simulation")
 
-# Example 3: Consistent random uniform disc of cases and complete spatial random controls
+# Example 3: Consistent random uniform disc of cases and systematic random controls
 
 # Arguments 
 ## Same as in Example 2
@@ -141,16 +142,13 @@ plot(rand_pts2, pch = 1, cex = c(0.5,0.1), cols = c("red", "blue"), main = "CSR 
 ## 1000 total points
 ## 3 case clusters
 ## 100 case points within each case cluster (300 case points total)
-## Approximately 700 control points within window (stratified)
+## Approximately 700 control points within window (systematic random)
 ## 0.1 units for radius of each case cluster
 ## within a unit square window (0,1),(0,1)
 ## case cluster centroids located at (0.25,0.75), (0.5,0.25), & (0.75,0.75)
 ## four simulation iterations (only control locations change between iteration)
 
 ## NOTE: Cannot restrict to a consistent sample size of control points
-
-# Set seed for reproducibility
-set.seed(1234)
 
 # Simulate relative clustering
 rand_pts3 <- rand_cascon_unifdisc(x_case = c(0.25, 0.5, 0.75),
@@ -159,7 +157,7 @@ rand_pts3 <- rand_cascon_unifdisc(x_case = c(0.25, 0.5, 0.75),
                                   n_control = 700,
                                   r_case = c(0.1, 0.1, 0.1),
                                   sim_total = 4,
-                                  type_sampling = "stratified",
+                                  type_sampling = "systematic",
                                   win = spatstat::unit.square()
 )
 
@@ -168,5 +166,127 @@ lapply(rand_pts3, FUN = function(x) {table(x$marks)}) # double check prevalence
 
 ## Data Visualization
 plot(rand_pts3, pch = 1, cex = c(0.5,0.1), cols = c("red", "blue"), main = "Stratified Uniform Simulation")
+
+# Example 4: Consistent random uniform disc of cases and stratified random controls
+
+# Arguments 
+## Same as in Example 2
+## n_knot: total number of knots (gridded) within which points are randomly generated independently 
+
+# Example
+## 1000 total points
+## 3 case clusters
+## 100 case points within each case cluster (300 case points total)
+## Approximately 700 control points within window (stratified random)
+## 100 knots
+## 0.1 units for radius of each case cluster
+## within a unit square window (0,1),(0,1)
+## case cluster centroids located at (0.25,0.75), (0.5,0.25), & (0.75,0.75)
+## four simulation iterations (only control locations change between iteration)
+
+## NOTE: Cannot restrict to a consistent sample size of control points
+
+# Simulate relative clustering
+rand_pts4 <- rand_cascon_unifdisc(x_case = c(0.25, 0.5, 0.75),
+                                  y_case = c(0.75, 0.25, 0.75),
+                                  n_case = c(100, 100, 100),
+                                  n_control = 700,
+                                  r_case = c(0.1, 0.1, 0.1),
+                                  sim_total = 4,
+                                  type_sampling = "stratified",
+                                  n_knot = 10^2,
+                                  win = spatstat::unit.square()
+)
+
+lapply(rand_pts4, FUN = function(x) {x$n}) # double check sample size
+lapply(rand_pts4, FUN = function(x) {table(x$marks)}) # double check prevalence
+
+## Data Visualization
+plot(rand_pts4, pch = 1, cex = c(0.5,0.1), cols = c("red", "blue"), main = "Stratified Random Simulation")
+
+# Example 5: Consistent random uniform disc of cases and inhomogenous Poisson process for controls
+
+# Arguments 
+## Same as in Example 2
+## l_control: intensity function for controls
+
+# Example
+## 1000 total points
+## 3 case clusters
+## 100 case points within each case cluster (300 case points total)
+## Approximately 700 control points 
+## User-specified intensity function
+## 0.1 units for radius of each case cluster
+## within a unit square window (0,1),(0,1)
+## case cluster centroids located at (0.25,0.75), (0.5,0.25), & (0.75,0.75)
+## four simulation iterations (only control locations change between iteration)
+
+## NOTE: Cannot restrict to a consistent sample size of control points
+
+# Simulate relative clustering
+rand_pts5 <- rand_cascon_unifdisc(x_case = c(0.25, 0.5, 0.75),
+                                  y_case = c(0.75, 0.25, 0.75),
+                                  n_case = c(100, 100, 100),
+                                  #n_control = 700,
+                                  r_case = c(0.1, 0.1, 0.1),
+                                  sim_total = 4,
+                                  type_sampling = "IPP",
+                                  l_control = function(x, y) {1000 * exp(-3 * x) + 1000 * exp(-3 * y) },
+                                  win = spatstat::unit.square()
+) 
+
+lapply(rand_pts5, FUN = function(x) {x$n}) # double check sample size
+lapply(rand_pts5, FUN = function(x) {table(x$marks)}) # double check prevalence
+
+## Data Visualization
+plot(rand_pts5, pch = 1, cex = c(0.5,0.1), cols = c("red", "blue"), main = "IPP Sampling Simulation")
+
+# Example 6: Consistent random uniform disc of cases and random cluster sampling of controls (Neyman-Scott Process)
+
+# Arguments 
+## Same as in Example 2
+## l_control: intensity function for controls
+## e_control: expansion factor for controls
+## n_cluster: sample size of controls per cluster
+## r_control: radius of all control clusters
+## same_n = T: logical to force a consistent sample size of control points
+
+# Example
+## 1000 total points
+## 3 case clusters
+## 100 case points within each case cluster (300 case points total)
+## Approximately 700 control points 
+## User-specified intensity function for parent points
+## no expansion of the simulation window for generating parent points
+## 0.1 units for radius of each case cluster
+## 0.1 units for radius for each control cluster
+## within a unit square window (0,1),(0,1)
+## case cluster centroids located at (0.25,0.75), (0.5,0.25), & (0.75,0.75)
+## four simulation iterations (only control locations change between iteration)
+
+## NOTE: Cannot force a consistent sample size of control point by setting the argument 'same_n' to TRUE. Will increase computation time considerably. 
+
+# Simulate relative clustering
+rand_pts6 <- rand_cascon_unifdisc(x_case = c(0.25, 0.5, 0.75),
+                                  y_case = c(0.75, 0.25, 0.75),
+                                  n_case = c(100, 100, 100),
+                                  n_control = 700,
+                                  r_case = c(0.1, 0.1, 0.1),
+                                  sim_total = 4,
+                                  type_sampling = "clustered",
+                                  #l_control = function(x, y) {100 * exp(-3 * x) + 100 * exp(-3 * y) },
+                                  l_control = 67,
+                                  e_control = 0,
+                                  n_cluster = 13,
+                                  r_control = 0.1,
+                                  same_n = F,
+                                  win = spatstat::unit.square()
+) 
+
+lapply(rand_pts6, FUN = function(x) {x$n}) # double check sample size
+lapply(rand_pts6, FUN = function(x) {table(x$marks)}) # double check prevalence
+
+## Data Visualization
+plot(rand_pts6, pch = 1, cex = c(0.5,0.1), cols = c("red", "blue"), main = "Clustered Sampling Simulation")
 
 # -------------------- END OF CODE -------------------- #

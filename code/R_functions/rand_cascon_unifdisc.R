@@ -4,8 +4,8 @@
 # Created by: Ian Buller, Ph.D., M.A. (GitHub: @idblr)
 # Created on: April 8, 2020
 #
-# Recently modified by: 
-# Recently modified on:
+# Recently modified by: @idblr
+# Recently modified on: April 9, 2020
 #
 # Notes:
 # A) 4/8/20 (IB) - Potential simulation scheme for sparrpoweR package 0.0.0.9000
@@ -13,9 +13,13 @@
 # C) 4/8/20 (IB) - Maintains the case clusters as constant while simulating random control locations
 # D) 4/8/20 (IB) - Initially provided functionality for complete spatial randomness of control locations
 # E) 4/8/20 (IB) - Allows functionality for user-specified, consistent sample sizes
+# F) 4/8/20 (IB) - Added functionality for systematic control locations
+# G) 4/8/20 (IB) - Added functionality for stratified random control locations. This is very similar to CSR, so likely not necessary
+# H) 4/8/20 (IB) - Added functionality for inhomogenous Poisson control locations
+# I) 4/9/20 (IB) - Added functionality for clustered control locations
 # ------------------------------------------ #
 
-rand_cascon_unifdisc <- function(x_case, y_case, n_case, n_control, r_case, sim_total, type_sampling = c("CSR", "stratified"), ...) {
+rand_cascon_unifdisc <- function(x_case, y_case, n_case, n_control, n_cluster, r_case, r_control, sim_total, type_sampling = c("CSR", "systematic", "stratified", "IPP", "clustered"), n_knot, l_control, e_control, same_n = FALSE, ...) {
   
   # Packages
   require(spatstat)
@@ -47,15 +51,61 @@ rand_cascon_unifdisc <- function(x_case, y_case, n_case, n_control, r_case, sim_
   rcluster_control <- function(n, types = "control", ...) {
     if (type_sampling == "CSR") {
     repeat {  
-      x <- spatstat::rpoint(n = n, ...)
+      x <- spatstat::rpoispp(lambda = n, ...)
       if (x$n == n) break
       }
       }
       
-      if (type_sampling == "stratified") {
-        x <- spatstat::rsyst(nx = sqrt(n), ...)
+    if (type_sampling == "systematic") {
+      # repeat { 
+      x <- spatstat::rsyst(nx = sqrt(n), ...)
+      # if (x$n == n) break
+      # }
+    }
+      
+    if (type_sampling == "stratified") {
+      # repeat {  
+      x <- spatstat::rstrat(nx = round(sqrt(n_knot)), k = round(n/n_knot), ...)
+      # if (x$n == n) break
+      # }
+    }
+    
+    if (type_sampling == "IPP") {
+      if (class(l_control) != "function") {
+        stop("The argument 'lambda' should be an intensity function")
+      }
+      # repeat {  
+        x <- spatstat::rpoispp(lambda = l_control, ...)
+       # if (x$n == n) break
+       # }
+    }
+    
+    if (type_sampling == "clustered") {
+      
+      rcluster_control <- function(x0, y0, radius, n) {
+        X <- spatstat::runifdisc(n, radius, centre=c(x0, y0))
+        return(X)
       }
       
+      if(same_n == T){
+       repeat {
+      x <- spatstat::rNeymanScott(kappa = l_control,
+                                  expand = e_control,
+                                  rcluster = rcluster_control, 
+                                  n = n_cluster,
+                                  radius = r_control
+                                  )
+       if (x$n == n) break
+       }
+      } else {
+        x <- spatstat::rNeymanScott(kappa = l_control,
+                                    expand = e_control,
+                                    rcluster = rcluster_control, 
+                                    n = n_cluster,
+                                    radius = r_control
+        )
+      }
+    }
       spatstat::marks(x) <- types
     return(x)
   }
