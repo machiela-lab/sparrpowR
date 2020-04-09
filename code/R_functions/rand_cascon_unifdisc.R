@@ -9,13 +9,13 @@
 #
 # Notes:
 # A) 4/8/20 (IB) - Potential simulation scheme for sparrpoweR package 0.0.0.9000
-# B) 4/8/20 (IB) - Simulates a case cluster with user-specified parameters
+# B) 4/8/20 (IB) - Simulates case clusters with user-specified parameters
 # C) 4/8/20 (IB) - Maintains the case clusters as constant while simulating random control locations
 # D) 4/8/20 (IB) - Initially provided functionality for complete spatial randomness of control locations
 # E) 4/8/20 (IB) - Allows functionality for user-specified, consistent sample sizes
 # ------------------------------------------ #
 
-rand_cascon_unifdisc <- function(x_case, y_case, n_case, n_control, r_case, sim_total, ...) {
+rand_cascon_unifdisc <- function(x_case, y_case, n_case, n_control, r_case, sim_total, type_sampling = c("CSR", "stratified"), ...) {
   
   # Packages
   require(spatstat)
@@ -45,10 +45,17 @@ rand_cascon_unifdisc <- function(x_case, y_case, n_case, n_control, r_case, sim_
   
   # marked uniform ppp for controls
   rcluster_control <- function(n, types = "control", ...) {
+    if (type_sampling == "CSR") {
     repeat {  
-      x <- spatstat::rpoint(n, ...)
-    if (x$n == n) break
-    }
+      x <- spatstat::rpoint(n = n, ...)
+      if (x$n == n) break
+      }
+      }
+      
+      if (type_sampling == "stratified") {
+        x <- spatstat::rsyst(nx = sqrt(n), ...)
+      }
+      
       spatstat::marks(x) <- types
     return(x)
   }
