@@ -364,10 +364,10 @@ lapply(rand_pts7, FUN = function(x) {table(x$marks)}) # double check prevalence
 
 ## Data Visualization
 plot(rand_pts7, pch = 1, cex = c(0.5,0.1), cols = c("red", "blue"),
-     main = "Poisson Case Clusters"
+     main = "Poisson (CSR) Case Clusters"
      )
 
-# Example 7: Consistent random inhomogeneous Poisson disc of cases and complete spatial randomness controls
+# Example 8: Consistent random inhomogeneous Poisson disc of cases and complete spatial randomness controls
 
 # Arguments 
 ## Same as in Example 7
