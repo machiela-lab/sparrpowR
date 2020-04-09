@@ -14,7 +14,8 @@
 # D) 4/7/20 (IB) - Allows functionality for user-specified prevalence 
 # E) 4/7/20 (IB) - Allows functionality for user-specified, consistent sample sizes 
 # F) 4/8/20 (IB) - Added functionality for iterative simulations
-# F) 4/8/20 (IB) - Moved custom function to companion file "/R_functions/rand_cascon_neymscot.R"
+# G) 4/8/20 (IB) - Moved custom function to companion file "/R_functions/rand_cascon_neymscot.R"
+# H) 4/8/20 (IB) - Added functionality for uniform random sampling of controls with consistent case clusters of uniform disc of user-specified radii and centroids. Companion file "/R_functions/rand_cascon_unifdisc.R"
 # ------------------------------------------ #
 
 ############
@@ -61,6 +62,7 @@ source(file = paste(getwd(), "/code/R_functions/rand_cascon_unifdisc.R", sep = "
 ## 0.1 units for radii of case clusters
 ## 0.5 units for radii of control clusters
 ## within a unit square window (0,1),(0,1)
+## four simulation iterations
 
 ### NOTE: Sample sizes, prevalence, and kappa are all interlinked and requires tuning
 
@@ -101,21 +103,23 @@ plot(rand_pts1, pch = 1, cex = c(0.5,0.1), cols = c("red", "blue"), main = "Rand
 
 # Example
 ## 1000 total points
-## 200 case points within cluster
-## 800 control points within window
-## 0.1 units for radius of case cluster
+## 3 case clusters
+## 100 case points within each case cluster (300 case points total)
+## 700 control points within window
+## 0.1 units for radius of each case cluster
 ## within a unit square window (0,1),(0,1)
-## case cluster centroid located at center of window (0.5, 0.5)
+## case cluster centroids located at (0.25,0.75), (0.5,0.25), & (0.75,0.75)
+## four simulation iterations (only control locations change between iteration)
 
 # Set seed for reproducibility
 set.seed(1234)
 
 # Simulate relative clustering
-rand_pts2 <- rand_cascon_unif(x_case = 0.5,
-                             y_case = 0.5,
-                             n_case = 200,
-                             n_control = 800,
-                             r_case = 0.1,
+rand_pts2 <- rand_cascon_unifdisc(x_case = c(0.25, 0.5, 0.75),
+                             y_case = c(0.75, 0.25, 0.75),
+                             n_case = c(100, 100, 100),
+                             n_control = 700,
+                             r_case = c(0.1, 0.1, 0.1),
                              sim_total = 4,
                              win = spatstat::unit.square()
 )

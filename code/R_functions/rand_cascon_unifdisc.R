@@ -17,7 +17,21 @@
 
 rand_cascon_unifdisc <- function(x_case, y_case, n_case, n_control, r_case, sim_total, ...) {
   
+  # Packages
   require(spatstat)
+  
+  # Inputs
+  if (length(x_case) != length(y_case)) {
+    stop("There is at least one missing coordinate")
+  }
+  
+  if (length(x_case) != length(r_case) | length(y_case) != length(r_case)) {
+    stop("There is at least one radius (r_case) missing")
+  }
+  
+  if (length(x_case) != length(n_case) | length(y_case) != length(n_case)) {
+    stop("There is at least one case cluster sample size (n_case) missing")
+  }
   
   # marked uniform disc ppp with user-specified radius for cases
   rcluster_case <- function(x0, y0, radius, n, types = "case", ...) {
@@ -39,13 +53,20 @@ rand_cascon_unifdisc <- function(x_case, y_case, n_case, n_control, r_case, sim_
     return(x)
   }
   
-  pppList <- vector('list', length(sim_total)) # create empty list
+  # Create empty lists
+  pppCase <- vector('list', length(x_case))
+  pppList <- vector('list', length(sim_total))
   
   # Create a consistent random cluster of cases (uniform around user-specified centroid)
-  x <- rcluster_case(x0 = x_case, y0 = y_case, radius = r_case, n = n_case, ...)
+  for (i in 1:length(x_case)){
+    x1 <- rcluster_case(x0 = x_case[i], y0 = y_case[i], radius = r_case[i], n = n_case[i], ...)
+    pppCase[[i]] <- x1
+  }
+  class(pppCase) <- c("ppplist", "solist",  "anylist", "listof", "list")
+  x <- spatstat::superimpose(pppCase)
   
   # Simulate marked ppp for each iteration
-  for(i in 1:sim_total) {
+  for (j in 1:sim_total) {
     
     # Create random cluster of controls
     y <- rcluster_control(n = n_control, ...)
@@ -54,8 +75,8 @@ rand_cascon_unifdisc <- function(x_case, y_case, n_case, n_control, r_case, sim_
     z <- spatstat::superimpose(x, y)
     
     # Compile ppp into list
-    pppList[[i]] <- z
-    pppList[[i]]
+    pppList[[j]] <- z
+    pppList[[j]]
   }
   class(pppList) <- c("ppplist", "solist",  "anylist", "listof", "list")
   
