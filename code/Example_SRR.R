@@ -4,11 +4,12 @@
 # Created by: Ian Buller, Ph.D., M.A. (GitHub: @idblr)
 # Created on: April 8, 2020
 #
-# Recently modified by: 
-# Recently modified on:
+# Recently modified by: @idblr
+# Recently modified on: April 10, 2020
 #
 # Notes:
 # A) 4/8/20 (IB) - Uses simulated data from the companion file "Random_Clustering.R"
+# A) 4/10/20 (IB) - Added example calculating summary of iterative simulation 
 # ------------------------------------------ #
 
 ############
@@ -32,64 +33,57 @@ library(sparr)
 # CUSTOM FUNCTIONS #
 ####################
 
-source(file = paste(getwd(), "/code/R_functions/rand_cascon_neymscot.R", sep = ""))
+source(file = paste(getwd(), "/code/R_functions/rand_cascon_unifdisc.R", sep = ""))
 source(file = paste(getwd(), "/code/R_functions/lrr_ramp.R", sep = ""))
+source(file = paste(getwd(), "/code/R_functions/rand_srr.R", sep = ""))
 
 ######################
 # EXAMPLE SIMULATION #
 ######################
 
 # Arguments 
-## Prevlance: Proportion of cases
-## n_total: Total sample size
-## n_case: Approximate sample size of cases within each simulated case cluster
-## n_control: Approximate sample size of controls within each simulated control cluster
-## k_case: kappa of all case clusters
-## k_control: kappa of all control clusters
-## e_case: expansion of all case clusters
-## e_control: expansion of all control clusters
-## r_case: radius of all case clusters
-## r_control: radius of all control clusters
+## x_case: x-coordinate of case cluster centroid
+## y_case: y-coordinate of case cluster centroid
+## n_case: Sample size of cases within the simulated case cluster
+## n_control: Sample size of controls within window
+## r_case: radius of case cluster
 ## sim_total: number of simulation iterations
-## Other arguments passed to rNeymanScott() function in "spatstat" package (e.g., win, lmax)
+## samp_case: selection of sampling scheme for case locations
+## samp_control: selection of sampling scheme for control locations
+## Other arguments passed to runifdisc() and rpoint() functions in "spatstat" package (e.g., win)
 
 # Example
-## 20% Prevalence
 ## 1000 total points
-## 50 case points per cluster
-## 200 case points per cluster
-## kappa = 5 for both cases and controls
-## expansion = 0 for both cases and controls
-## 0.1 units for radii of case clusters
-## 0.5 units for radii of control clusters
+## 3 case clusters
+## 100 case points within each case cluster (300 case points total)
+## 700 control points within window (complete spatial randomness)
+## 0.1 units for radius of each case cluster
 ## within a unit square window (0,1),(0,1)
-
-### NOTE: Sample sizes, prevalence, and kappa are all interlinked and requires tuning
+## case cluster centroids located at (0.25,0.75), (0.5,0.25), & (0.75,0.75)
+## four simulation iterations (only control locations change between iteration)
 
 # Set seed for reproducibility
 set.seed(1234)
 
 # Simulate relative clustering
-rand_pts <- rand_cascon_neymscot(prevalence = 0.2, 
-                                 n_total = 1000,
-                                 n_case = 50,
-                                 n_control = 200,
-                                 k_case = 5, 
-                                 k_control = 5,
-                                 e_case = 0, 
-                                 e_control = 0, 
-                                 r_case = 0.1, 
-                                 r_control = 0.5,
-                                 sim_total = 4,
-                                 win = spatstat::unit.square()
+rand_pts <- rand_cascon(x_case = c(0.25, 0.5, 0.75),
+                        y_case = c(0.75, 0.25, 0.75),
+                        n_case = c(100, 100, 100),
+                        n_control = 700,
+                        r_case = c(0.1, 0.1, 0.1),
+                        sim_total = 100,
+                        samp_case = "uniform",
+                        samp_control = "CSR",
+                        win = spatstat::unit.square()
 )
 
 lapply(rand_pts, FUN = function(x) {x$n}) # double check sample size
 lapply(rand_pts, FUN = function(x) {table(x$marks)}) # double check prevalence
 
 ## Data Visualization
-### All iterations
-plot(rand_pts, pch = 1, cex = c(0.5,0.1), cols = c("red", "blue"), main = "Random Simulation")
+plot(rand_pts[1:4], pch = 1, cex = c(0.5,0.1), cols = c("red", "blue"),
+     main = "CSR Sampling Simulation"
+)
 
 #############################
 # EXAMPLE SPATIAL STATISTIC #
@@ -157,7 +151,6 @@ pvl_raster_reclass <- raster::reclassify(pvl_raster, c(-Inf, 0.005, 1,
 )
 #plot(pvl_raster_reclass) # check raster reclassification
 
-
 ## Data Visualization
 ### Input
 plot(rand_pts[[1]], pch = 1, cex = c(0.5,0.1), cols = c("red", "blue"), main = "Random Simulation")
@@ -204,7 +197,7 @@ fields::image.plot(ramp$lrr,
 
 ### Categorical output
 plot(pvl_raster_reclass,
-     main = "Estimated significant p-values\n alpha = 0.1 and 0.05",
+     main = "Estimated significant p-values\n alpha = 0.1 and alpha = 0.05",
      col = plot_cols5,
      axes = F,
      bty = "o",
@@ -273,4 +266,231 @@ legend("bottom", inset = -0.2, ncol = 2, xpd = T,
        pt.cex = 1
 )
 
+###############################
+# ITERATIVE SPATIAL STATISTIC #
+###############################
+
+# Estimate the mean and standard deviation of the log-relative risk surface 
+# Estimate the mean p-value surface and the proportion of iterations that are significant
+
+## Arguments:
+### sim_locs = the pppList of simulated marked planar point patterns
+### upper_tail = user-specified upper tail of a two-tailed significance level
+### lower_tail = user-specified lower tail of a two-tailed significance level
+### resolution = 10 to calculate surfaces in a 10 x 10 grid
+### edge = "diggle" to employ the Diggle method that reweights each observation-specific kernel
+### adapt = F to estimate using fixed smoothing (future direction: explore adaptive smoothing)
+### h0 = NULL for internal estimation of a common oversmoothing bandwidth computed via the sparr::OS() function in the sparr package (can be user specified if want to force same bandwidth across iterations)
+### verbose = F to clean-up presentation 
+### There are other arguments for tuning (mostly for adaptive smoothing), see sparr::risk() helpfile
+
+## NOTE: Force the sparr::risk() arguement tolerate = TRUE to always calculate asymptotic p-vlaue surfaces
+
+sim_srr <- rand_srr(sim_locs = rand_pts, 
+                    # upper_tail = 0.975, # the default value
+                    # lower_tail = 0.025, # the default value
+                    upper_tail = 0.995,
+                    lower_tail = 0.005, 
+                    resolution = 10, # try the default 128 for a smoother surface
+                    edge = "diggle", 
+                    adapt = F, 
+                    h0 = NULL, 
+                    verbose = F
+                    )
+
+# Create mean log relative risk raster
+rr <- as.data.frame(dplyr::tibble(
+  x = sim_srr$rx,
+  y = sim_srr$ry,
+  rr = sim_srr$rr_mean
+))
+lrr_narm <- na.omit(rr) # remove NAs
+sp::coordinates(lrr_narm) <- ~ x + y # coordinates
+sp::gridded(lrr_narm) <- TRUE # gridded
+rr_raster <- raster::raster(lrr_narm)
+#plot(rr_raster) # check raster creation
+
+# Create mean p-value raster
+pval <- as.data.frame(dplyr::tibble(
+  x = sim_srr$rx,
+  y = sim_srr$ry,
+  tol = sim_srr$pval_mean
+))
+lrr_narm <- na.omit(pval) # remove NAs
+sp::coordinates(lrr_narm) <- ~ x + y # coordinates
+sp::gridded(lrr_narm) <- TRUE # gridded
+pval_raster <- raster::raster(lrr_narm)
+#plot(pval_raster) # check raster creation
+## Reclassify raster of asymptotic p-value surface
+#### Here: two alpha levels, both two-tailed
+#### 0.1 and 0.05
+pval_reclass <- raster::reclassify(pval_raster, c(-Inf, 0.005, 1,
+                                                  0.005, 0.025, 2,
+                                                  0.025, 0.975, 3,
+                                                  0.975, 0.995, 4,
+                                                  0.995, Inf, 5
+                                                  )
+                                   )
+
+# Create standard deviation of log relative risk raster
+rrsd <- as.data.frame(dplyr::tibble(
+  x = sim_srr$rx,
+  y = sim_srr$ry,
+  sd = sim_srr$rr_sd
+))
+lrr_narm <- na.omit(rrsd) # remove NAs
+sp::coordinates(lrr_narm) <- ~ x + y # coordinates
+sp::gridded(lrr_narm) <- TRUE # gridded
+rrsd_raster <- raster::raster(lrr_narm)
+#plot(rrsd_raster) # check raster creation
+
+# Create proportion significant raster
+pvalprop <- as.data.frame(dplyr::tibble(
+  x = sim_srr$rx,
+  y = sim_srr$ry,
+  prop = sim_srr$pval_prop
+))
+lrr_narm <- na.omit(pvalprop) # remove NAs
+sp::coordinates(lrr_narm) <- ~ x + y # coordinates
+sp::gridded(lrr_narm) <- TRUE # gridded
+pvalprop_raster <- raster::raster(lrr_narm)
+#plot(pvalprop_raster) # check raster creation
+## Reclassify raster of proportion significant
+#### Here: power = 80
+p_thresh <- 0.9
+pvalprop_reclass <- raster::reclassify(pvalprop_raster, c(-Inf, p_thresh, 1,
+                                                          p_thresh, Inf, 2
+                                                          )
+                                       )
+
+## Data Visualization
+
+### Mean log relative risk
+#### Colors for raster
+plot_cols5 <- c("indianred4", "indianred1", "grey80","cornflowerblue","blue3")
+plot_cols3 <- plot_cols5[-c(2,4)] # just the two extreme colors and the color for insignificance
+
+ramp <- lrr_ramp(x = rr_raster, 
+                 cols = plot_cols3,
+                 midpoint = 0, # for a log relative risk midpoint is 0
+                 thresh_up = 5, # likely not necessary because max < thresh_up
+                 thresh_low = -5
+                 )
+#### Plot
+fields::image.plot(ramp$lrr, 
+                   main = "Mean log relative risk",
+                   col = ramp$cols, 
+                   breaks = ramp$breaks,
+                   axes = F,
+                   cex.lab = 1,
+                   xlab = "",
+                   ylab = "",
+                   cex = 1,
+                   smallplot = c(0.86, 0.88, 0.2, 0.8),
+                   axis.args = list(labels = c(paste("<", format(round(min(ramp$lrr[!is.infinite(ramp$lrr)], na.rm = T), digits = 2), nsmall = 1) ,sep = ""),
+                                               format(round(min(ramp$lrr[!is.infinite(ramp$lrr)], na.rm=T)/2, digits = 2), nsmall = 1),
+                                               0,
+                                               format(round(max(ramp$lrr[!is.infinite(ramp$lrr)], na.rm=T)/2, digits = 2), nsmall = 1),
+                                               paste(">",format(round(max(ramp$lrr[!is.infinite(ramp$lrr)], na.rm=T), digits = 2), nsmall = 1),sep = "")
+                   ),
+                   at = c(min(ramp$lrr[!is.infinite(ramp$lrr)], na.rm=T),
+                          min(ramp$lrr[!is.infinite(ramp$lrr)], na.rm=T)/2,
+                          0,
+                          max(ramp$lrr[!is.infinite(ramp$lrr)], na.rm=T)/2,
+                          max(ramp$lrr[!is.infinite(ramp$lrr)], na.rm=T)
+                   ),
+                   cex.axis = 0.67
+                   ),
+                   legend.args = list(text = "mean log relative risk", side = 4, line = 2,  cex = 0.67)
+)
+
+### Standard deviation log relative risk
+#### Colors
+rampcols <- terrain.colors(length(raster::values(rrsd_raster)))
+rampbreaks <- seq(rrsd_raster@data@min, rrsd_raster@data@max, 
+                  length.out = length(raster::values(rrsd_raster))+1
+)
+#### Plot
+fields::image.plot(rrsd_raster, 
+                   main = "Standard deviation log relative risk",
+                   col = rampcols, 
+                   breaks = rampbreaks,
+                   axes = F,
+                   cex.lab = 1,
+                   xlab = "",
+                   ylab = "",
+                   cex = 1,
+                   smallplot = c(0.86, 0.88, 0.2, 0.8),
+                   axis.args = list(labels = format(round(seq(rrsd_raster@data@min,
+                                                   rrsd_raster@data@max,
+                                                   (1/6)*rrsd_raster@data@max
+                                                   ), digits = 2), nsmall = 1),
+                                    at =  seq(rrsd_raster@data@min,
+                                              rrsd_raster@data@max,
+                                              (1/6)*rrsd_raster@data@max
+                                              ),
+                                    cex.axis = 0.67
+                                    ),
+                   legend.args = list(text = "standard deviation log relative risk",
+                                      side = 4, line = 2,  cex = 0.67
+                                      )
+                   )
+
+### Mean p-value
+### Categorical output
+plot(pval_reclass,
+     main = "Significant mean p-values\n alpha = 0.1 and alpha = 0.05",
+     col = plot_cols5,
+     axes = F,
+     bty = "o",
+     box = F,
+     axis.args = list(at = seq(1,5,1),
+                      labels = c("<0.005", "<0.025", "insignficant",
+                                 ">0.975",  ">0.995"
+                      ), 
+                      cex.axis = 0.5
+                      )
+     )
+
+### Proportion of p-value significant
+#### Colors for raster
+rampcols <- rev(gray.colors(length(raster::values(pvalprop_raster)), 
+                            start = 0.95, end = 0, 
+                            gamma = 1, alpha = NULL
+                            )
+                )
+rampbreaks <- seq(pvalprop_raster@data@min, pvalprop_raster@data@max, 
+                  length.out = length(raster::values(pvalprop_raster))+1
+                  )
+#### Continuous Output
+fields::image.plot(pvalprop_raster, 
+                   main = "Proportion significant",
+                   col = rampcols, 
+                   breaks = rampbreaks,
+                   axes = F,
+                   cex.lab = 1,
+                   xlab = "",
+                   ylab = "",
+                   cex = 1,
+                   smallplot = c(0.86, 0.88, 0.2, 0.8),
+                   axis.args = list(cex.axis = 0.67),
+                   legend.args = list(text = "proportion significant",
+                                      side = 4, line = 2,  cex = 0.67
+                                      )
+                   )
+
+#### Categorical output
+plot(pvalprop_reclass,
+     main = paste("Proportion significant above", p_thresh,"threshold", sep = " "),
+     col = c("grey", "black"),
+     axes = F,
+     bty = "o",
+     box = F,
+     axis.args = list(at = c(1,2),
+                      labels = c("insufficient",
+                                 "sufficient"
+                      ), 
+                      cex.axis = 0.5
+     )
+)
 # -------------------- END OF CODE -------------------- #
