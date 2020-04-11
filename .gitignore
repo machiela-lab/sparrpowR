@@ -41,3 +41,6 @@ rsconnect/
 
 # R installed data
 *.rds
+
+# Sandboxes
+*/sandbox.R
