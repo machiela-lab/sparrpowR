@@ -66,6 +66,7 @@ source(file = paste(getwd(), "/code/R_functions/rand_srr.R", sep = ""))
 set.seed(1234)
 
 # Simulate relative clustering
+start_time <- Sys.time()
 rand_pts <- rand_cascon(x_case = c(0.25, 0.5, 0.75),
                         y_case = c(0.75, 0.25, 0.75),
                         n_case = c(100, 100, 100),
@@ -76,6 +77,8 @@ rand_pts <- rand_cascon(x_case = c(0.25, 0.5, 0.75),
                         samp_control = "CSR",
                         win = spatstat::unit.square()
 )
+end_time <- Sys.time()
+time_pts <- end_time - start_time # n = 10,000 about 6 min
 
 lapply(rand_pts, FUN = function(x) {x$n}) # double check sample size
 lapply(rand_pts, FUN = function(x) {table(x$marks)}) # double check prevalence
@@ -285,7 +288,7 @@ legend("bottom", inset = -0.2, ncol = 2, xpd = T,
 ### There are other arguments for tuning (mostly for adaptive smoothing), see sparr::risk() helpfile
 
 ## NOTE: Force the sparr::risk() arguement tolerate = TRUE to always calculate asymptotic p-vlaue surfaces
-
+start_time <- Sys.time()
 sim_srr <- rand_srr(sim_locs = rand_pts, 
                     # upper_tail = 0.975, # the default value
                     # lower_tail = 0.025, # the default value
@@ -297,6 +300,8 @@ sim_srr <- rand_srr(sim_locs = rand_pts,
                     h0 = NULL, 
                     verbose = F
                     )
+end_time <- Sys.time()
+time_srr <- end_time - start_time # n = 10,000 about 3 min
 
 # Create mean log relative risk raster
 rr <- as.data.frame(dplyr::tibble(
