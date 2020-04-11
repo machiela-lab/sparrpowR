@@ -482,7 +482,7 @@ fields::image.plot(pvalprop_raster,
 #### Categorical output
 plot(pvalprop_reclass,
      main = paste("Proportion significant above", p_thresh,"threshold", sep = " "),
-     col = c("grey", "black"),
+     col = c("black", "grey"),
      axes = F,
      bty = "o",
      box = F,
