@@ -12,6 +12,7 @@
 # B) 4/10/20 (IB) - Added example calculating summary of iterative simulation 
 # C) 4/12/20 (IB) - Added example for all-in-one sparrpowR() run
 # D) 4/13/20 (IB) - Renamed sparrpowR() to spatial_power() and rand_cascon() to spatial_data()
+# E) 4/13/20 (IB) - Added example implementation of data visualization of input and power using the spatial_plots() function
 # ------------------------------------------ #
 
 ############
@@ -39,6 +40,7 @@ source(file = paste(getwd(), "/code/R_functions/spatial_data.R", sep = ""))
 source(file = paste(getwd(), "/code/R_functions/lrr_ramp.R", sep = ""))
 source(file = paste(getwd(), "/code/R_functions/rand_srr.R", sep = ""))
 source(file = paste(getwd(), "/code/R_functions/spatial_power.R", sep = ""))
+source(file = paste(getwd(), "/code/R_functions/spatial_plots.R", sep = ""))
 
 ######################
 # EXAMPLE SIMULATION #
@@ -502,21 +504,6 @@ plot(pvalprop_reclass,
      )
 )
 
-#### Categorical output
-plot(pvalprop_reclass,
-     main = paste("Proportion significant above", p_thresh,"threshold", sep = " "),
-     col = c("black", "grey"),
-     axes = F,
-     bty = "o",
-     box = F,
-     axis.args = list(at = c(1,2),
-                      labels = c("insufficient",
-                                 "sufficient"
-                      ), 
-                      cex.axis = 0.5
-     )
-)
-
 #########################################
 # ITERATIVE SPATIAL STATISTIC EXAMPLE 2 #
 #########################################
@@ -566,7 +553,14 @@ end_time <- Sys.time()
 time_srr <- end_time - start_time 
 time_srr # n = 10,000 about (12 min for version 1; 11 min for version 2)
 
-# Create mean log relative risk raster
+## Data Visualizaiton of Input and Power
+spatial_plots(sim_srr = sim_srr, # use output of SRR simulation
+              p_thresh = 0.9, # default = 0.8
+              plot_text = T # default = FALSE in case resolution >> 10
+              )
+
+## Other, Raw Simulations using sim_srr object
+### Create mean log relative risk raster
 rr <- as.data.frame(dplyr::tibble(x = sim_srr$rx,
                                   y = sim_srr$ry,
                                   rr = sim_srr$rr_mean
@@ -578,7 +572,7 @@ sp::gridded(lrr_narm) <- TRUE # gridded
 rr_raster <- raster::raster(lrr_narm)
 #plot(rr_raster) # check raster creation
 
-# Create mean p-value raster
+### Create mean p-value raster
 pval <- as.data.frame(dplyr::tibble(x = sim_srr$rx,
                                     y = sim_srr$ry,
                                     tol = sim_srr$pval_mean
@@ -589,9 +583,9 @@ sp::coordinates(lrr_narm) <- ~ x + y # coordinates
 sp::gridded(lrr_narm) <- TRUE # gridded
 pval_raster <- raster::raster(lrr_narm)
 #plot(pval_raster) # check raster creation
-## Reclassify raster of asymptotic p-value surface
-#### Here: two alpha levels, both two-tailed
-#### 0.1 and 0.05
+#### Reclassify raster of asymptotic p-value surface
+##### Here: two alpha levels, both two-tailed
+##### 0.1 and 0.05
 pval_reclass <- raster::reclassify(pval_raster, c(-Inf, 0.005, 1,
                                                   0.005, 0.025, 2,
                                                   0.025, 0.975, 3,
@@ -600,7 +594,7 @@ pval_reclass <- raster::reclassify(pval_raster, c(-Inf, 0.005, 1,
                                                   )
                                    )
 
-# Create standard deviation of log relative risk raster
+### Create standard deviation of log relative risk raster
 rrsd <- as.data.frame(dplyr::tibble(x = sim_srr$rx,
                                     y = sim_srr$ry,
                                     sd = sim_srr$rr_sd
@@ -612,7 +606,7 @@ sp::gridded(lrr_narm) <- TRUE # gridded
 rrsd_raster <- raster::raster(lrr_narm)
 #plot(rrsd_raster) # check raster creation
 
-# Create proportion significant raster
+### Create proportion significant raster
 pvalprop <- as.data.frame(dplyr::tibble(x = sim_srr$rx,
                                         y = sim_srr$ry,
                                         prop = sim_srr$pval_prop
@@ -623,23 +617,22 @@ sp::coordinates(lrr_narm) <- ~ x + y # coordinates
 sp::gridded(lrr_narm) <- TRUE # gridded
 pvalprop_raster <- raster::raster(lrr_narm)
 #plot(pvalprop_raster) # check raster creation
-## Reclassify raster of proportion significant
-#### Here: power = 80
+#### Reclassify raster of proportion significant
+##### Here: power = 0.9
 p_thresh <- 0.9
 pvalprop_reclass <- raster::reclassify(pvalprop_raster, c(-Inf, p_thresh, 1,
                                                           p_thresh, Inf, 2
                                                           )
                                        )
 
-## Data Visualization
-
-### Example input
+#### Data Visualization
+##### Example input **included in spatial_plots() function**
 plot(sim_srr$sim, pch = 1, cex = c(0.5,0.1), cols = c("red", "blue"),
      main = "First iteration of simulated data"
      )
 
-### Mean log relative risk
-#### Colors for raster
+##### Mean log relative risk
+###### Colors for raster
 plot_cols5 <- c("indianred4", "indianred1", "grey80","cornflowerblue","blue3")
 plot_cols3 <- plot_cols5[-c(2,4)] # just the two extreme colors and the color for insignificance
 
@@ -649,7 +642,7 @@ ramp <- lrr_ramp(x = rr_raster,
                  thresh_up = 5, # likely not necessary because max < thresh_up
                  thresh_low = -5
                  )
-#### Plot
+###### Plot
 fields::image.plot(ramp$lrr, 
                    main = "Mean log relative risk",
                    col = ramp$cols, 
@@ -677,13 +670,13 @@ fields::image.plot(ramp$lrr,
                    legend.args = list(text = "mean log relative risk", side = 4, line = 2,  cex = 0.67)
                    )
 
-### Standard deviation log relative risk
-#### Colors
+##### Standard deviation log relative risk
+###### Colors
 rampcols <- terrain.colors(length(raster::values(rrsd_raster)))
 rampbreaks <- seq(rrsd_raster@data@min, rrsd_raster@data@max, 
                   length.out = length(raster::values(rrsd_raster))+1
                   )
-#### Plot
+###### Plot
 fields::image.plot(rrsd_raster, 
                    main = "Standard deviation log relative risk",
                    col = rampcols, 
@@ -709,8 +702,8 @@ fields::image.plot(rrsd_raster,
                                       )
                    )
 
-### Mean p-value
-### Categorical output
+##### Mean p-value
+###### Categorical output
 plot(pval_reclass,
      main = "Significant mean p-values\n alpha = 0.1 and alpha = 0.05",
      col = plot_cols5,
@@ -725,8 +718,8 @@ plot(pval_reclass,
                       )
      )
 
-### Proportion of p-value significant
-#### Colors for raster
+##### Proportion of p-value significant **included in spatial_plots() function**
+###### Colors for raster
 rampcols <- rev(gray.colors(length(raster::values(pvalprop_raster)), 
                             start = 0.95, end = 0, 
                             gamma = 1, alpha = NULL
@@ -735,7 +728,7 @@ rampcols <- rev(gray.colors(length(raster::values(pvalprop_raster)),
 rampbreaks <- seq(pvalprop_raster@data@min, pvalprop_raster@data@max, 
                   length.out = length(raster::values(pvalprop_raster))+1
                   )
-#### Continuous Output
+###### Continuous Output **included in spatial_plots() function**
 fields::image.plot(pvalprop_raster, 
                    main = "Proportion significant",
                    col = rampcols, 
@@ -751,4 +744,19 @@ fields::image.plot(pvalprop_raster,
                                       side = 4, line = 2,  cex = 0.67
                                       )
                    )
+
+###### Categorical output **included in spatial_plots() function**
+plot(pvalprop_reclass,
+     main = paste("Proportion significant above", p_thresh,"threshold", sep = " "),
+     col = c("black", "grey"),
+     axes = F,
+     bty = "o",
+     box = F,
+     axis.args = list(at = c(1,2),
+                      labels = c("insufficient",
+                                 "sufficient"
+                      ), 
+                      cex.axis = 0.5
+     )
+)
 # -------------------- END OF CODE -------------------- #
