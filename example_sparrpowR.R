@@ -56,7 +56,9 @@ time_pts <- end_time - start_time # n = 10,000 about 6 min
 time_pts
 
 ## Data Visualizaiton of Input and Power
-spatial_plots(input = rand_pts) # use output of data simulation
+spatial_plots(input = rand_pts, # use output of data simulation
+              n_sim = 4 # default = 4 simulations
+              ) 
 
 # Estimates SRR with the following arguments:
 ### upper_tail = user-specified upper tail of a two-tailed significance level

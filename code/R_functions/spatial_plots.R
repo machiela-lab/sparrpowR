@@ -14,6 +14,7 @@
 spatial_plots <- function(input,
                           p_thresh = 0.8,
                           plot_text = FALSE,
+                          n_sim = 4,
                           ...) {
   
   # Packages
@@ -22,7 +23,7 @@ spatial_plots <- function(input,
   require(sp)
   
   if("ppplist" %in% class(input)){
-    return(sp::plot(input[1:4], 
+    return(sp::plot(input[1:n_sim], 
              pch = 1, 
              cex = c(0.5,0.1),
              cols = c("red", "blue"),
@@ -35,7 +36,7 @@ p1 <- sp::plot(input$sim,
                pch = 1, 
                cex = c(0.5,0.1),
                cols = c("red", "blue"),
-               main = "First iteration of simulated data"
+               main = "First iterations of simulated data"
                )
 
 # Plot 2: Power, Continuous
