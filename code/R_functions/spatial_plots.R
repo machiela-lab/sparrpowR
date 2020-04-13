@@ -15,6 +15,7 @@ spatial_plots <- function(input,
                           p_thresh = 0.8,
                           plot_text = FALSE,
                           n_sim = 4,
+                          cols = c("grey0", "grey80", "grey100"),
                           ...) {
   
   # Packages
@@ -54,13 +55,9 @@ pvalprop <- NULL # conserve memory
 lrr_narm <- NULL # conserve memory
 
 ## Colors for raster
-rampcols <- rev(gray.colors(length(raster::values(pvalprop_raster)), 
-                            start = 0.95,
-                            end = 0, 
-                            gamma = 1,
-                            alpha = NULL
-                            )
-                )
+rampcols <- grDevices::colorRampPalette(colors = c(cols[1], cols[2]),
+                                        space="Lab"
+                                        )(length(raster::values(pvalprop_raster)))
 rampbreaks <- seq(pvalprop_raster@data@min,
                   pvalprop_raster@data@max, 
                   length.out = length(raster::values(pvalprop_raster))+1
@@ -104,7 +101,7 @@ p3 <- fields::image.plot(pvalprop_reclass,
                                       p_thresh,
                                       "threshold",
                                       sep = " "),
-                         col = c("black", "grey"),
+                         col = cols[1:2],
                          breaks = c(1, 1.5, 2),
                          axes = F,
                          cex.lab = 1,
@@ -126,7 +123,7 @@ p3 <- fields::image.plot(pvalprop_reclass,
 )
 ### Add text of local power to each knot
 if(plot_text == T){
-  text(x = input$rx, y = input$ry, input$pval_prop, col = "white", cex = 0.5)
+  text(x = input$rx, y = input$ry, input$pval_prop, col = cols[3], cex = 0.5)
   }
 pvalprop_reclass <- NULL # conserve memory
 }

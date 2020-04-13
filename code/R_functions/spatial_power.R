@@ -25,13 +25,13 @@ spatial_power <- function(x_case, y_case,
                           lower_tail = 0.025,
                           parallel = FALSE,
                           win = unit.square(),
+                          cascon = TRUE,
                           ...) {
   
   # Packages
   require(spatstat)
   require(sparr)
   require(foreach)
-  require(svMisc)
   
   # Custom Internal Functions
   ## Set function used in foreach
@@ -257,7 +257,11 @@ spatial_power <- function(x_case, y_case,
   
   ## Calculate proportion of tests were significant
   ### Significance level is user-specified
+  if(cascon == TRUE){
   pval_sig <- rapply(sim_pval, function(x) ifelse(x < lower_tail | x > upper_tail , TRUE, FALSE), how = "replace")
+  } else {
+    pval_sig <- rapply(sim_pval, function(x) ifelse(x < lower_tail, TRUE, FALSE), how = "replace")
+  }
   pval_count <- rowSums(do.call(cbind,pval_sig), na.rm = TRUE)
   pval_prop_wNA <- sapply(pval_count, FUN = proportionSignificant)
   

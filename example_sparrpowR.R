@@ -59,7 +59,6 @@ time_pts
 spatial_plots(input = rand_pts, # use output of data simulation
               n_sim = 4 # default = 4 simulations
               ) 
-
 # Estimates SRR with the following arguments:
 ### upper_tail = user-specified upper tail of a two-tailed significance level
 ### lower_tail = user-specified lower tail of a two-tailed significance level
@@ -67,6 +66,7 @@ spatial_plots(input = rand_pts, # use output of data simulation
 ### edge = "diggle" to employ the Diggle method that reweights each observation-specific kernel
 ### adapt = F to estimate using fixed smoothing (future direction: explore adaptive smoothing)
 ### h0 = NULL for internal estimation of a common oversmoothing bandwidth computed via the sparr::OS() function in the sparr package (can be user specified if want to force same bandwidth across iterations)
+### cascon = TRUE for power to detect both relative case and control clustering (hot and coldspots)
 ### There are other arguments for tuning (mostly for adaptive smoothing), see sparr::risk() helpfile
 
 ## NOTE: Force the sparr::risk() arguement tolerate = TRUE to always calculate asymptotic p-vlaue surfaces
@@ -89,15 +89,19 @@ sim_srr <- spatial_power(x_case = c(0.25, 0.5, 0.75),
                          lower_tail = 0.005, # default = 0.025
                          resolution = 10, # try the default 128 for a smoother surface
                          edge = "diggle",
-                         adapt = F,
-                         h0 = NULL
+                         adapt = FALSE,
+                         h0 = NULL,
+                         cascon = TRUE # cascon = FALSE for only relative case clustering (hotspots)
                          )
 end_time <- Sys.time() # record end time
 time_srr <- end_time - start_time # Calculate run time
 time_srr # n = 10,000 about (12 min for version 1; 11 min for version 2)
 
 ## Data Visualizaiton of Input and Power
+### Default colors = c("grey0", "grey80", "grey100")
 spatial_plots(input = sim_srr, # use output of SRR simulation
               p_thresh = 0.9, # default = 0.8
-              plot_text = T # default = FALSE in case resolution >> 10
+              plot_text = T, # default = FALSE in case resolution >> 10
+              cols = c("blue", "green", "red") # insufficient, sufficient, text
               )
+# -------------------- END OF CODE -------------------- #
