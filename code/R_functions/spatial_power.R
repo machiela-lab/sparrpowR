@@ -12,20 +12,21 @@
 # A) 4/13/20 (IB) - Combines rand_cascon() and rand_srr() functions per iteration
 # ------------------------------------------ #
 
-sparrpowR <- function(x_case, y_case,
-                      n_case = NULL, n_control, n_cluster, n_knot,
-                      r_case, r_control,
-                      l_control, l_case = NULL,
-                      e_control,
-                      sim_total,
-                      samp_case = c("uniform", "Poisson"),
-                      samp_control = c("CSR", "systematic", "stratified",
-                                       "IPP", "clustered"),
-                      same_n = FALSE, 
-                      upper_tail = 0.975,
-                      lower_tail = 0.025,
-                      parallel = FALSE, 
-                      win = unit.square(), ...) {
+spatial_power <- function(x_case, y_case,
+                          n_case = NULL, n_control, n_cluster, n_knot,
+                          r_case, r_control,
+                          l_control, l_case = NULL,
+                          e_control,
+                          sim_total,
+                          samp_case = c("uniform", "Poisson"),
+                          samp_control = c("CSR", "systematic", "stratified",
+                                           "IPP", "clustered"),
+                          same_n = FALSE,
+                          upper_tail = 0.975,
+                          lower_tail = 0.025,
+                          parallel = FALSE,
+                          win = unit.square(), ...) {
+  
   
   # Packages
   require(spatstat)
