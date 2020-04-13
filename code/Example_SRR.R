@@ -37,7 +37,8 @@ library(sparr)
 source(file = paste(getwd(), "/code/R_functions/rand_cascon_unifdisc.R", sep = ""))
 source(file = paste(getwd(), "/code/R_functions/lrr_ramp.R", sep = ""))
 source(file = paste(getwd(), "/code/R_functions/rand_srr.R", sep = ""))
-source(file = paste(getwd(), "/code/R_functions/sparrpowR.R", sep = ""))
+#source(file = paste(getwd(), "/code/R_functions/sparrpowR.R", sep = ""))
+source(file = paste(getwd(), "/code/R_functions/sparrpowR_v2.R", sep = ""))
 
 ######################
 # EXAMPLE SIMULATION #
@@ -543,7 +544,6 @@ plot(pvalprop_reclass,
 ### verbose = F to clean-up presentation 
 ### There are other arguments for tuning (mostly for adaptive smoothing), see sparr::risk() helpfile
 
-source(file = paste(getwd(), "/code/R_functions/sparrpowR.R", sep = ""))
 ## NOTE: Force the sparr::risk() arguement tolerate = TRUE to always calculate asymptotic p-vlaue surfaces
 start_time <- Sys.time()
 sim_srr <- sparrpowR(x_case = c(0.25, 0.5, 0.75),
@@ -564,7 +564,8 @@ sim_srr <- sparrpowR(x_case = c(0.25, 0.5, 0.75),
                      verbose = F
                      )
 end_time <- Sys.time()
-time_srr <- end_time - start_time # n = 10,000 about 12 min
+time_srr <- end_time - start_time 
+time_srr # n = 10,000 about (12 min for version 1; 11 min for version 2)
 
 # Create mean log relative risk raster
 rr <- as.data.frame(dplyr::tibble(x = sim_srr$rx,
