@@ -15,7 +15,7 @@
 # CUSTOM FUNCTIONS #
 ####################
 
-#source(file = paste(getwd(), "/code/R_functions/spatial_data.R", sep = ""))
+source(file = paste(getwd(), "/code/R_functions/spatial_data.R", sep = ""))
 source(file = paste(getwd(), "/code/R_functions/spatial_power.R", sep = ""))
 source(file = paste(getwd(), "/code/R_functions/spatial_plots.R", sep = ""))
 
@@ -36,6 +36,28 @@ source(file = paste(getwd(), "/code/R_functions/spatial_plots.R", sep = ""))
 ## case cluster centroids located at (0.25,0.75), (0.5,0.25), & (0.75,0.75)
 ## four simulation iterations (only control locations change between iteration)
 
+# Set seed for reproducibility
+set.seed(1234)
+
+# Simulate relative clustering
+start_time <- Sys.time() # record start time
+rand_pts <- spatial_data(x_case = c(0.25, 0.5, 0.75),
+                         y_case = c(0.75, 0.25, 0.75),
+                         n_case = c(100, 100, 100),
+                         n_control = 700,
+                         r_case = c(0.1, 0.1, 0.1),
+                         sim_total = 10,
+                         samp_case = "uniform",
+                         samp_control = "CSR",
+                         win = spatstat::unit.square()
+)
+end_time <- Sys.time() # record end time
+time_pts <- end_time - start_time # n = 10,000 about 6 min
+time_pts
+
+## Data Visualizaiton of Input and Power
+spatial_plots(input = rand_pts) # use output of data simulation
+
 # Estimates SRR with the following arguments:
 ### upper_tail = user-specified upper tail of a two-tailed significance level
 ### lower_tail = user-specified lower tail of a two-tailed significance level
@@ -47,6 +69,9 @@ source(file = paste(getwd(), "/code/R_functions/spatial_plots.R", sep = ""))
 
 ## NOTE: Force the sparr::risk() arguement tolerate = TRUE to always calculate asymptotic p-vlaue surfaces
 ## NOTE: Force the sparr::risk() arguement verbose = FALSE to clean-up presentation 
+
+# Set seed for reproducibility
+set.seed(1234)
 
 start_time <- Sys.time() # record start time
 sim_srr <- spatial_power(x_case = c(0.25, 0.5, 0.75),
@@ -70,7 +95,7 @@ time_srr <- end_time - start_time # Calculate run time
 time_srr # n = 10,000 about (12 min for version 1; 11 min for version 2)
 
 ## Data Visualizaiton of Input and Power
-spatial_plots(sim_srr = sim_srr, # use output of SRR simulation
+spatial_plots(input = sim_srr, # use output of SRR simulation
               p_thresh = 0.9, # default = 0.8
               plot_text = T # default = FALSE in case resolution >> 10
               )

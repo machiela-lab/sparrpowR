@@ -11,7 +11,7 @@
 # A) 4/13/20 (IB) - Combines rand_cascon() and rand_srr() functions per iteration
 # ------------------------------------------ #
 
-spatial_plots <- function(sim_srr,
+spatial_plots <- function(input,
                           p_thresh = 0.8,
                           plot_text = FALSE,
                           ...) {
@@ -21,8 +21,17 @@ spatial_plots <- function(sim_srr,
   require(raster)
   require(sp)
   
+  if("ppplist" %in% class(input)){
+    return(sp::plot(input[1:4], 
+             pch = 1, 
+             cex = c(0.5,0.1),
+             cols = c("red", "blue"),
+             main = "First iterations of simulated data"
+    ))
+  }
+  
 # Plot 1: Example input
-p1 <- sp::plot(sim_srr$sim, 
+p1 <- sp::plot(input$sim, 
                pch = 1, 
                cex = c(0.5,0.1),
                cols = c("red", "blue"),
@@ -31,9 +40,9 @@ p1 <- sp::plot(sim_srr$sim,
 
 # Plot 2: Power, Continuous
 ## Create proportion significant raster
-pvalprop <- as.data.frame(dplyr::tibble(x = sim_srr$rx,
-                                        y = sim_srr$ry,
-                                        prop = sim_srr$pval_prop
+pvalprop <- as.data.frame(dplyr::tibble(x = input$rx,
+                                        y = input$ry,
+                                        prop = input$pval_prop
                                         )
                           )
 lrr_narm <- na.omit(pvalprop) # remove NAs
@@ -116,7 +125,7 @@ p3 <- fields::image.plot(pvalprop_reclass,
 )
 ### Add text of local power to each knot
 if(plot_text == T){
-  text(x = sim_srr$rx, y = sim_srr$ry, sim_srr$pval_prop, col = "white", cex = 0.5)
+  text(x = input$rx, y = input$ry, input$pval_prop, col = "white", cex = 0.5)
   }
 pvalprop_reclass <- NULL # conserve memory
 }
