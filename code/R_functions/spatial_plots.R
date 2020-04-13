@@ -28,6 +28,7 @@ spatial_plots <- function(input,
              pch = 1, 
              cex = c(0.5,0.1),
              cols = c("red", "blue"),
+             leg.side = "right",
              main = "First iterations of simulated data"
     ))
   }
@@ -37,6 +38,7 @@ p1 <- sp::plot(input$sim,
                pch = 1, 
                cex = c(0.5,0.1),
                cols = c("red", "blue"),
+               leg.side = "right",
                main = "First iterations of simulated data"
                )
 
