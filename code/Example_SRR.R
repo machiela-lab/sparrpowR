@@ -11,6 +11,7 @@
 # A) 4/8/20 (IB) - Uses simulated data from the companion file "Random_Clustering.R"
 # B) 4/10/20 (IB) - Added example calculating summary of iterative simulation 
 # C) 4/12/20 (IB) - Added example for all-in-one sparrpowR() run
+# D) 4/13/20 (IB) - Renamed sparrpowR() to spatial_power() and rand_cascon() to spatial_data()
 # ------------------------------------------ #
 
 ############
@@ -34,11 +35,10 @@ library(sparr)
 # CUSTOM FUNCTIONS #
 ####################
 
-source(file = paste(getwd(), "/code/R_functions/rand_cascon_unifdisc.R", sep = ""))
+source(file = paste(getwd(), "/code/R_functions/spatial_data.R", sep = ""))
 source(file = paste(getwd(), "/code/R_functions/lrr_ramp.R", sep = ""))
 source(file = paste(getwd(), "/code/R_functions/rand_srr.R", sep = ""))
-#source(file = paste(getwd(), "/code/R_functions/sparrpowR.R", sep = ""))
-source(file = paste(getwd(), "/code/R_functions/sparrpowR_v2.R", sep = ""))
+source(file = paste(getwd(), "/code/R_functions/spatial_power.R", sep = ""))
 
 ######################
 # EXAMPLE SIMULATION #
@@ -70,15 +70,15 @@ set.seed(1234)
 
 # Simulate relative clustering
 start_time <- Sys.time()
-rand_pts <- rand_cascon(x_case = c(0.25, 0.5, 0.75),
-                        y_case = c(0.75, 0.25, 0.75),
-                        n_case = c(100, 100, 100),
-                        n_control = 700,
-                        r_case = c(0.1, 0.1, 0.1),
-                        sim_total = 100,
-                        samp_case = "uniform",
-                        samp_control = "CSR",
-                        win = spatstat::unit.square()
+rand_pts <- spatial_data(x_case = c(0.25, 0.5, 0.75),
+                         y_case = c(0.75, 0.25, 0.75),
+                         n_case = c(100, 100, 100),
+                         n_control = 700,
+                         r_case = c(0.1, 0.1, 0.1),
+                         sim_total = 100,
+                         samp_case = "uniform",
+                         samp_control = "CSR",
+                         win = spatstat::unit.square()
 )
 end_time <- Sys.time()
 time_pts <- end_time - start_time # n = 10,000 about 6 min
@@ -546,23 +546,22 @@ plot(pvalprop_reclass,
 
 ## NOTE: Force the sparr::risk() arguement tolerate = TRUE to always calculate asymptotic p-vlaue surfaces
 start_time <- Sys.time()
-sim_srr <- sparrpowR(x_case = c(0.25, 0.5, 0.75),
-                     y_case = c(0.75, 0.25, 0.75),
-                     n_case = c(100, 100, 100),
-                     n_control = 700,
-                     r_case = c(0.1, 0.1, 0.1),
-                     sim_total = 100,
-                     samp_case = "uniform",
-                     samp_control = "CSR",
-                     win = spatstat::unit.square(), # the default
-                     upper_tail = 0.995, # default = 0.975
-                     lower_tail = 0.005, # default = 0.025
-                     resolution = 10, # try the default 128 for a smoother surface
-                     edge = "diggle",
-                     adapt = F,
-                     h0 = NULL,
-                     verbose = F
-                     )
+sim_srr <- spatial_power(x_case = c(0.25, 0.5, 0.75),
+                         y_case = c(0.75, 0.25, 0.75),
+                         n_case = c(100, 100, 100),
+                         n_control = 700,
+                         r_case = c(0.1, 0.1, 0.1),
+                         sim_total = 10,
+                         samp_case = "uniform",
+                         samp_control = "CSR",
+                         win = spatstat::unit.square(), # the default
+                         upper_tail = 0.995, # default = 0.975
+                         lower_tail = 0.005, # default = 0.025
+                         resolution = 10, # try the default 128 for a smoother surface
+                         edge = "diggle",
+                         adapt = F,
+                         h0 = NULL
+                         )
 end_time <- Sys.time()
 time_srr <- end_time - start_time 
 time_srr # n = 10,000 about (12 min for version 1; 11 min for version 2)
