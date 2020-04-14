@@ -36,9 +36,10 @@ spatial_plots <- function(input,
 # Plot 1: Example input
 p1 <- sp::plot(input$sim, 
                pch = 1, 
-               cex = c(0.5,0.1),
+               cex = c(0.1,0.1),
                cols = c("red", "blue"),
-               leg.side = "right",
+               leg.side = "bottom",
+               leg.args = list(cex.axis = 0.9, cex = 1, pch = 16),
                main = "First iterations of simulated data"
                )
 
@@ -65,24 +66,39 @@ rampbreaks <- seq(pvalprop_raster@data@min,
                   length.out = length(raster::values(pvalprop_raster))+1
                   )
 ## Continuous Output
-p2 <- fields::image.plot(pvalprop_raster, 
-                         main = "Local power:\nProportion of simulations significant",
-                         col = rampcols,
-                         breaks = rampbreaks,
-                         axes = F,
-                         cex.lab = 1,
-                         xlab = "",
-                         ylab = "",
-                         cex = 1,
-                         bigplot = c(0.25, 0.8, 0.2, 0.8),
-                         smallplot = c(0.82, 0.84, 0.2, 0.8),
-                         axis.args = list(cex.axis = 0.67),
-                         legend.args = list(text = "Power",
-                                            side = 4,
-                                            line = 2,
-                                            cex = 0.67
-                                            )
-                         )
+p2 <- sp::plot(input$sim, 
+               pch = 1, 
+               cex = c(0.1,0.1),
+               cols = c("red", "blue"),
+               leg.side = "bottom",
+               leg.args = list(cex.axis = 0.9, cex = 1, pch = 16),
+               main = "Local power:\nProportion of simulations significant"
+               )
+fields::image.plot(pvalprop_raster, 
+                   col = rampcols,
+                   breaks = rampbreaks,
+                   axes = F,
+                   cex.lab = 1,
+                   xlab = "",
+                   ylab = "",
+                   cex = 1,
+                   bigplot = c(0.25, 0.8, 0.2, 0.8),
+                   smallplot = c(0.82, 0.84, 0.32, 0.8),
+                   axis.args = list(cex.axis = 0.67),
+                   add = T,
+                   legend.args = list(text = "Power",
+                                      side = 4,
+                                      line = 2,
+                                      cex = 0.67
+                                      )
+                   )
+sp::plot(sim_srr$sim, 
+         pch = 1, 
+         cex = c(0.1,0.1),
+         cols = c("red", "blue"),
+         add = T
+         )
+
 rampbreaks <- NULL # conserve memory
 rampcols <- NULL # convserve memory
 
@@ -98,31 +114,39 @@ pvalprop_reclass <- raster::reclassify(pvalprop_raster,
 pvalprop_raster <- NULL # conserve memory
 
 ## Categorical Output
-p3 <- fields::image.plot(pvalprop_reclass, 
-                         main = paste("Local power:\nProportion significant above",
-                                      p_thresh,
-                                      "threshold",
-                                      sep = " "),
-                         col = cols[1:2],
-                         breaks = c(1, 1.5, 2),
-                         axes = F,
-                         cex.lab = 1,
-                         xlab = "",
-                         ylab = "",
-                         cex = 1,
-                         bigplot = c(0.25, 0.8, 0.2, 0.8),
-                         smallplot = c(0.82, 0.84, 0.2, 0.8),
-                         axis.args = list(
-                           cex.axis = 0.67,
-                           labels = c("insufficient", "sufficient"),
-                           at = c(1.25, 1.75)
-                         ),
-                         legend.args = list(text = "Power",
-                                            side = 4,
-                                            line = 2,
-                                            cex = 0.67
-                         )
+p3 <- sp::plot(sim_srr$sim, 
+               pch = 1, 
+               cex = c(0.1,0.1),
+               cols = c("transparent", "transparent"),
+               leg.side = "bottom",
+               leg.args = list(cex.axis = 0.0000000000000001),
+               main = paste("Local power:\nProportion significant above",
+                            p_thresh,
+                            "threshold",
+                            sep = " ")
 )
+fields::image.plot(pvalprop_reclass, 
+                   add = T,
+                   col = cols[1:2],
+                   breaks = c(1, 1.5, 2),
+                   axes = F,
+                   cex.lab = 1,
+                   xlab = "",
+                   ylab = "",
+                   cex = 1,
+                   bigplot = c(0.25, 0.8, 0.2, 0.8),
+                   smallplot = c(0.82, 0.84, 0.32, 0.8),
+                   axis.args = list(cex.axis = 0.67,
+                                    labels = c("insufficient",
+                                               "sufficient"),
+                                    at = c(1.25, 1.75)
+                                    ),
+                   legend.args = list(text = "Power",
+                                      side = 4,
+                                      line = 2,
+                                      cex = 0.67
+                                      )
+                   )
 ### Add text of local power to each knot
 if(plot_text == T){
   text(x = input$rx, y = input$ry, input$pval_prop, col = cols[3], cex = 0.5)
