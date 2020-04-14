@@ -64,11 +64,13 @@ x_reclass <- raster::reclassify(x, matrix(c(-Inf, 0.8,0,
 # Data Visualization #
 ######################
 
+load(file = "data/CBIIT_example.Rdata")
+
 # Plot 1: Example Input
 grDevices::png(file = paste(getwd(),"/figures/input.png", sep = ""), height = 1000/2, width = 1000/2)
 plot(sps, main = "Example Input")
-plot(random_con, col = "blue", pch = 16, cex = 0.5, add = T)
-plot(cluster_cas, col = "red", pch = 16, cex = 0.5, add = T)
+plot(random_con, col = "blue", pch = 16, cex = 1, add = T)
+plot(cluster_cas, col = "red", pch = 16, cex = 1, add = T)
 legend(xpd = T, x = 3, y = -0.5,
        legend = c("control", "case"),
        col = c("blue", "red"),
@@ -81,8 +83,8 @@ dev.off()
 # Plot 2: Example Output (continuous)
 grDevices::png(file = paste(getwd(),"/figures/output_continuous.png", sep = ""), height = 1000/2, width = 1000/2)
 plot(x, axes = F, bty = "n", box = F, main = "Continuous Output")
-plot(random_con, col = "blue", pch = 16, cex = 0.5, add = T)
-plot(cluster_cas, col = "red", pch = 16, cex = 0.5, add = T)
+plot(random_con, col = "blue", pch = 16, cex = 1, add = T)
+plot(cluster_cas, col = "red", pch = 16, cex = 1, add = T)
 legend(xpd = T, x = 3, y = -0.5,
        legend = c("control", "case"),
        col = c("blue", "red"),
@@ -95,8 +97,8 @@ dev.off()
 # Plot 3: Example Output (categorical)
 grDevices::png(file = paste(getwd(),"/figures/output_categorical.png", sep = ""), height = 1000/2, width = 1000/2)
 plot(x_reclass, axes = F, bty = "n", box = F, main = "Categorical Output", legend = F, col = c("grey", "black"))
-plot(random_con, col = "blue", pch = 16, cex = 0.5, add = T)
-plot(cluster_cas, col = "red", pch = 16, cex = 0.5, add = T)
+plot(random_con, col = "blue", pch = 16, cex = 1, add = T)
+plot(cluster_cas, col = "red", pch = 16, cex = 1, add = T)
 legend(xpd = T, x = 1, y = -0.5,
        legend = c("control", "case", "sufficiently powered", "insufficiently powered"),
        col = c("blue", "red", "black", "grey"),
