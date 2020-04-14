@@ -98,10 +98,13 @@ time_srr <- end_time - start_time # Calculate run time
 time_srr # n = 10,000 about (12 min for version 1; 11 min for version 2)
 
 ## Data Visualizaiton of Input and Power
-### Default colors = c("grey0", "grey80", "grey100")
+### Default colors = c("grey0", "grey80", "grey100", "red", "blue")
 spatial_plots(input = sim_srr, # use output of SRR simulation
-              p_thresh = 0.9, # default = 0.8
-              plot_text = T, # default = FALSE in case resolution >> 10
-              cols = c("blue", "green", "red") # insufficient, sufficient, text
-              )
+              p_thresh = 0.8, # default = 0.8
+              #plot_text = T, # default = FALSE in case resolution >> 10
+              plot_pts = T, # default = TRUE 
+              chars = c(4,5), # case, control
+              sizes = c(0.5,0.5), # case, control
+              cols = c("blue", "green", "red", "purple", "orange") # insufficient, sufficient, text, case, control
+)
 # -------------------- END OF CODE -------------------- #
