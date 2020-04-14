@@ -8,7 +8,9 @@
 # Recently modified on:
 #
 # Notes:
-# A)
+# A) 04/14/2020 (IB) - Adapted from spatial_power() function
+# B) 4/14/20 (IB) - Set 'cascon' argument default to FALSE
+# C) 04/14/2020 (IB) - Switched order of ppp marks for plotting
 # ------------------------------------------ #
 
 jitter_power <- function(obs_data,
@@ -102,7 +104,7 @@ jitter_power <- function(obs_data,
                           ...)
     
     # Combine random clusters of cases and controls into one marked ppp
-    z <- spatstat::superimpose(x, y)
+    z <- spatstat::superimpose(y, x)
     
     # Calculate observed kernel density ratio
     obs_lrr <- sparr::risk(z, tolerate = T, verbose = F, ...)

@@ -12,6 +12,7 @@
 # B) 4/14/20 (IB) - Set 'cascon' argument default to FALSE
 # C) 4/14/20 (IB) - Removed "stratified" option for control sampling
 # D) 4/14/20 (IB) - Fixed 'lambda' parameter to be flexible to window
+# E) 04/14/2020 (IB) - Switched order of ppp marks for plotting
 # ------------------------------------------ #
 
 spatial_power <- function(x_case, y_case,
@@ -190,7 +191,7 @@ spatial_power <- function(x_case, y_case,
                           ...)
     
     # Combine random clusters of cases and controls into one marked ppp
-    z <- spatstat::superimpose(x, y)
+    z <- spatstat::superimpose(y, x)
     
     # Calculate observed kernel density ratio
     obs_lrr <- sparr::risk(z, tolerate = T, verbose = F, ...)

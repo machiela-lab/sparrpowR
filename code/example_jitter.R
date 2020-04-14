@@ -8,8 +8,16 @@
 # Recently modified on:
 #
 # Notes:
-# A) Uses data from the 'sparr' package
+# A) 04/14/2020 (IB) - Uses data from the 'sparr' package
+# B) 04/14/2020 (IB) - Adapted example to match spatial_power() example
+# C) 04/14/2020 (IB) - Updated arguments for spatial_plots() function
 # ------------------------------------------ #
+
+############
+# PACKAGES #
+############
+
+library(sparr)
 
 ####################
 # CUSTOM FUNCTIONS #
@@ -52,7 +60,6 @@ data(pbc)
 ## NOTE: Force the sparr::risk() arguement tolerate = TRUE to always calculate asymptotic p-vlaue surfaces
 ## NOTE: Force the sparr::risk() arguement verbose = FALSE to clean-up presentation 
 
-
 # Set seed for reproducibility
 set.seed(1234)
 
@@ -71,9 +78,13 @@ sim_power <- jitter_power(obs_data = pbc,
 time_pts <- end_time - start_time
 time_pts
 
+## Data visualization
 spatial_plots(input = sim_power, # use output of SRR simulation
               p_thresh = 0.8, # default = 0.8
               #plot_text = T, # default = FALSE in case resolution >> 10
-              #cols = c("blue", "green", "red") # insufficient, sufficient, text
+              plot_pts = T, # default = TRUE 
+              chars = c(4,5), # case, control
+              sizes = c(0.5,0.5), # case, control
+              cols = c("blue", "green", "red", "purple", "orange") # insufficient, sufficient, text, case, control
 )
 # -------------------- END OF CODE -------------------- #
