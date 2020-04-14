@@ -1,5 +1,5 @@
 # ------------------------------------------ #
-# Example of power calculation of a spatial relative risk 
+# Example of power calculation of a spatial relative risk for simulated data
 #
 # Created by: Ian Buller, Ph.D., M.A. (GitHub: @idblr)
 # Created on: April 13, 2020

@@ -4,28 +4,31 @@
 # Created by: Ian Buller, Ph.D., M.A. (GitHub: @idblr)
 # Created on: April 13, 2020
 #
-# Recently modified by:
-# Recently modified on:
+# Recently modified by: @idblr
+# Recently modified on: April 14, 2020
 #
 # Notes:
 # A) 4/13/20 (IB) - Combines rand_cascon() and rand_srr() functions per iteration
+# B) 4/14/20 (IB) - Set 'cascon' argument default to FALSE
+# C) 4/14/20 (IB) - Removed "stratified" option for control sampling
+# D) 4/14/20 (IB) - Fixed 'lambda' parameter to be flexible to window
 # ------------------------------------------ #
 
 spatial_power <- function(x_case, y_case,
-                          n_case = NULL, n_control, n_cluster, n_knot,
+                          n_case = NULL, n_control,
                           r_case, r_control,
                           l_control, l_case = NULL,
                           e_control,
                           sim_total,
                           samp_case = c("uniform", "Poisson"),
-                          samp_control = c("CSR", "systematic", "stratified",
+                          samp_control = c("CSR", "systematic",
                                            "IPP", "clustered"),
                           same_n = FALSE,
                           upper_tail = 0.975,
                           lower_tail = 0.025,
                           parallel = FALSE,
                           win = unit.square(),
-                          cascon = TRUE,
+                          cascon = FALSE,
                           ...) {
   
   # Packages
@@ -84,47 +87,31 @@ spatial_power <- function(x_case, y_case,
     
     if (samp_case == "Poisson"){
       win_case <- spatstat::disc(radius, centre = c(0.5, 0.5), ...)
-      # repeat { 
       x <- spatstat::rpoispp(lambda, win = win_case, ...)
       x <- spatstat::shift(x, c(x0 - 0.5, y0 - 0.5))
-      # if (x$n == n) break
-      # }
       }
     spatstat::marks(x) <- types
     return(x)
     }
   
   # marked uniform ppp for controls
-  rcluster_control <- function(n, types = "control", ...) {
+  rcluster_control <- function(n, l, types = "control", ...) {
     if (samp_control == "CSR") {
       repeat {  
-        x <- spatstat::rpoispp(lambda = n, ...)
+        x <- spatstat::rpoispp(lambda = l, ...)
         if (x$n == n) break
         }
       }
     
     if (samp_control == "systematic") {
-      # repeat { 
       x <- spatstat::rsyst(nx = sqrt(n), ...)
-      # if (x$n == n) break
-      # }
-      }
-    
-    if (samp_control == "stratified") {
-      # repeat {
-      x <- spatstat::rstrat(nx = round(sqrt(n_knot)), k = round(n/n_knot), ...)
-      # if (x$n == n) break
-      # }
       }
     
     if (samp_control == "IPP") {
       if (class(l_control) != "function") {
         stop("The argument 'lambda' should be an intensity function")
       }
-      # repeat {  
       x <- spatstat::rpoispp(lambda = l_control, ...)
-      # if (x$n == n) break
-      # }
       }
     
     if (samp_control == "clustered") {
@@ -198,7 +185,9 @@ spatial_power <- function(x_case, y_case,
     setTxtProgressBar(pb, k)
     
     # Create random cluster of controls
-    y <- rcluster_control(n = n_control, ...)
+    y <- rcluster_control(n = n_control, 
+                          l = n_control/(diff(win$xrange)*diff(win$yrange)),
+                          ...)
     
     # Combine random clusters of cases and controls into one marked ppp
     z <- spatstat::superimpose(x, y)
