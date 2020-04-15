@@ -13,6 +13,7 @@
 # C) 4/14/20 (IB) - Option to display points on second plot
 # D) 4/14/20 (IB) - Options to customize size, character, and color of points
 # E) 4/15/20 (IB) - Matched formatting for spatial_data() to spatial_power() output
+# E) 4/15/20 (IB) - Forced limits in colorkey of second plot to be (0,1)
 # ------------------------------------------ #
 
 spatial_plots <- function(input,
@@ -70,8 +71,7 @@ lrr_narm <- NULL # conserve memory
 rampcols <- grDevices::colorRampPalette(colors = c(cols[1], cols[2]),
                                         space="Lab"
                                         )(length(raster::values(pvalprop_raster)))
-rampbreaks <- seq(pvalprop_raster@data@min,
-                  pvalprop_raster@data@max, 
+rampbreaks <- seq(0, 1, 
                   length.out = length(raster::values(pvalprop_raster))+1
                   )
 ## Continuous Output

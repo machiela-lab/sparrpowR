@@ -85,8 +85,6 @@ set.seed(1234)
 l_cont <- function(x, y) {1000 * exp(-3 * x) + 1000 * exp(-3 * y)}
 unit.circle <- spatstat::disc(radius = 0.5, centre = c(0.5,0.5))
 
-source(file = paste(getwd(), "/code/R_functions/spatial_power.R", sep = ""))
-
 start_time <- Sys.time() # record start time
 sim_srr <- spatial_power(x_case = c(0.25, 0.5, 0.75),
                          y_case = c(0.75, 0.25, 0.75),
