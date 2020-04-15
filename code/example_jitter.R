@@ -4,13 +4,14 @@
 # Created by: Ian Buller, Ph.D., M.A. (GitHub: @idblr)
 # Created on: April 14, 2020
 #
-# Recently modified by:
-# Recently modified on:
+# Recently modified by: @idblr
+# Recently modified on: April 15, 2020
 #
 # Notes:
 # A) 04/14/2020 (IB) - Uses data from the 'sparr' package
 # B) 04/14/2020 (IB) - Adapted example to match spatial_power() example
 # C) 04/14/2020 (IB) - Updated arguments for spatial_plots() function
+# D) 04/14/2020 (IB) - Added assessment of sample size of simulated data per iteration
 # ------------------------------------------ #
 
 ############
@@ -88,4 +89,8 @@ spatial_plots(input = sim_power, # use output of SRR simulation
               sizes = c(0.5,0.5), # case, control
               cols = c("blue", "green", "red", "purple", "orange") # insufficient, sufficient, text, case, control
 )
+
+# Mean and standard devation of simulated controls
+mean(sim_power$n_con); sd(sim_power$n_con)
+
 # -------------------- END OF CODE -------------------- #

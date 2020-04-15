@@ -5,7 +5,7 @@
 # Created on: April 13, 2020
 #
 # Recently modified by: @idblr
-# Recently modified on: April 14, 2020
+# Recently modified on: April 15, 2020
 #
 # Notes:
 # A) 4/13/20 (IB) - Combines rand_cascon() and rand_srr() functions per iteration
@@ -13,10 +13,12 @@
 # C) 4/14/20 (IB) - Removed "stratified" option for control sampling
 # D) 4/14/20 (IB) - Fixed 'lambda' parameter to be flexible to window
 # E) 04/14/2020 (IB) - Switched order of ppp marks for plotting
+# F) 04/15/2020 (IB) - "IPP" and "cluster" force the definition of these arguments. Curiously, "CSR" and "systematic" can run with sparr defaults without specifying. Added 'resolution', 'edge', 'adapt", and 'h0' arguments for now as a band-aid solution
+# G) 04/15/2020 (IB) - Capture sample size of simulated data (cases and controls) in each iteration
 # ------------------------------------------ #
 
 spatial_power <- function(x_case, y_case,
-                          n_case = NULL, n_control,
+                          n_case = NULL, n_control, n_cluster,
                           r_case, r_control,
                           l_control, l_case = NULL,
                           e_control,
@@ -30,6 +32,10 @@ spatial_power <- function(x_case, y_case,
                           parallel = FALSE,
                           win = unit.square(),
                           cascon = FALSE,
+                          resolution = 128,
+                          edge = "uniform",
+                          adapt = FALSE,
+                          h0 = NULL,
                           ...) {
   
   # Packages
@@ -98,10 +104,7 @@ spatial_power <- function(x_case, y_case,
   # marked uniform ppp for controls
   rcluster_control <- function(n, l, types = "control", ...) {
     if (samp_control == "CSR") {
-      repeat {  
         x <- spatstat::rpoispp(lambda = l, ...)
-        if (x$n == n) break
-        }
       }
     
     if (samp_control == "systematic") {
@@ -110,33 +113,33 @@ spatial_power <- function(x_case, y_case,
     
     if (samp_control == "IPP") {
       if (class(l_control) != "function") {
-        stop("The argument 'lambda' should be an intensity function")
+        stop("The argument 'l_control' should be an intensity function")
       }
       x <- spatstat::rpoispp(lambda = l_control, ...)
       }
     
     if (samp_control == "clustered") {
-      rcluster_control <- function(x0, y0, radius, n) {
-        X <- spatstat::runifdisc(n, radius, centre=c(x0, y0))
+      control_clustering <- function(x0, y0, radius, n) {
+        X <- spatstat::runifdisc(n, radius, centre = c(x0, y0))
         return(X)
         }
       if(same_n == T){
         repeat {
           x <- spatstat::rNeymanScott(kappa = l_control,
                                       expand = e_control,
-                                      rcluster = rcluster_control, 
+                                      rcluster = control_clustering, 
                                       n = n_cluster,
-                                      radius = r_control
-          )
+                                      radius = r_control,
+                                      ...)
           if (x$n == n) break
         }
       } else {
         x <- spatstat::rNeymanScott(kappa = l_control,
                                     expand = e_control,
-                                    rcluster = rcluster_control, 
+                                    rcluster = control_clustering, 
                                     n = n_cluster,
-                                    radius = r_control
-        )
+                                    radius = r_control,
+                                    ...)
       }
     }
     spatstat::marks(x) <- types
@@ -179,7 +182,7 @@ spatial_power <- function(x_case, y_case,
                               .combine = comb, 
                               .multicombine = TRUE, 
                               .packages = c("sparr", "spatstat"),
-                              .init = list(list(), list(), list(), list(), list(), list())
+                              .init = list(list(), list(), list(), list(), list(), list(), list(), list())
                               ) %fun% {
     
     # Progress bar
@@ -188,13 +191,19 @@ spatial_power <- function(x_case, y_case,
     # Create random cluster of controls
     y <- rcluster_control(n = n_control, 
                           l = n_control/(diff(win$xrange)*diff(win$yrange)),
+                          win = win,
                           ...)
     
     # Combine random clusters of cases and controls into one marked ppp
     z <- spatstat::superimpose(y, x)
     
     # Calculate observed kernel density ratio
-    obs_lrr <- sparr::risk(z, tolerate = T, verbose = F, ...)
+    obs_lrr <- sparr::risk(z, tolerate = T, verbose = F,
+                           resolution = resolution, ## SEE NOTE (F)
+                           edge = edge,
+                           adapt = adapt,
+                           h0 = h0,
+                           ...)
     
     # Output processing for visualization and summary across iterations
     ## Convert output matrix to two output vectors
@@ -225,7 +234,9 @@ spatial_power <- function(x_case, y_case,
                         "rx" = rx,
                         "ry" = ry,
                         "sim" = sim,
-                        "out" = out
+                        "out" = out,
+                        "n_con" = y$n,
+                        "n_cas" = x$n
                         )
     
     return(par_results)
@@ -268,7 +279,9 @@ spatial_power <- function(x_case, y_case,
                   "rr_sd" = rr_sd,
                   "pval_prop" = pval_prop,
                   "rx" = out_par[[3]][[1]],
-                  "ry" = out_par[[4]][[1]]
+                  "ry" = out_par[[4]][[1]],
+                  "n_con" = unlist(out_par[[7]]),
+                  "n_cas" = unlist(out_par[[8]])
                   )
   }
 # -------------------- END OF CODE -------------------- #

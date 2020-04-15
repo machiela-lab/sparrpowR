@@ -4,13 +4,14 @@
 # Created by: Ian Buller, Ph.D., M.A. (GitHub: @idblr)
 # Created on: April 14, 2020
 #
-# Recently modified by:
-# Recently modified on:
+# Recently modified by: @idblr
+# Recently modified on: April 15, 2020
 #
 # Notes:
 # A) 04/14/2020 (IB) - Adapted from spatial_power() function
 # B) 4/14/20 (IB) - Set 'cascon' argument default to FALSE
 # C) 04/14/2020 (IB) - Switched order of ppp marks for plotting
+# D) 04/15/2020 (IB) - Capture sample size of simulated data (controls) in each iteration
 # ------------------------------------------ #
 
 jitter_power <- function(obs_data,
@@ -89,7 +90,7 @@ jitter_power <- function(obs_data,
                               .multicombine = TRUE, 
                               .packages = c("sparr", "spatstat"),
                               .init = list(list(), list(), list(),
-                                           list(), list(), list()
+                                           list(), list(), list(), list()
                                            )
                               ) %fun% {
     
@@ -138,7 +139,8 @@ jitter_power <- function(obs_data,
                         "rx" = rx,
                         "ry" = ry,
                         "sim" = sim,
-                        "out" = out
+                        "out" = out,
+                        "n_con" = y$n
                         )
     return(par_results)
     }
@@ -180,7 +182,8 @@ jitter_power <- function(obs_data,
                   "rr_sd" = rr_sd,
                   "pval_prop" = pval_prop,
                   "rx" = out_par[[3]][[1]],
-                  "ry" = out_par[[4]][[1]]
+                  "ry" = out_par[[4]][[1]],
+                  "n_con" = unlist(out_par[[7]])
   )
 }
 # -------------------- END OF CODE -------------------- #

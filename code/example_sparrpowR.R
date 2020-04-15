@@ -4,11 +4,13 @@
 # Created by: Ian Buller, Ph.D., M.A. (GitHub: @idblr)
 # Created on: April 13, 2020
 #
-# Recently modified by:
-# Recently modified on:
+# Recently modified by: @idblr
+# Recently modified on: April 15, 2020
 #
 # Notes:
 # A) 4/13/20 (IB) - Trimmed down example found in "Example_SRR.R"
+# B) 4/15/20 (IB) - Specified arguments for full spatial_power() function
+# C) 4/15/20 (IB) - Match example for spatial_data() and spatial_power()
 # ------------------------------------------ #
 
 ####################
@@ -57,8 +59,12 @@ time_pts
 
 ## Data Visualizaiton of Input and Power
 spatial_plots(input = rand_pts, # use output of data simulation
-              n_sim = 4 # default = 4 simulations
+              n_sim = 2, # default = 4 simulations
+              chars = c(4,5), # case, control
+              sizes = c(0.5,0.5), # case, control
+              cols = c("blue", "green", "red", "purple", "orange") # insufficient, sufficient, text, case, control
               ) 
+
 # Estimates SRR with the following arguments:
 ### upper_tail = user-specified upper tail of a two-tailed significance level
 ### lower_tail = user-specified lower tail of a two-tailed significance level
@@ -75,6 +81,12 @@ spatial_plots(input = rand_pts, # use output of data simulation
 # Set seed for reproducibility
 set.seed(1234)
 
+# Lambda for the inhomogenous Poisson process of control locations
+l_cont <- function(x, y) {1000 * exp(-3 * x) + 1000 * exp(-3 * y)}
+unit.circle <- spatstat::disc(radius = 0.5, centre = c(0.5,0.5))
+
+source(file = paste(getwd(), "/code/R_functions/spatial_power.R", sep = ""))
+
 start_time <- Sys.time() # record start time
 sim_srr <- spatial_power(x_case = c(0.25, 0.5, 0.75),
                          y_case = c(0.75, 0.25, 0.75),
@@ -83,16 +95,21 @@ sim_srr <- spatial_power(x_case = c(0.25, 0.5, 0.75),
                          r_case = c(0.1, 0.1, 0.1),
                          sim_total = 10,
                          samp_case = "uniform",
-                         samp_control = "CSR",
-                         win = spatstat::unit.square(), # the default
+                         samp_control = "clustered",
+                         #l_control = l_cont,
+                         l_control = 50,
+                         e_control = 0,
+                         r_control = 0.01,
+                         n_cluster = 10,
+                         win = unit.circle, # the default
                          upper_tail = 0.995, # default = 0.975
                          lower_tail = 0.005, # default = 0.025
-                         resolution = 10, # try the default 128 for a smoother surface
-                         edge = "diggle",
-                         adapt = FALSE,
-                         h0 = NULL,
+                         resolution = 50, # default = 128
+                         edge = "diggle", # default = "uniform"
+                         #adapt = FALSE,
+                         #h0 = NULL,
                          cascon = TRUE # cascon = FALSE for only relative case clustering (hotspots)
-                         )
+                         ) 
 end_time <- Sys.time() # record end time
 time_srr <- end_time - start_time # Calculate run time
 time_srr # n = 10,000 about (12 min for version 1; 11 min for version 2)
@@ -107,4 +124,9 @@ spatial_plots(input = sim_srr, # use output of SRR simulation
               sizes = c(0.5,0.5), # case, control
               cols = c("blue", "green", "red", "purple", "orange") # insufficient, sufficient, text, case, control
 )
+
+# Mean and standard deviation of simulated controls and cases
+mean(sim_srr$n_con); sd(sim_srr$n_con) # controls
+mean(sim_srr$n_cas); sd(sim_srr$n_cas) # cases
+
 # -------------------- END OF CODE -------------------- #

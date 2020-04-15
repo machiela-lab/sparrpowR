@@ -4,21 +4,22 @@
 # Created by: Ian Buller, Ph.D., M.A. (GitHub: @idblr)
 # Created on: April 13, 2020
 #
-# Recently modified by:
-# Recently modified on:
+# Recently modified by: @idblr
+# Recently modified on: April 15, 2020
 #
 # Notes:
 # A) 4/13/20 (IB) - Creates multiple plots in one printout
 # B) 4/14/20 (IB) - Consistent size windows of plots
 # C) 4/14/20 (IB) - Option to display points on second plot
 # D) 4/14/20 (IB) - Options to customize size, character, and color of points
+# E) 4/15/20 (IB) - Matched formatting for spatial_data() to spatial_power() output
 # ------------------------------------------ #
 
 spatial_plots <- function(input,
                           p_thresh = 0.8,
                           plot_text = FALSE,
                           n_sim = 4,
-                          cols = c("grey0", "grey80", "grey100", "red", cols[5]),
+                          cols = c("grey0", "grey80", "grey100", "red", "blue"),
                           chars = c(1,1),
                           sizes = c(0.1,0.1),
                           plot_pts = TRUE,
@@ -30,12 +31,14 @@ spatial_plots <- function(input,
   require(sp)
   
   if("ppplist" %in% class(input)){
-    return(spatstat::plot.ppp(input[1:n_sim], 
-             pch = chars, 
+    return(sp::plot(input[1:n_sim], 
+             pch = chars,
+             
              cex = sizes,
              cols = c(cols[4], cols[5]),
-             leg.side = "right",
-             main = "First iterations of simulated data"
+             leg.side = "bottom",
+             leg.args = list(cex.axis = 0.9, cex = 1, pch = chars),
+             main = "First iteration(s)\nof simulated data"
     ))
   }
   
