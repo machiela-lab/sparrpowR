@@ -20,6 +20,7 @@
 # J) 4/9/20 (IB) - Added functionality for case Poisson clustering within a disc (homogenous and inhomogeneous)
 # K) 4/9/20 (IB) - Renamed and reorganized function
 # L) 4/13/20 (IB) - Renamed function for R package development
+# J) 4/15/20 (IB) - Made consistent with spatial_power() updates
 # ------------------------------------------ #
 
 spatial_data <- function(x_case, y_case,
@@ -29,7 +30,7 @@ spatial_data <- function(x_case, y_case,
                          e_control,
                          sim_total,
                          samp_case = c("uniform", "Poisson"),
-                         samp_control = c("CSR", "systematic",
+                         samp_control = c("uniform", "CSR", "systematic",
                                           "IPP", "clustered"),
                          same_n = FALSE, 
                          win = unit.square(),
@@ -79,6 +80,13 @@ spatial_data <- function(x_case, y_case,
   
   # marked uniform ppp for controls
   rcluster_control <- function(n, l, types = "control", ...) {
+    if (samp_control == "uniform"){ 
+      repeat { 
+        x <- spatstat::runifpoint(n, ...) 
+        if (x$n == n) break
+      }
+    }
+    
     if (samp_control == "CSR") {
       x <- spatstat::rpoispp(lambda = l, ...)
     }

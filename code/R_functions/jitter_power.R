@@ -12,11 +12,12 @@
 # B) 4/14/20 (IB) - Set 'cascon' argument default to FALSE
 # C) 04/14/2020 (IB) - Switched order of ppp marks for plotting
 # D) 04/15/2020 (IB) - Capture sample size of simulated data (controls) in each iteration
+# E) 04/15/2020 (IB) - Switched around "uniform" and "CSR"
 # ------------------------------------------ #
 
 jitter_power <- function(obs_data,
                          sim_total,
-                         samp_control = c("CSR", "uniform", "jitter"),
+                         samp_control = c("uniform", "CSR", "jitter"),
                          scalar = 1,
                          upper_tail = 0.975,
                          lower_tail = 0.025,
@@ -55,15 +56,15 @@ jitter_power <- function(obs_data,
   
   # marked uniform ppp for controls
   rcluster_control <- function(n, l, win, types = "control", ...) {
-    if (samp_control == "CSR") {
-        x <- spatstat::rpoispp(lambda = l, win = win, ...)
-    }
-    
     if (samp_control == "uniform") {
       repeat {  
         x <- spatstat::runifpoint(n = n, win = win, ...)
         if (x$n == n) break
       }
+    }
+    
+    if (samp_control == "CSR") {
+      x <- spatstat::rpoispp(lambda = l, win = win, ...)
     }
     
     if (samp_control == "jitter") {

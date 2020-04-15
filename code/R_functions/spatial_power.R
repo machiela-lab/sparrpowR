@@ -15,6 +15,7 @@
 # E) 04/14/2020 (IB) - Switched order of ppp marks for plotting
 # F) 04/15/2020 (IB) - "IPP" and "cluster" force the definition of these arguments. Curiously, "CSR" and "systematic" can run with sparr defaults without specifying. Added 'resolution', 'edge', 'adapt", and 'h0' arguments for now as a band-aid solution
 # G) 04/15/2020 (IB) - Capture sample size of simulated data (cases and controls) in each iteration
+# H) 04/15/2020 (IB) - Added "uniform" sampling for controls
 # ------------------------------------------ #
 
 spatial_power <- function(x_case, y_case,
@@ -24,7 +25,7 @@ spatial_power <- function(x_case, y_case,
                           e_control,
                           sim_total,
                           samp_case = c("uniform", "Poisson"),
-                          samp_control = c("CSR", "systematic",
+                          samp_control = c("uniform", "CSR", "systematic",
                                            "IPP", "clustered"),
                           same_n = FALSE,
                           upper_tail = 0.975,
@@ -103,18 +104,25 @@ spatial_power <- function(x_case, y_case,
   
   # marked uniform ppp for controls
   rcluster_control <- function(n, l, types = "control", ...) {
-    if (samp_control == "CSR") {
-        x <- spatstat::rpoispp(lambda = l, ...)
+    if (samp_control == "uniform"){ 
+      repeat { 
+        x <- spatstat::runifpoint(n, ...) 
+        if (x$n == n) break
+      }
+    }
+    
+    if (samp_control == "CSR") { 
+      x <- spatstat::rpoispp(lambda = l, ...)
       }
     
-    if (samp_control == "systematic") {
-      x <- spatstat::rsyst(nx = sqrt(n), ...)
+    if (samp_control == "systematic") { 
+      x <- spatstat::rsyst(nx = sqrt(n), ...) 
       }
     
     if (samp_control == "IPP") {
       if (class(l_control) != "function") {
         stop("The argument 'l_control' should be an intensity function")
-      }
+        }
       x <- spatstat::rpoispp(lambda = l_control, ...)
       }
     
