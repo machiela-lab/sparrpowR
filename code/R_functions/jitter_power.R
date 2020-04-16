@@ -5,7 +5,7 @@
 # Created on: April 14, 2020
 #
 # Recently modified by: @idblr
-# Recently modified on: April 15, 2020
+# Recently modified on: April 16, 2020
 #
 # Notes:
 # A) 04/14/2020 (IB) - Adapted from spatial_power() function
@@ -13,6 +13,7 @@
 # C) 04/14/2020 (IB) - Switched order of ppp marks for plotting
 # D) 04/15/2020 (IB) - Capture sample size of simulated data (controls) in each iteration
 # E) 04/15/2020 (IB) - Switched around "uniform" and "CSR"
+# F) 04/16/2020 (IB) - Fixed bug in 'jittered' sampling
 # ------------------------------------------ #
 
 jitter_power <- function(obs_data,
@@ -68,9 +69,9 @@ jitter_power <- function(obs_data,
     }
     
     if (samp_control == "jitter") {
-        x <- cbind(obs_data$x,obs_data$y)
-        x <-  x + rnorm(length(obs_data), 0, scalar) 
-        x <- spatstat::ppp(x[,1], x[,2], window = win)
+        x1 <- sp::coordinates(cbind(obs_data$x,obs_data$y))
+        x2 <-  x1 + rnorm(nrow(x1), 0, scalar) 
+        x <- spatstat::ppp(x2[,1], x2[,2], window = win)
     }
     
     spatstat::marks(x) <- types

@@ -5,7 +5,7 @@
 # Created on: April 13, 2020
 #
 # Recently modified by: @idblr
-# Recently modified on: April 15, 2020
+# Recently modified on: April 16, 2020
 #
 # Notes:
 # A) 4/13/20 (IB) - Creates multiple plots in one printout
@@ -13,14 +13,15 @@
 # C) 4/14/20 (IB) - Option to display points on second plot
 # D) 4/14/20 (IB) - Options to customize size, character, and color of points
 # E) 4/15/20 (IB) - Matched formatting for spatial_data() to spatial_power() output
-# E) 4/15/20 (IB) - Forced limits in colorkey of second plot to be (0,1)
+# F) 4/15/20 (IB) - Forced limits in colorkey of second plot to be (0,1)
+# G) 4/15/20 (IB) - Changed default colors to hexadecimal
 # ------------------------------------------ #
 
 spatial_plots <- function(input,
                           p_thresh = 0.8,
                           plot_text = FALSE,
                           n_sim = 4,
-                          cols = c("grey0", "grey80", "grey100", "red", "blue"),
+                          cols = c("#000000", "#cccccc", "ffffff", "ff0000", "0000ff"),
                           chars = c(1,1),
                           sizes = c(0.1,0.1),
                           plot_pts = TRUE,
