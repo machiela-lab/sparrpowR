@@ -5,7 +5,7 @@
 # Created on: April 13, 2020
 #
 # Recently modified by: @idblr
-# Recently modified on: April 15, 2020
+# Recently modified on: April 16, 2020
 #
 # Notes:
 # A) 4/13/20 (IB) - Combines rand_cascon() and rand_srr() functions per iteration
@@ -16,6 +16,8 @@
 # F) 04/15/2020 (IB) - "IPP" and "cluster" force the definition of these arguments. Curiously, "CSR" and "systematic" can run with sparr defaults without specifying. Added 'resolution', 'edge', 'adapt", and 'h0' arguments for now as a band-aid solution
 # G) 04/15/2020 (IB) - Capture sample size of simulated data (cases and controls) in each iteration
 # H) 04/15/2020 (IB) - Added "uniform" sampling for controls
+# I) 04/16/2020 (IB) - Set the default bandwidth using the sparr::OS() function and capture bandwidth for each iteration
+# J) 04/16/2020 (IB) - Add capability for silent runs (verbose = FALSE)
 # ------------------------------------------ #
 
 spatial_power <- function(x_case, y_case,
@@ -37,6 +39,7 @@ spatial_power <- function(x_case, y_case,
                           edge = "uniform",
                           adapt = FALSE,
                           h0 = NULL,
+                          verbose = TRUE,
                           ...) {
   
   # Packages
@@ -182,19 +185,23 @@ spatial_power <- function(x_case, y_case,
   x <- spatstat::superimpose(pppCase)
   
   # Progress bar
+  if (verbose == TRUE){
   message("Generating Data, Estimating Relative Risk, Calculating Power")
   pb <- txtProgressBar(min = 0, max = sim_total, style = 3)
+  }
   
   # Iteratively calculate the log relative risk and asymptotic p-value surfaces
   out_par <- foreach::foreach(k = 1:sim_total, 
                               .combine = comb, 
                               .multicombine = TRUE, 
                               .packages = c("sparr", "spatstat"),
-                              .init = list(list(), list(), list(), list(), list(), list(), list(), list())
+                              .init = list(list(), list(), list(), list(), list(), list(), list(), list(), list())
                               ) %fun% {
     
     # Progress bar
+    if (verbose == TRUE){
     setTxtProgressBar(pb, k)
+    }
     
     # Create random cluster of controls
     y <- rcluster_control(n = n_control, 
@@ -204,6 +211,12 @@ spatial_power <- function(x_case, y_case,
     
     # Combine random clusters of cases and controls into one marked ppp
     z <- spatstat::superimpose(y, x)
+    spatstat::marks(z) <- as.factor(spatstat::marks(z))
+    
+    # Bandwidth selection
+    if(is.null(h0)){
+      h0 <- sparr::OS(z, nstar = "geometric")
+    }
     
     # Calculate observed kernel density ratio
     obs_lrr <- sparr::risk(z, tolerate = T, verbose = F,
@@ -244,7 +257,8 @@ spatial_power <- function(x_case, y_case,
                         "sim" = sim,
                         "out" = out,
                         "n_con" = y$n,
-                        "n_cas" = x$n
+                        "n_cas" = x$n,
+                        "bandw" = h0
                         )
     
     return(par_results)
@@ -289,7 +303,8 @@ spatial_power <- function(x_case, y_case,
                   "rx" = out_par[[3]][[1]],
                   "ry" = out_par[[4]][[1]],
                   "n_con" = unlist(out_par[[7]]),
-                  "n_cas" = unlist(out_par[[8]])
+                  "n_cas" = unlist(out_par[[8]]),
+                  "bandw" = unlist(out_par[[9]])
                   )
   }
 # -------------------- END OF CODE -------------------- #

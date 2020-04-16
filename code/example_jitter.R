@@ -8,7 +8,7 @@
 # Recently modified on: April 16, 2020
 #
 # Notes:
-# A) 04/14/2020 (IB) - Uses data from the 'sparr' package
+# A) 04/14/2020 (IB) - Uses 'pbc' data from the 'sparr' package https://doi.org/10.1053/jhep.2001.29760
 # B) 04/14/2020 (IB) - Adapted example to match spatial_power() example
 # C) 04/14/2020 (IB) - Updated arguments for spatial_plots() function
 # D) 04/14/2020 (IB) - Added assessment of sample size of simulated data per iteration
