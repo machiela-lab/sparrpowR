@@ -7,20 +7,20 @@ output:
   pdf_document: default
 ---
 
-<!-- Notes:  -->
+<!-- Notes: -->
 <!-- A) 04/16/2020 (IB) - Companion file for sparrpowR -->
+<!-- B) 04/17/2020 (IB) - Updated for multivariate normal sampling -->
 
 ```{r setup, include=FALSE}
 library(knitr)
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(global.par = TRUE)
 ```
 
 Start with the necessary packages and seed for the vignette
 ```{r echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE}
 loadedPackages <- c("broom", "fields", "foreach", "geojsonio",
                     "ggmap", "maptools", "osmdata", "raster",
-                    "rgeos", "sp", "sparr", "spatstat", "tidyverse")
+                    "rgeos", "sp", "sparr", "spatstat", "tibble", "tidyverse")
 invisible(lapply(loadedPackages, require, character.only = TRUE))
 set.seed(1234) # for reproducibility
 ```
@@ -62,41 +62,41 @@ dco <- spatstat::as.owin(dcp)
 In this hypothetical example, we want to estimate the local power of detecting a spatial case cluster relative to control locations. Study participants that tested positive for a disease (i.e., cases) are hypothesized to be located in a circular area around the Navy Yard, an Environmental Protection Agency (EPA) Superfund Site [(see the success story)](https://cumulis.epa.gov/supercpad/cursites/csitinfo.cfm?id=0300031).
 ```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
 navy <- data.frame(lon = 326414.70444451, lat = 4304571.1539442)
-spf <- SpatialPoints(coords = navy, proj4string = CRS("+init=EPSG:32618"))
+spf <- sp::SpatialPoints(coords = navy, proj4string = sp::CRS("+init=EPSG:32618"))
 # Plot
 sp::plot(dcp, main = "Location of Hypothetical\nDisease Cluster")
 sp::plot(spf, col = "red", add = T)
 legend("right", legend = c("Navy Yard"), col = "red", pch = 3, bty = "n")
 ```
 
-We will assume that 50 cases (e.g., `n_case = 50`) were uniformly distributed (e.g., `samp_case = "uniform"`) within a circular radius with a radius of 2 kilometers (e.g., `r_case = 2000`).
+We will assume that approximately 50 cases (e.g., `n_case = 50`) were clustered around the center of the Navy Yard (e.g., `samp_case = "MVN"`) with more cases near the center and fewer cases about 1 kilometers away (e.g., `s_case = 1000`).
 
-If we were to conduct a study, where would we be sufficiently statistically powered to detect this spatial case cluster? To answer this question we will randomly sample locations (e.g., `n_conrol = 950` or 5% disease prevalence) within the District of Columbia (e.g., `samp_control = "uniform"`) as hypothetical study participants that would test negative for a disease (i.e., controls) were we to conduct a study. We can then resample control locations iteratively, as if we conducted the same study multiple times (e.g., `sim_total = 10`). We can conclude that we are sufficiently powered to detect a spatial case cluster in areas where a statistically significant (e.g., two-tailed alpha level of 0.05 or `lower_tail = 0.025`) spatial case cluster was located in at least 80% (e.g., `p_thresh = 0.8`) of these theoretical studies. 
+If we were to conduct a study, where would we be sufficiently statistically powered to detect this spatial case cluster? To answer this question we will randomly sample approximately 950 participants (e.g., `n_conrol = 950` or 5% disease prevalence) around the Navy Yard (e.g., `samp_control = "MVN"`) sampling more participants near the center and fewer particiaptns about 2 kilometers away (e.g., `s_control = 2000`). These participants would test negative for a disease (i.e., controls) were we to conduct a study. We can then resample control locations iteratively, as if we conducted the same study multiple times (e.g., `sim_total = 10`). We can conclude that we are sufficiently powered to detect a spatial case cluster in areas where a statistically significant (e.g., two-tailed alpha level of 0.05 or `lower_tail = 0.025`) spatial case cluster was located in at least 80% (e.g., `p_thresh = 0.8`) of these theoretical studies. 
 
 ```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
 start_time <- Sys.time() # record start time
 sim_power <- spatial_power(x_case = navy[[1]], y_case = navy[[2]], # center of cluster
-                         n_case = 50, n_control = 950, # sample size of case/control
-                         r_case = 2000, # size of case cluster (2 km)
-                         samp_case = "uniform", samp_control = "uniform", # samplers
-                         cascon = FALSE, # power for case cluster(s) only
-                         lower_tail = 0.025, upper_tail = 0.975, # two-tailed alpha
-                         sim_total = 10, # number of iterations
-                         win = dco, # study area
-                         resolution = 100, # number gridded knots on x-axis
-                         edge = "diggle", # correct for edge effects
-                         adapt = FALSE, # fixed-bandwidth
-                         h0 = NULL, # automatically select bandwidth for each iteration
-                         verbose = FALSE # no printout
-                         )
+                           x_control = navy[[1]], y_control = navy[[2]], # center of cluster
+                           n_case = 50, n_control = 950, # sample size of case/control
+                           samp_case = "MVN", samp_control = "MVN", # samplers
+                           s_case = 1000, s_control = 2000, # approximate size of clusters
+                           cascon = FALSE, # power for case cluster(s) only
+                           lower_tail = 0.025, upper_tail = 0.975, # two-tailed alpha
+                           sim_total = 10, # number of iterations
+                           win = dco, # study area
+                           resolution = 100, # number gridded knots on x-axis
+                           edge = "diggle", # correct for edge effects
+                           adapt = FALSE, # fixed-bandwidth
+                           h0 = NULL, # automatically select bandwidth for each iteration
+                           verbose = FALSE) # no printout
 end_time <- Sys.time() # record end time
 time_srr <- end_time - start_time # Calculate run time
 ```
 
-The process above took about `r round(time_srr, digits = 1)` minutes to run. Of the `r length(sim_power)` iterations we simulated an average of `r mean(sim_power$n_con)` (SD: `r sd(sim_power$n_con)`) control locations with an average fixed bandwidth of `r round(mean(sim_power$bandw)/1000, digits = 1)` (SD: `r sd(sim_power$bandw)/1000`) kilometers.
+The process above took about `r round(time_srr, digits = 1)` minutes to run. Of the `r length(sim_power$n_con)` iterations, we simulated `r mean(sim_power$n_cas)` case locations and an average `r round(mean(sim_power$n_con))` (SD: `r round(sd(sim_power$n_con), digits = 2)`) control locations for an average prevalence of `r round(mean(sim_power$n_cas/sim_power$n_con)*100, digits = 2)`% (SD: `r round(sd(sim_power$n_cas/sim_power$n_con)*100, digits = 2)`%). The averaged bandwidth for the statistic was `r round(mean(sim_power$bandw)/1000, digits = 1)` kilometers (SD: `r sd(sim_power$bandw)/1000`).
 
 ```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE, fig.align='center'}
-cols <- c("cornflowerblue", "green", "red", "darkgreen", "blue") # colors
+cols <- c("cornflowerblue", "green", "red", "lightgreen", "blue") # colors for plots
 chars <- c(4,5) # symbols for point-locations
 sizes <- c(0.5,0.5) # size of point-locations
 p_thresh <- 0.8 # 80% of iterations with statistically significant results
@@ -104,11 +104,10 @@ p_thresh <- 0.8 # 80% of iterations with statistically significant results
 ## Data Visualizaiton of Input and Power
 spatial_plots(input = sim_power, # use output of above simulation
               p_thresh = p_thresh, # power cut-off
-              plot_pts = T, # default = TRUE
+              plot_pts = TRUE, # display the points in the second plot
               chars = chars, # case, control
               sizes = sizes, # case, control
-              cols = cols
-)
+              cols = cols) # colors of plot
 ```
 
 Now, lets overlay our results ontop of a basemap. Here, we will use an open-source map from [Stamen](http://maps.stamen.com/#terrain/12/37.7706/-122.3782), that is unprojected in WGS84. We extract the rectagular box (i.e., bounding box) surrounding our polygon boundary of the District of Columbia (WGS84) and enlarge it using the custom function `expandbb` to the size of basemap we want to import. 
@@ -122,87 +121,84 @@ expandbb <- function(bb, f) {
   nb[2] <- bb[2] - (f * y) # ymin - bottom
   nb[4] <- bb[4] + (f * y) # ymax - top
   return(nb)}
-dcbb <- expandbb(bb = bbox(dc), f = 0.01)
+dcbb <- expandbb(bb = sp::bbox(dc), f = 0.01)
 base_map <- ggmap::get_map(location = dcbb, maptype = "toner", source = "stamen")
-plot(base_map, main = "Washington, D.C.")
+raster::plot(base_map, main = "Washington, D.C.")
 ```
 
 Prepare the points from the first simulation for plotting in `ggplot2` suite.
 ```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
-sim_pts <- sim_power$sim 
-sim_pts <- as.SpatialPointsDataFrame.ppp(sim_pts)
-crs(sim_pts) <- proj4string(dcp)
-sim_pts_wgs84 <-  sp::spTransform(sim_pts, CRS("+init=epsg:4326"))
+sim_pts <- sim_power$sim  # extract points from first iteration
+sim_pts <- maptools::as.SpatialPointsDataFrame.ppp(sim_pts) # convert to spatial data frame
+raster::crs(sim_pts) <- sp::proj4string(dcp) # set initial projection
+sim_pts_wgs84 <-  sp::spTransform(sim_pts, CRS("+init=epsg:4326")) # project to basemap
 sim_pts_df <- tibble::tibble(data.frame(sim_pts_wgs84)) # convert to tidy data frame
 ```
 
 Prepare the original boundary for plotting in `ggplot2` suite.
 ```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
-dc_df <- tidy(dcc) # conver to a tidy dataframe
-dcc$polyID <- sapply(slot(dcc, "polygons"), function(x) slot(x, "ID")) # preserve polygon id
+dc_df <- broom::tidy(dcc) # conver to a tidy dataframe
+dcc$polyID <- sapply(slot(dcc, "polygons"), function(x) slot(x, "ID")) # preserve polygon id for merge
 dc_df <- merge(dc_df, dcc, by.x = "id", by.y="polyID") # merge data
 ```
 
 Prepare the raster from the simulation for plotting in `ggplot2` suite.
 ```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
-pvalprop <- tibble::tibble(x = sim_power$rx, y = sim_power$ry, z = sim_power$pval_prop) # extract output
+pvalprop <- tibble::tibble(x = sim_power$rx, y = sim_power$ry, z = sim_power$pval_prop) # extract proportion significant
 lrr_narm <- na.omit(pvalprop) # remove NAs
-coordinates(lrr_narm) <- ~ x + y # coordinates
+sp::coordinates(lrr_narm) <- ~ x + y # coordinates
 gridded(lrr_narm) <- TRUE # gridded
 pvalprop_raster <- raster::raster(lrr_narm) # convert to raster
 rm(pvalprop, lrr_narm) # conserve memory
-crs(pvalprop_raster) <- crs(dcp) # set output project (UTM 18N)
-pvalprop_raster <- raster::projectRaster(pvalprop_raster, crs = crs(dc)) # unproject (WGS84) 
-rtp <- rasterToPolygons(pvalprop_raster) # convert to polygons
+raster::crs(pvalprop_raster) <- raster::crs(dcp) # set output project (UTM 18N)
+pvalprop_raster <- raster::projectRaster(pvalprop_raster, crs = raster::crs(dc)) # unproject (WGS84)
+rtp <- raster::rasterToPolygons(pvalprop_raster) # convert to polygons
 rtp@data$id <- 1:nrow(rtp@data)   # add id column for join
-rtpFort <- tidy(rtp, data = rtp@data) # convert to tibble
+rtpFort <- broom::tidy(rtp, data = rtp@data) # convert to tibble
 rtpFortMer <- merge(rtpFort, rtp@data, by.x = 'id', by.y = 'id')  # join data
 rampcols <- grDevices::colorRampPalette(colors = c(cols[5], cols[2]), space="Lab")(length(raster::values(pvalprop_raster))) # set colorramp
 ```
 
-Plot local power as a continuous outcome with point-locations
+Plot local power as a continuous outcome with point-locations using the `ggplot2` suite.
 ```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
-ggmap(base_map) + # basemap
-  geom_polygon(data = dc_df, # original boundary
-               aes(x = long, y = lat,
-                   group = group),
+ggmap::ggmap(base_map) + # basemap
+  ggplot2::geom_polygon(data = dc_df, # original boundary
+               ggplot2::aes(x = long, y = lat, group = group),
                fill = "transparent",
                colour = "black") +
-  geom_polygon(data = rtpFortMer, # output raster
-               aes(x = long, y = lat, group = group, fill = z), 
+  ggplot2::geom_polygon(data = rtpFortMer, # output raster as polygons
+               ggplot2::aes(x = long, y = lat, group = group, fill = z), 
                size = 0, 
                alpha = 0.5) +
-  scale_fill_gradientn(colours = rampcols) + # colors for raster
-  geom_point(data = sim_pts_df, # simulated point-locations
-             aes(x = mx, y = my, color = marks, shape = marks),
-             alpha = 0.8
-             ) + 
-  scale_color_manual(values = cols[4:5]) + # fill of point-locations
-  scale_shape_manual(values = chars) + # shope of point-locations
-  labs(x = "", y = "", fill = "Power", color = "", shape = "") # legend labels
+  ggplot2::scale_fill_gradientn(colours = rampcols) + # colors for polygons
+  ggplot2::geom_point(data = sim_pts_df, # simulated point-locations
+             ggplot2::aes(x = mx, y = my, color = marks, shape = marks),
+             alpha = 0.8) + 
+  ggplot2::scale_color_manual(values = cols[4:5]) + # fill of point-locations
+  ggplot2::scale_shape_manual(values = chars) + # shope of point-locations
+  ggplot2::labs(x = "", y = "", fill = "Power", color = "", shape = "") # legend labels
 ```
 
-Plot local power as a categorical outcome with point-locations
+Plot local power as a categorical outcome with point-locations using the `ggplot2` suite.
 ```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
 pvalprop_reclass <- raster::reclassify(pvalprop_raster, c(-Inf, p_thresh-0.0000001, 1,
                                                           p_thresh-0.0000001, Inf, 2)) # categorical outcome
-rtp <- rasterToPolygons(pvalprop_reclass) # convert to polygons
+rtp <- raster::rasterToPolygons(pvalprop_reclass) # convert to polygons
 rtp@data$id <- 1:nrow(rtp@data)   # add id column for join
-rtpFort <- tidy(rtp, data = rtp@data) # convert to tibble
+rtpFort <- broom::tidy(rtp, data = rtp@data) # convert to tibble
 rtpFortMer <- merge(rtpFort, rtp@data, by.x = 'id', by.y = 'id')  # join data
 
-ggmap(base_map) + # basemap
-  geom_polygon(data = dc_df, # original boundary
-               aes(x = long, y = lat,
-                   group = group),
+ggmap::ggmap(base_map) + # basemap 
+  ggplot2::geom_polygon(data = dc_df, # original boundary
+               ggplot2::aes(x = long, y = lat, group = group),
                fill = "transparent",
                colour = "black") +
-  geom_polygon(data = rtpFortMer, # output raster
-               aes(x = long, y = lat, group = group, fill = as.factor(z)), 
+  ggplot2::geom_polygon(data = rtpFortMer, # output raster as polygons
+               ggplot2::aes(x = long, y = lat, group = group, fill = as.factor(z)), 
                size = 0, 
                alpha = 0.5) +
-  scale_fill_manual(values = cols[c(5,2)], labels = c("insufficient", "sufficient")) + # colors for raster
-  labs(x = "", y = "", fill = "Power") # legend labels
+  ggplot2::scale_fill_manual(values = cols[c(5,2)], labels = c("insufficient", "sufficient")) + # colors for polygons
+  ggplot2::labs(x = "", y = "", fill = "Power") # legend labels
 ```
 
-Based on `r length(sim_power$n_con)` and uniform sampling of `r sim_power$n_con[1]` control participants located within the District of Columbia, we are sufficiently powered to detect the disease cluster in the Navy Yard area. 
+Based on `r length(sim_power$n_con)` iterations of multivariate normal sampling of approximately `r round(mean(sim_power$n_con))` control participants focused around the Navy Yard, we are sufficiently powered to detect the disease cluster in the Navy Yard area. 
