@@ -13,6 +13,7 @@
 # C) 04/14/2020 (IB) - Updated arguments for spatial_plots() function
 # D) 04/14/2020 (IB) - Added assessment of sample size of simulated data per iteration
 # E) 04/16/2020 (IB) - Added first attempt at adding GIS basemap layer to output plots
+# F) 04/16/2020 (IB) - Increased s_control to show effect and extacted bandwidth
 # ------------------------------------------ #
 
 ############
@@ -47,13 +48,13 @@ data(pbc)
 ### n = 761 cases
 ### n = 3,020 controls
 ### Unique window
-### Multivariate normal jittering by N(0,1)
+### Multivariate normal jittering by N(0,10)
 ### Power to detect both hot and coldspots
 
 # Estimates SRR with the following arguments:
 ### sim_total = number of simulation iterations
-### samp_control = type of random sampling for controls ('CSR', 'uniform', 'jittered')
-### scalar = if jittered, the standard deviation of the random normal noise added to each coordinate of the control locations
+### samp_control = type of random sampling for controls ('CSR', 'uniform', 'MVN')
+### s_control = if MVN, the standard deviation of the random normal noise added to each coordinate of the control locations
 ### upper_tail = user-specified upper tail of a two-tailed significance level
 ### lower_tail = user-specified lower tail of a two-tailed significance level
 ### resolution = 10 to calculate surfaces in a 10 x 10 grid
@@ -73,8 +74,8 @@ set.seed(1234)
 start_time <- Sys.time() # record start time
 sim_power <- jitter_power(obs_data = pbc,
                           sim_total = 100,
-                          samp_control = "jitter",
-                          scalar = 1, # default = 1
+                          samp_control = "MVN",
+                          s_control = 10, # default = 1
                           upper_tail = 0.995, # default = 0.975
                           lower_tail = 0.005, # default = 0.025
                           resolution = 100, # default = 128
@@ -96,8 +97,11 @@ spatial_plots(input = sim_power, # use output of SRR simulation
               cols = c("#0000ff", "#00ff00", "#ff0000", "#a020f0", "#ffa500") #c("blue", "green", "red", "purple", "orange") # insufficient, sufficient, text, case, control
 )
 
-# Mean and standard devation of simulated controls
+# Mean and standard devation of samples size of simulated controls
 mean(sim_power$n_con); sd(sim_power$n_con)
+
+# Mean and standard devation of bandwidth
+mean(sim_power$bandw); sd(sim_power$bandw)
 
 ###############################
 # ADVANCED DATA VISUALIZATION #

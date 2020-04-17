@@ -13,17 +13,25 @@
 # C) 04/14/2020 (IB) - Switched order of ppp marks for plotting
 # D) 04/15/2020 (IB) - Capture sample size of simulated data (controls) in each iteration
 # E) 04/15/2020 (IB) - Switched around "uniform" and "CSR"
-# F) 04/16/2020 (IB) - Fixed bug in 'jittered' sampling
+# F) 04/16/2020 (IB) - Fixed bug in "jittered" sampling and renamed "MVN"
+# G) 04/16/2020 (IB) - Renamed 'scalar' argument as 's_control' to match spatial_power() and spatial_data()
+# H) 04/16/2020 (IB) - Set the default bandwidth using the sparr::OS() function and capture bandwidth for each iteration
+# I) 04/16/2020 (IB) - Add capability for silent runs (verbose = FALSE)
 # ------------------------------------------ #
 
 jitter_power <- function(obs_data,
                          sim_total,
-                         samp_control = c("uniform", "CSR", "jitter"),
-                         scalar = 1,
+                         samp_control = c("uniform", "CSR", "MVN"),
+                         s_control = 1,
                          upper_tail = 0.975,
                          lower_tail = 0.025,
                          parallel = FALSE,
                          cascon = FALSE,
+                         resolution = 128,
+                         edge = "uniform",
+                         adapt = FALSE,
+                         h0 = NULL,
+                         verbose = TRUE,
                          ...) {
   
   # Packages
@@ -56,7 +64,7 @@ jitter_power <- function(obs_data,
   }
   
   # marked uniform ppp for controls
-  rcluster_control <- function(n, l, win, types = "control", ...) {
+  rcluster_control <- function(n, l, win, s, types = "control", ...) {
     if (samp_control == "uniform") {
       repeat {  
         x <- spatstat::runifpoint(n = n, win = win, ...)
@@ -68,10 +76,10 @@ jitter_power <- function(obs_data,
       x <- spatstat::rpoispp(lambda = l, win = win, ...)
     }
     
-    if (samp_control == "jitter") {
-        x1 <- sp::coordinates(cbind(obs_data$x,obs_data$y))
-        x2 <-  x1 + rnorm(nrow(x1), 0, scalar) 
-        x <- spatstat::ppp(x2[,1], x2[,2], window = win)
+    if (samp_control == "MVN") {
+        x1 <- obs_data$x + rnorm(length(obs_data$x), 0, s) 
+        y1 <- obs_data$y + rnorm(length(obs_data$y), 0, s) 
+        x <- spatstat::ppp(x1, y1, window = win)
     }
     
     spatstat::marks(x) <- types
@@ -82,9 +90,10 @@ jitter_power <- function(obs_data,
   x <- obs_data[obs_data$marks == "case"]
   marks(x) <- "case"
   
-  # Progress bar
-  message("Generating Data, Estimating Relative Risk, Calculating Power")
-  pb <- txtProgressBar(min = 0, max = sim_total, style = 3)
+  if (verbose == TRUE){
+    message("Generating Data, Estimating Relative Risk, Calculating Power")
+    pb <- txtProgressBar(min = 0, max = sim_total, style = 3)
+  }
   
   # Iteratively calculate the log relative risk and asymptotic p-value surfaces
   out_par <- foreach::foreach(k = 1:sim_total, 
@@ -92,22 +101,31 @@ jitter_power <- function(obs_data,
                               .multicombine = TRUE, 
                               .packages = c("sparr", "spatstat"),
                               .init = list(list(), list(), list(),
-                                           list(), list(), list(), list()
+                                           list(), list(), list(), 
+                                           list(), list()
                                            )
                               ) %fun% {
     
     # Progress bar
-    setTxtProgressBar(pb, k)
+    if (verbose == TRUE){
+      setTxtProgressBar(pb, k)
+      }
     
     # Create random cluster of controls
     y <- rcluster_control(n = obs_data[obs_data$marks == "control"]$n,
                           l = obs_data[obs_data$marks == "control"]$n / (diff(obs_data$window$xrange)*diff(obs_data$window$yrange)),
                           win = obs_data$window,
-                          s = scalar,
+                          s = s_control,
                           ...)
     
     # Combine random clusters of cases and controls into one marked ppp
     z <- spatstat::superimpose(y, x)
+    spatstat::marks(z) <- as.factor(spatstat::marks(z))
+    
+    # Bandwidth selection
+    if(is.null(h0)){
+      h0 <- sparr::OS(z, nstar = "geometric")
+    }
     
     # Calculate observed kernel density ratio
     obs_lrr <- sparr::risk(z, tolerate = T, verbose = F, ...)
@@ -142,7 +160,8 @@ jitter_power <- function(obs_data,
                         "ry" = ry,
                         "sim" = sim,
                         "out" = out,
-                        "n_con" = y$n
+                        "n_con" = y$n,
+                        "bandw" = h0
                         )
     return(par_results)
     }
@@ -185,7 +204,8 @@ jitter_power <- function(obs_data,
                   "pval_prop" = pval_prop,
                   "rx" = out_par[[3]][[1]],
                   "ry" = out_par[[4]][[1]],
-                  "n_con" = unlist(out_par[[7]])
+                  "n_con" = unlist(out_par[[7]]),
+                  "bandw" = unlist(out_par[[8]])
   )
 }
 # -------------------- END OF CODE -------------------- #
