@@ -20,23 +20,33 @@
 # J) 4/9/20 (IB) - Added functionality for case Poisson clustering within a disc (homogenous and inhomogeneous)
 # K) 4/9/20 (IB) - Renamed and reorganized function
 # L) 4/13/20 (IB) - Renamed function for R package development
-# J) 4/15/20 (IB) - Made consistent with spatial_power() updates
+# M) 4/15/20 (IB) - Made consistent with spatial_power() updates
+# N) 4/16/20 (IB) - LARGE UPDATE
+#     1. Added functionality for multivariate normal case sampling
+#     2. Added functionality for multivariate normal control sampling at user-specified areas
+#     3. Improved parameter input of class double or vector 
+#     4. Removed consistent sample size (... for now)
+#     5. Fixed CSR sampling for cases and renamed 'Poisson' case sampling to IPP
+#     6. Fixed bug in parameter specification for 'clustered' control sampling
+#     7. Improved parameter specification of case clustering function across sampling types
+#     8. Switched order of ppp marks for plotting
 # ------------------------------------------ #
 
 spatial_data <- function(x_case, y_case,
-                         n_case = NULL, n_control, n_cluster,
-                         r_case, r_control,
-                         l_control, l_case = NULL,
-                         e_control,
+                         x_control = NULL, y_control = NULL,
+                         n_case = NULL, n_control = NULL, npc_control = NULL,
+                         r_case = NULL, r_control = NULL,
+                         s_case = NULL, s_control = NULL,
+                         l_case = NULL, l_control = NULL, 
+                         e_control = NULL,
                          sim_total,
-                         samp_case = c("uniform", "Poisson"),
-                         samp_control = c("uniform", "CSR", "systematic",
-                                          "IPP", "clustered"),
-                         same_n = FALSE, 
+                         samp_case = c("uniform", "MVN", "CSR", "IPP"),
+                         samp_control = c("uniform", "systematic","MVN",
+                                          "CSR","IPP", "clustered"),
                          win = unit.square(),
                          ...) {
   
-  # Packages
+  # Package(s)
   require(spatstat)
   
   # Inputs
@@ -44,62 +54,117 @@ spatial_data <- function(x_case, y_case,
     stop("There is at least one missing coordinate")
   }
   
-  if (length(x_case) != length(r_case) | length(y_case) != length(r_case)) {
-    stop("There is at least one radius (r_case) missing")
+  if (length(n_case) == 1) {
+    l <- vector('list', length(x_case))
+    for (i in 1:length(x_case)) {
+      l[[i]] <- n_case
+    }
+    n_case <- unlist(l)
   }
   
-  if (samp_case == "Poisson" & length(l_case) == 1) {
-    l_list <- vector('list', length(x_case))
-    for (l in 1:length(x_case)) {
-      l_list[[l]] <- l_case
+  if (length(r_case) == 1) {
+    l <- vector('list', length(x_case))
+    for (i in 1:length(x_case)) {
+      l[[i]] <- r_case
     }
+    r_case <- unlist(l)
+  }
+  
+  if (length(s_case) == 1) {
+    l <- vector('list', length(x_case))
+    for (i in 1:length(x_case)) {
+      l[[i]] <- s_case
+    }
+    s_case <- unlist(l)
+  }
+  
+  if (length(l_case) == 1) {
+    l <- vector('list', length(x_case))
+    for (i in 1:length(x_case)) {
+      l[[i]] <- l_case
+    }
+    l_case <- l
+  }
+  
+  if (samp_control == "MVN" & length(n_control) == 1) {
+    l <- vector('list', length(x_control))
+    for (i in 1:length(x_control)) {
+      l[[i]] <- round(n_control/length(x_control))
+    }
+    n_control <- unlist(l)
+  }
+
+  if (length(s_control) == 1) {
+    l <- vector('list', length(x_control))
+    for (i in 1:length(x_control)) {
+      l[[i]] <- s_control
+    }
+    s_control <- unlist(l)
   }
   
   # marked uniform disc ppp with user-specified radius for cases
-  rcluster_case <- function(x0, y0, radius, n = NULL, types = "case", lambda = NULL, win = NULL, ...) {
+  rcluster_case <- function(x0, y0, rad, n, scalar, lamb, wind, types = "case", ...) {
     
     if (samp_case == "uniform"){
-      if (length(x_case) != length(n_case)) {
-        stop("There is at least one case cluster sample size (n_case) missing")
-      }
-      
-      repeat {  
-        x <- spatstat::runifdisc(n, radius, centre = c(x0, y0), ...)
-        if (x$n == n) break
-      }
+        x <- spatstat::runifdisc(n = n, radius = rad, centre = c(x0, y0), win = wind, ...)
     }  
     
-    if (samp_case == "Poisson"){
-      win_case <- spatstat::disc(radius, centre = c(0.5, 0.5), ...)
-      x <- spatstat::rpoispp(lambda, win = win_case, ...)
+    if (samp_case == "MVN"){
+        x1 <- rep(x0, n)
+        y1 <- rep(y0, n)
+        x2 <- x1 + rnorm(n, 0, scalar) 
+        y2 <- y1 + rnorm(n, 0, scalar) 
+        x <- spatstat::ppp(x2, y2, window = wind)
+    }  
+    
+    if (samp_case == "CSR"){
+      win_case <- spatstat::disc(radius = rad, centre = c(0.5, 0.5), ...)
+      l <- n/(diff(win_case$xrange)*diff(win_case$yrange))
+      x <- spatstat::rpoispp(lambda = l, win = win_case, ...)
       x <- spatstat::shift(x, c(x0 - 0.5, y0 - 0.5))
     }
+    
+    if (samp_case == "IPP"){
+      if (class(lamb) != "function") {
+        stop("The argument 'l_case' should be an intensity function")
+      }
+      win_case <- spatstat::disc(radius = rad, centre = c(0.5, 0.5), ...)
+      x <- spatstat::rpoispp(lambda = lamb, win = win_case, ...)
+      x <- spatstat::shift(x, c(x0 - 0.5, y0 - 0.5))
+    }
+    
     spatstat::marks(x) <- types
     return(x)
   }
   
   # marked uniform ppp for controls
-  rcluster_control <- function(n, l, types = "control", ...) {
+  rcluster_control <- function(x0, y0, scalar, n, lamb, ex, nclust, rad, types = "control", wind, ...) {
     if (samp_control == "uniform"){ 
-      repeat { 
-        x <- spatstat::runifpoint(n, ...) 
-        if (x$n == n) break
-      }
-    }
-    
-    if (samp_control == "CSR") {
-      x <- spatstat::rpoispp(lambda = l, ...)
+        x <- spatstat::runifpoint(n, win = wind, ...) 
     }
     
     if (samp_control == "systematic") {
-      x <- spatstat::rsyst(nx = sqrt(n), ...)
+      x <- spatstat::rsyst(nx = sqrt(n), win = wind, ...)
+    }
+    
+    if (samp_control == "MVN"){
+      x1 <- rep(x0, n)
+      y1 <- rep(y0, n)
+      x2 <- x1 + rnorm(n, 0, scalar) 
+      y2 <- y1 + rnorm(n, 0, scalar) 
+      x <- spatstat::ppp(x2, y2, window = wind)
+    }  
+    
+    if (samp_control == "CSR") {
+      l <- n/(diff(wind$xrange)*diff(wind$yrange))
+      x <- spatstat::rpoispp(lambda = l, win = wind, ...)
     }
     
     if (samp_control == "IPP") {
-      if (class(l_control) != "function") {
+      if (class(lamb) != "function") {
         stop("The argument 'l_control' should be an intensity function")
       }
-      x <- spatstat::rpoispp(lambda = l_control, ...)
+      x <- spatstat::rpoispp(lambda = lamb, win = wind, ...)
     }
     
     if (samp_control == "clustered") {
@@ -107,52 +172,29 @@ spatial_data <- function(x_case, y_case,
         X <- spatstat::runifdisc(n, radius, centre = c(x0, y0))
         return(X)
       }
-      if(same_n == T){
-        repeat {
-          x <- spatstat::rNeymanScott(kappa = l_control,
-                                      expand = e_control,
-                                      rcluster = control_clustering, 
-                                      n = n_cluster,
-                                      radius = r_control,
-                                      ...)
-          if (x$n == n) break
-        }
-      } else {
-        x <- spatstat::rNeymanScott(kappa = l_control,
-                                    expand = e_control,
+        x <- spatstat::rNeymanScott(kappa = lamb,
+                                    expand = ex,
                                     rcluster = control_clustering, 
-                                    n = n_cluster,
-                                    radius = r_control,
+                                    n = nclust,
+                                    radius = rad,
+                                    win = wind,
                                     ...)
       }
-    }
     spatstat::marks(x) <- types
     return(x)
   }
   
   # Create empty lists
   pppCase <- vector('list', length(x_case))
+  pppControl <- vector('list', length(x_control))
   pppList <- vector('list', length(sim_total))
   
   # Create a consistent random cluster of cases (uniform around user-specified centroid)
   for (i in 1:length(x_case)){
-    if(samp_case == "uniform"){
       x1 <- rcluster_case(x0 = x_case[i], y0 = y_case[i],
-                          radius = r_case[i], n = n_case[i],
-                          lambda = NULL, ...)
-    }
-    
-    if(samp_case == "Poisson"){
-      if (length(l_case) == 1) {
-        x1 <- rcluster_case(x0 = x_case[i], y0 = y_case[i],
-                            radius = r_case[i], n = NULL,
-                            lambda = l_list[[i]], ...)
-      } else {
-        x1 <- rcluster_case(x0 = x_case[i], y0 = y_case[i],
-                            radius = r_case[i], n = NULL,
-                            lambda = l_case[[i]], ...)
-      }
-    }
+                          rad = r_case[i], n = n_case[i],
+                          scalar = s_case[i], lamb = l_case[[i]],
+                          wind = win, ...)
     pppCase[[i]] <- x1
   }
   class(pppCase) <- c("ppplist", "solist",  "anylist", "listof", "list")
@@ -162,13 +204,32 @@ spatial_data <- function(x_case, y_case,
   for (j in 1:sim_total) {
     
     # Create random cluster of controls
-    y <- rcluster_control(n = n_control, 
-                          l = n_control/(diff(win$xrange)*diff(win$yrange)),
-                          win = win,
+    if(samp_control == "MVN") {
+      for (i in 1:length(x_control)){
+        y1 <- rcluster_control(x0 = x_control[i], y0 = y_control[i],
+                            radius = NULL, n = n_control[i],
+                            scalar = s_control[i], lamb =NULL,
+                            wind = win, ...)
+        pppControl[[i]] <- y1
+      }
+      class(pppControl) <- c("ppplist", "solist",  "anylist", "listof", "list")
+      y <- spatstat::superimpose(pppControl)
+      
+    } else { 
+      
+    y <- rcluster_control(x0 = NULL, y0 = NULL,
+                          n = n_control, 
+                          nclust = npc_control,
+                          rad = r_control,
+                          ex = e_control,
+                          lamb = l_control,
+                          scalar = NULL,
+                          wind = win,
                           ...)
+    }
     
     # Combine random clusters of cases and controls into one marked ppp
-    z <- spatstat::superimpose(x, y)
+    z <- spatstat::superimpose(y, x)
     
     # Compile ppp into list
     pppList[[j]] <- z
