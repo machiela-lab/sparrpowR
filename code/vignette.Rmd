@@ -35,11 +35,11 @@ Import data from Open Data DC [website](https://opendata.dc.gov/datasets/washing
 ```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
 # Washington, D.C. boundary
 gis_path1 <- "https://opendata.arcgis.com/datasets/7241f6d500b44288ad983f0942b39663_10.geojson"
-dc <- geojson_read(gis_path1,  what = "sp")
+dc <- geojsonio::geojson_read(gis_path1,  what = "sp")
 
 # American Community Survey 2018 Census Tracts
 gis_path2 <- "https://opendata.arcgis.com/datasets/faea4d66e7134e57bf8566197f25b3a8_0.geojson"
-census <- geojson_read(gis_path2,  what = "sp")
+census <- geojsonio::geojson_read(gis_path2,  what = "sp")
 ```
 
 We want to create a realistic boundary (i.e., polygon) of our study area. We are going to spatially clip our DC boundary by the census tracts in an attempt to remove major bodies of water where people do not reside.
@@ -133,7 +133,7 @@ sim_pts <- sim_power$sim
 sim_pts <- as.SpatialPointsDataFrame.ppp(sim_pts)
 crs(sim_pts) <- proj4string(dcp)
 sim_pts_wgs84 <-  sp::spTransform(sim_pts, CRS("+init=epsg:4326"))
-sim_pts_df <- tibble(data.frame(sim_pts_wgs84)) # convert to tidy data frame
+sim_pts_df <- tibble::tibble(data.frame(sim_pts_wgs84)) # convert to tidy data frame
 ```
 
 Prepare the original boundary for plotting in `ggplot2` suite.
@@ -145,7 +145,7 @@ dc_df <- merge(dc_df, dcc, by.x = "id", by.y="polyID") # merge data
 
 Prepare the raster from the simulation for plotting in `ggplot2` suite.
 ```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
-pvalprop <- tibble(x = sim_power$rx, y = sim_power$ry, z = sim_power$pval_prop) # extract output
+pvalprop <- tibble::tibble(x = sim_power$rx, y = sim_power$ry, z = sim_power$pval_prop) # extract output
 lrr_narm <- na.omit(pvalprop) # remove NAs
 coordinates(lrr_narm) <- ~ x + y # coordinates
 gridded(lrr_narm) <- TRUE # gridded
