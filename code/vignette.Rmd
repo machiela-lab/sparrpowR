@@ -3,8 +3,8 @@ title: "Vignette for sparrpowR"
 author: 'Ian D. Buller, Ph.D., M.A. (Github: @idblr)'
 date: "4/16/2020"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 <!-- Notes:  -->
@@ -99,11 +99,12 @@ The process above took about `r round(time_srr, digits = 1)` minutes to run. Of 
 cols <- c("cornflowerblue", "green", "red", "darkgreen", "blue") # colors
 chars <- c(4,5) # symbols for point-locations
 sizes <- c(0.5,0.5) # size of point-locations
+p_thresh <- 0.8 # 80% of iterations with statistically significant results
 
 ## Data Visualizaiton of Input and Power
 spatial_plots(input = sim_power, # use output of above simulation
-              p_thresh = 0.8, # power cut-off
-               plot_pts = T, # default = TRUE
+              p_thresh = p_thresh, # power cut-off
+              plot_pts = T, # default = TRUE
               chars = chars, # case, control
               sizes = sizes, # case, control
               cols = cols
@@ -159,7 +160,7 @@ rtpFortMer <- merge(rtpFort, rtp@data, by.x = 'id', by.y = 'id')  # join data
 rampcols <- grDevices::colorRampPalette(colors = c(cols[5], cols[2]), space="Lab")(length(raster::values(pvalprop_raster))) # set colorramp
 ```
 
-Plot all together
+Plot local power as a continuous outcome with point-locations
 ```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
 ggmap(base_map) + # basemap
   geom_polygon(data = dc_df, # original boundary
@@ -168,8 +169,7 @@ ggmap(base_map) + # basemap
                fill = "transparent",
                colour = "black") +
   geom_polygon(data = rtpFortMer, # output raster
-               aes(x = long, y = lat, group = group, 
-                   fill = z), 
+               aes(x = long, y = lat, group = group, fill = z), 
                size = 0, 
                alpha = 0.5) +
   scale_fill_gradientn(colours = rampcols) + # colors for raster
@@ -180,6 +180,29 @@ ggmap(base_map) + # basemap
   scale_color_manual(values = cols[4:5]) + # fill of point-locations
   scale_shape_manual(values = chars) + # shope of point-locations
   labs(x = "", y = "", fill = "Power", color = "", shape = "") # legend labels
+```
+
+Plot local power as a categorical outcome with point-locations
+```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
+pvalprop_reclass <- raster::reclassify(pvalprop_raster, c(-Inf, p_thresh-0.0000001, 1,
+                                                          p_thresh-0.0000001, Inf, 2)) # categorical outcome
+rtp <- rasterToPolygons(pvalprop_reclass) # convert to polygons
+rtp@data$id <- 1:nrow(rtp@data)   # add id column for join
+rtpFort <- tidy(rtp, data = rtp@data) # convert to tibble
+rtpFortMer <- merge(rtpFort, rtp@data, by.x = 'id', by.y = 'id')  # join data
+
+ggmap(base_map) + # basemap
+  geom_polygon(data = dc_df, # original boundary
+               aes(x = long, y = lat,
+                   group = group),
+               fill = "transparent",
+               colour = "black") +
+  geom_polygon(data = rtpFortMer, # output raster
+               aes(x = long, y = lat, group = group, fill = as.factor(z)), 
+               size = 0, 
+               alpha = 0.5) +
+  scale_fill_manual(values = cols[c(5,2)], labels = c("insufficient", "sufficient")) + # colors for raster
+  labs(x = "", y = "", fill = "Power") # legend labels
 ```
 
 Based on `r length(sim_power$n_con)` and uniform sampling of `r sim_power$n_con[1]` control participants located within the District of Columbia, we are sufficiently powered to detect the disease cluster in the Navy Yard area. 
