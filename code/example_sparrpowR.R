@@ -5,13 +5,14 @@
 # Created on: April 13, 2020
 #
 # Recently modified by: @idblr
-# Recently modified on: April 16, 2020
+# Recently modified on: April 20, 2020
 #
 # Notes:
 # A) 4/13/20 (IB) - Trimmed down example found in "Example_SRR.R"
 # B) 4/15/20 (IB) - Specified arguments for full spatial_power() function
 # C) 4/15/20 (IB) - Match example for spatial_data() and spatial_power()
 # D) 4/16/20 (IB) - Updated example of spatial_data() and spatial_power() to show additional parameters
+# E) 4/20/20 (IB) - Added example of parallel processessing
 # ------------------------------------------ #
 
 ####################
@@ -161,5 +162,94 @@ spatial_plots(input = sim_srr, # use output of SRR simulation
 mean(sim_srr$n_con); sd(sim_srr$n_con) # controls
 mean(sim_srr$n_cas); sd(sim_srr$n_cas) # cases
 mean(sim_srr$bandw); sd(sim_srr$bandw) # bandwidth
+
+###################################################
+# ITERATIVE SPATIAL STATISTIC EXAMPLE 3: PARALLEL #
+###################################################
+
+# Same example as above, but testing the parallel feature
+
+start_time <- Sys.time() # record start time
+sim_srr <- spatial_power(x_case = c(0.25, 0.5, 0.75),
+                         y_case = c(0.75, 0.25, 0.75),
+                         x_control = c(0.25, 0.5, 0.75),
+                         y_control = c(0.75, 0.25, 0.75),
+                         # n_case = c(100, 100,100),
+                         n_case = 100,
+                         n_control = 700,
+                         #r_case = c(0.1, 0.2, 0.1),
+                         r_case = 0.1,
+                         #s_case = c(0.05,0.01,0.05),
+                         s_case = 0.05,
+                         #l_case = c(200,100,200),
+                         l_case = 200,
+                         #l_case = l_cont,
+                         sim_total = 10,
+                         samp_case = "MVN", 
+                         samp_control = "MVN",
+                         npc_control = 10,
+                         r_control = 0.1,
+                         e_control = 0,
+                         l_control = 100,
+                         #l_control = l_cont,
+                         s_control = 0.1,
+                         #win = unit.circle,
+                         upper_tail = 0.995, # default = 0.975
+                         lower_tail = 0.005, # default = 0.025
+                         resolution = 50, # default = 128
+                         edge = "diggle", # default = "uniform"
+                         adapt = FALSE,
+                         h0 = NULL,
+                         cascon = TRUE, # cascon = FALSE for only relative case clustering (hotspots)
+                         parallel = F,
+                         verbose = F
+) 
+end_time <- Sys.time() # record end time
+time_do <- end_time - start_time # Calculate run time
+
+start_time <- Sys.time() # record start time
+sim_srr <- spatial_power(x_case = c(0.25, 0.5, 0.75),
+                         y_case = c(0.75, 0.25, 0.75),
+                         x_control = c(0.25, 0.5, 0.75),
+                         y_control = c(0.75, 0.25, 0.75),
+                         # n_case = c(100, 100,100),
+                         n_case = 100,
+                         n_control = 700,
+                         #r_case = c(0.1, 0.2, 0.1),
+                         r_case = 0.1,
+                         #s_case = c(0.05,0.01,0.05),
+                         s_case = 0.05,
+                         #l_case = c(200,100,200),
+                         l_case = 200,
+                         #l_case = l_cont,
+                         sim_total = 10,
+                         samp_case = "MVN", 
+                         samp_control = "MVN",
+                         npc_control = 100,
+                         r_control = 0.1,
+                         e_control = 0,
+                         l_control = 100,
+                         #l_control = l_cont,
+                         s_control = 0.1,
+                         #win = unit.circle,
+                         upper_tail = 0.995, # default = 0.975
+                         lower_tail = 0.005, # default = 0.025
+                         resolution = 50, # default = 128
+                         edge = "diggle", # default = "uniform"
+                         adapt = FALSE,
+                         h0 = NULL,
+                         cascon = TRUE, # cascon = FALSE for only relative case clustering (hotspots)
+                         parallel = T,
+                         verbose = F
+) 
+end_time <- Sys.time() # record end time
+time_dopar <- end_time - start_time # Calculate run time
+
+# Comparison: Time difference
+time_do - time_dopar 
+# sim_total = 10: parallel is 1.1 seconds *longer*
+# sim_total = 100: parallel is 1.2 seconds *longer*
+# sim_total = 1000: parallel is 0.9 seconds *longer*
+# sim_total = 10000: parallel is 18 seconds *longer*
 
 # -------------------- END OF CODE -------------------- #

@@ -27,6 +27,7 @@
 #     6. Fixed bug in parameter specification for 'clustered' control sampling
 #     7. Improved parameter specification of case clustering function across sampling types
 #     8. Switched order of ppp marks for plotting
+# J) 04/20/20 (IB) - Added functionality for parallel processing
 # ------------------------------------------ #
 
 spatial_power <- function(x_case, y_case,
@@ -36,13 +37,12 @@ spatial_power <- function(x_case, y_case,
                            s_case = NULL, s_control = NULL,
                            l_case = NULL, l_control = NULL, 
                            e_control = NULL,
-                           sim_total,
+                           sim_total = 1,
                            samp_case = c("uniform", "MVN", "CSR", "IPP"),
                            samp_control = c("uniform", "systematic","MVN",
                                             "CSR","IPP", "clustered"),
                           upper_tail = 0.975,
                           lower_tail = 0.025,
-                          parallel = FALSE,
                           win = unit.square(),
                           cascon = FALSE,
                           resolution = 128,
@@ -50,6 +50,8 @@ spatial_power <- function(x_case, y_case,
                           adapt = FALSE,
                           h0 = NULL,
                           verbose = TRUE,
+                          parallel = FALSE,
+                          n_core = NULL,
                           ...) {
   
   # Packages
@@ -58,13 +60,6 @@ spatial_power <- function(x_case, y_case,
   require(foreach)
   
   # Custom Internal Functions
-  ## Set function used in foreach
-  if (parallel == TRUE){
-    `%fun%` <- `%dopar%`
-  } else {
-    `%fun%` <- `%do%`
-  }
-  
   ## Combine function used in foreach
   comb <- function(x, ...) {
     lapply(seq_along(x),
@@ -211,9 +206,8 @@ spatial_power <- function(x_case, y_case,
     return(x)
   }
   
-  # Create empty lists
+  # Create empty list
   pppCase <- vector('list', length(x_case))
-  pppControl <- vector('list', length(x_control))
   
   # Create a consistent random cluster of cases (uniform around user-specified centroid)
   for (i in 1:length(x_case)){
@@ -224,12 +218,31 @@ spatial_power <- function(x_case, y_case,
     pppCase[[i]] <- x1
   }
   class(pppCase) <- c("ppplist", "solist",  "anylist", "listof", "list")
-  x <- spatstat::superimpose(pppCase)
+  cas <- spatstat::superimpose(pppCase)
   
   # Progress bar
-  if (verbose == TRUE){
+  if (verbose == TRUE & parallel == FALSE){
   message("Generating Data, Estimating Relative Risk, Calculating Power")
   pb <- txtProgressBar(min = 0, max = sim_total, style = 3)
+  }
+  
+  ## Set function used in foreach
+  if (parallel == TRUE){
+    require(parallel)
+    if(is.null(n_core)){ n_core <- parallel::detectCores() - 1 }
+    cl <- parallel::makeCluster(n_core)
+    parallel::clusterExport(cl = cl, 
+                            varlist = list("sim_total", "verbose",
+                                           "samp_control", "x_control", "y_control",
+                                           "l_control", "n_control", "npc_control",
+                                           "r_control", "s_control", "win",
+                                           "cas", "h0", "resolution", "edge", "adapt"
+                            ),
+                            envir = environment()
+    )
+    `%fun%` <- `%dopar%`
+  } else {
+    `%fun%` <- `%do%`
   }
   
   # Iteratively calculate the log relative risk and asymptotic p-value surfaces
@@ -242,10 +255,13 @@ spatial_power <- function(x_case, y_case,
                                            list(), list(), list())
                               ) %fun% {
   
-    # Progress bar
-    if (verbose == TRUE){
-    setTxtProgressBar(pb, k)
-    }
+  # Progress bar
+  if (verbose == TRUE & parallel == FALSE){
+  setTxtProgressBar(pb, k)
+  }
+  
+  # Create empty list                           
+  pppControl <- vector('list', length(x_control))
     
   # Create random cluster of controls
   if(samp_control == "MVN") {
@@ -257,11 +273,11 @@ spatial_power <- function(x_case, y_case,
       pppControl[[i]] <- y1
     }
     class(pppControl) <- c("ppplist", "solist",  "anylist", "listof", "list")
-    y <- spatstat::superimpose(pppControl)
+    con <- spatstat::superimpose(pppControl)
     
   } else { 
     
-    y <- rcluster_control(x0 = NULL, y0 = NULL,
+    con <- rcluster_control(x0 = NULL, y0 = NULL,
                           n = n_control, 
                           nclust = npc_control,
                           rad = r_control,
@@ -273,7 +289,7 @@ spatial_power <- function(x_case, y_case,
   }
     
     # Combine random clusters of cases and controls into one marked ppp
-    z <- spatstat::superimpose(y, x)
+    z <- spatstat::superimpose(con, cas)
     spatstat::marks(z) <- as.factor(spatstat::marks(z))
     
     # Bandwidth selection
@@ -319,13 +335,18 @@ spatial_power <- function(x_case, y_case,
                         "ry" = ry,
                         "sim" = sim,
                         "out" = out,
-                        "n_con" = y$n,
-                        "n_cas" = x$n,
+                        "n_con" = con$n,
+                        "n_cas" = cas$n,
                         "bandw" = h0
                         )
     
     return(par_results)
     }
+  
+  # Stop clusters, if parallel
+  if(parallel == TRUE){
+    parallel::stopCluster(cl)
+  }
   
   # Summarize iterative results
   sim_rr <- out_par[[1]]
