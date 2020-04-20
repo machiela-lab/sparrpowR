@@ -228,9 +228,10 @@ spatial_power <- function(x_case, y_case,
   
   ## Set function used in foreach
   if (parallel == TRUE){
-    require(parallel)
+    require(doParallel)
     if(is.null(n_core)){ n_core <- parallel::detectCores() - 1 }
     cl <- parallel::makeCluster(n_core)
+    doParallel::registerDoParallel(cl)
     parallel::clusterExport(cl = cl, 
                             varlist = list("sim_total", "verbose",
                                            "samp_control", "x_control", "y_control",
