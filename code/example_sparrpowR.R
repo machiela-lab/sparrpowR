@@ -13,6 +13,7 @@
 # C) 4/15/20 (IB) - Match example for spatial_data() and spatial_power()
 # D) 4/16/20 (IB) - Updated example of spatial_data() and spatial_power() to show additional parameters
 # E) 4/20/20 (IB) - Added example of parallel processessing
+# F) 4/20/20 (IB) - Fixed bug in parallel processing, suppressed warnings for data generation
 # ------------------------------------------ #
 
 ####################
@@ -247,9 +248,9 @@ time_dopar <- end_time - start_time # Calculate run time
 
 # Comparison: Time difference
 time_do - time_dopar 
-# sim_total = 10: parallel is 1.1 seconds *longer*
-# sim_total = 100: parallel is 1.2 seconds *longer*
-# sim_total = 1000: parallel is 0.9 seconds *longer*
-# sim_total = 10000: parallel is 18 seconds *longer*
+# sim_total = 10: parallel is 2.5 seconds *longer*
+# sim_total = 100: parallel is 0.6 seconds *shorter*
+# sim_total = 1000: parallel is 39.9 seconds *shorter*
+# sim_total = 10000: parallel is 310.9 seconds *shorter* (About 29% of the time)
 
 # -------------------- END OF CODE -------------------- #

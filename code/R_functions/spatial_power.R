@@ -5,7 +5,7 @@
 # Created on: April 13, 2020
 #
 # Recently modified by: @idblr
-# Recently modified on: April 16, 2020
+# Recently modified on: April 20, 2020
 #
 # Notes:
 # A) 4/13/20 (IB) - Combines rand_cascon() and rand_srr() functions per iteration
@@ -27,20 +27,21 @@
 #     6. Fixed bug in parameter specification for 'clustered' control sampling
 #     7. Improved parameter specification of case clustering function across sampling types
 #     8. Switched order of ppp marks for plotting
-# J) 04/20/20 (IB) - Added functionality for parallel processing
+# L) 04/20/20 (IB) - Added functionality for parallel processing
+# M) 04/20/20 (IB) - Added updated paralell run time comparisons
 # ------------------------------------------ #
 
 spatial_power <- function(x_case, y_case,
-                           x_control = NULL, y_control = NULL,
-                           n_case = NULL, n_control = NULL, npc_control = NULL,
-                           r_case = NULL, r_control = NULL,
-                           s_case = NULL, s_control = NULL,
-                           l_case = NULL, l_control = NULL, 
-                           e_control = NULL,
-                           sim_total = 1,
-                           samp_case = c("uniform", "MVN", "CSR", "IPP"),
-                           samp_control = c("uniform", "systematic","MVN",
-                                            "CSR","IPP", "clustered"),
+                          x_control = NULL, y_control = NULL,
+                          n_case = NULL, n_control = NULL, npc_control = NULL,
+                          r_case = NULL, r_control = NULL,
+                          s_case = NULL, s_control = NULL,
+                          l_case = NULL, l_control = NULL,
+                          e_control = NULL,
+                          sim_total = 1,
+                          samp_case = c("uniform", "MVN", "CSR", "IPP"),
+                          samp_control = c("uniform", "systematic", "MVN",
+                                           "CSR", "IPP", "clustered"), 
                           upper_tail = 0.975,
                           lower_tail = 0.025,
                           win = unit.square(),
@@ -211,10 +212,12 @@ spatial_power <- function(x_case, y_case,
   
   # Create a consistent random cluster of cases (uniform around user-specified centroid)
   for (i in 1:length(x_case)){
+    suppressWarnings(
     x1 <- rcluster_case(x0 = x_case[i], y0 = y_case[i],
                         rad = r_case[i], n = n_case[i],
                         scalar = s_case[i], lamb = l_case[[i]],
                         wind = win, ...)
+    )
     pppCase[[i]] <- x1
   }
   class(pppCase) <- c("ppplist", "solist",  "anylist", "listof", "list")
@@ -228,19 +231,11 @@ spatial_power <- function(x_case, y_case,
   
   ## Set function used in foreach
   if (parallel == TRUE){
+    require(parallel)
     require(doParallel)
     if(is.null(n_core)){ n_core <- parallel::detectCores() - 1 }
     cl <- parallel::makeCluster(n_core)
     doParallel::registerDoParallel(cl)
-    parallel::clusterExport(cl = cl, 
-                            varlist = list("sim_total", "verbose",
-                                           "samp_control", "x_control", "y_control",
-                                           "l_control", "n_control", "npc_control",
-                                           "r_control", "s_control", "win",
-                                           "cas", "h0", "resolution", "edge", "adapt"
-                            ),
-                            envir = environment()
-    )
     `%fun%` <- `%dopar%`
   } else {
     `%fun%` <- `%do%`
@@ -267,17 +262,19 @@ spatial_power <- function(x_case, y_case,
   # Create random cluster of controls
   if(samp_control == "MVN") {
     for (i in 1:length(x_control)){
+      suppressWarnings(
       y1 <- rcluster_control(x0 = x_control[i], y0 = y_control[i],
                              radius = NULL, n = n_control[i],
                              scalar = s_control[i], lamb =NULL,
                              wind = win, ...)
+      )
       pppControl[[i]] <- y1
     }
     class(pppControl) <- c("ppplist", "solist",  "anylist", "listof", "list")
     con <- spatstat::superimpose(pppControl)
     
   } else { 
-    
+    suppressWarnings(
     con <- rcluster_control(x0 = NULL, y0 = NULL,
                           n = n_control, 
                           nclust = npc_control,
@@ -287,6 +284,7 @@ spatial_power <- function(x_case, y_case,
                           scalar = NULL,
                           wind = win,
                           ...)
+    )
   }
     
     # Combine random clusters of cases and controls into one marked ppp
