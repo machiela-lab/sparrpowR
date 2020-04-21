@@ -14,6 +14,7 @@
 # D) 4/16/20 (IB) - Updated example of spatial_data() and spatial_power() to show additional parameters
 # E) 4/20/20 (IB) - Added example of parallel processessing
 # F) 4/20/20 (IB) - Fixed bug in parallel processing, suppressed warnings for data generation
+# G) 4/20/20 (IB) - Added example for global test statistics
 # ------------------------------------------ #
 
 ####################
@@ -163,6 +164,17 @@ spatial_plots(input = sim_srr, # use output of SRR simulation
 mean(sim_srr$n_con); sd(sim_srr$n_con) # controls
 mean(sim_srr$n_cas); sd(sim_srr$n_cas) # cases
 mean(sim_srr$bandw); sd(sim_srr$bandw) # bandwidth
+
+# Global Test Statistics
+## Global maximum relative risk: H0 = 1
+summary(sim_srr$s_obs)
+hist(sim_srr$s_obs)
+t.test(sim_srr$s_obs, mu = 0, alternative = "two.sided") # significant
+
+## Integral of log relative risk: H0 = 0
+summary(sim_srr$t_obs)
+hist(sim_srr$t_obs)
+t.test(sim_srr$t_obs, mu = 1, alternative = "two.sided") # significant
 
 ###################################################
 # ITERATIVE SPATIAL STATISTIC EXAMPLE 3: PARALLEL #

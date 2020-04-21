@@ -29,6 +29,7 @@
 #     8. Switched order of ppp marks for plotting
 # L) 04/20/20 (IB) - Added functionality for parallel processing
 # M) 04/20/20 (IB) - Added updated paralell run time comparisons
+# N) 4/20/20 (IB) - Added functionality for global test statistics
 # ------------------------------------------ #
 
 spatial_power <- function(x_case, y_case,
@@ -248,7 +249,8 @@ spatial_power <- function(x_case, y_case,
                               .packages = c("sparr", "spatstat"),
                               .init = list(list(), list(), list(),
                                            list(), list(), list(),
-                                           list(), list(), list())
+                                           list(), list(), list(),
+                                           list(), list())
                               ) %fun% {
   
   # Progress bar
@@ -312,15 +314,21 @@ spatial_power <- function(x_case, y_case,
       if (i == 1){ ry <- rep(obs_lrr$rr$yrow[i], length(obs_lrr$rr$xcol))}
       if (i != 1){ ry <- c(ry, rep(obs_lrr$rr$yrow[i], length(obs_lrr$rr$xcol)))}
       }
+    
     ### Estimated value (log relative risk and p-value) for each knot
+    sim_risk <- as.vector(t(obs_lrr$rr$v))
+    sim_pval <- as.vector(t(obs_lrr$P$v))
+    
+    ### Estimated global test statistics
+    #### Global maximum relative risk: H0 = 1
+    s_obs <- max(exp(obs_lrr$rr$v[!is.na(obs_lrr$rr$v)]))
+    #### Approximation for integral: H0 = 0
+    t_obs <- sum((obs_lrr$rr$v[!is.na(obs_lrr$rr$v) & is.finite(obs_lrr$rr$v)]/(diff(obs_lrr$rr$xcol)[1]*diff(obs_lrr$rr$yrow)[1]))^2)
+    
     if(k == 1) {
-      sim_risk = as.vector(t(obs_lrr$rr$v))
-      sim_pval = as.vector(t(obs_lrr$P$v))
       sim <- z
       out <- obs_lrr
       } else {
-      sim_risk <- as.vector(t(obs_lrr$rr$v))
-      sim_pval <- as.vector(t(obs_lrr$P$v))
       sim <- NULL
       out <- NULL
       rx <- NULL
@@ -336,7 +344,9 @@ spatial_power <- function(x_case, y_case,
                         "out" = out,
                         "n_con" = con$n,
                         "n_cas" = cas$n,
-                        "bandw" = h0
+                        "bandw" = h0,
+                        "s_obs" = s_obs,
+                        "t_obs" = t_obs
                         )
     
     return(par_results)
@@ -387,7 +397,9 @@ spatial_power <- function(x_case, y_case,
                   "ry" = out_par[[4]][[1]],
                   "n_con" = unlist(out_par[[7]]),
                   "n_cas" = unlist(out_par[[8]]),
-                  "bandw" = unlist(out_par[[9]])
+                  "bandw" = unlist(out_par[[9]]),
+                  "s_obs" = unlist(out_par[[10]]),
+                  "t_obs" = unlist(out_par[[11]])
                   )
   }
 # -------------------- END OF CODE -------------------- #
