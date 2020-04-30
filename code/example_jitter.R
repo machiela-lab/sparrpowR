@@ -5,7 +5,7 @@
 # Created on: April 14, 2020
 #
 # Recently modified by: @idblr
-# Recently modified on: April 16, 2020
+# Recently modified on: April 30, 2020
 #
 # Notes:
 # A) 04/14/2020 (IB) - Uses 'pbc' data from the 'sparr' package https://doi.org/10.1053/jhep.2001.29760
@@ -14,6 +14,7 @@
 # D) 04/14/2020 (IB) - Added assessment of sample size of simulated data per iteration
 # E) 04/16/2020 (IB) - Added first attempt at adding GIS basemap layer to output plots
 # F) 04/16/2020 (IB) - Increased s_control to show effect and extacted bandwidth
+# G) 04/30/2020 (IB) - Updated example to demonstrate parallelization
 # ------------------------------------------ #
 
 ############
@@ -75,12 +76,13 @@ start_time <- Sys.time() # record start time
 sim_power <- jitter_power(obs_data = pbc,
                           sim_total = 100,
                           samp_control = "MVN",
+                          parallel = TRUE,
                           s_control = 10, # default = 1
                           upper_tail = 0.995, # default = 0.975
                           lower_tail = 0.005, # default = 0.025
                           resolution = 100, # default = 128
                           edge = "diggle", # default = "uniform"
-                          cascon = TRUE # default = FALSE
+                          cascon = FALSE # default = FALSE
                           )
 end_time <- Sys.time() # record end time
 time_pts <- end_time - start_time

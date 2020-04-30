@@ -5,7 +5,7 @@
 # Created on: April 13, 2020
 #
 # Recently modified by: @idblr
-# Recently modified on: April 20, 2020
+# Recently modified on: April 30, 2020
 #
 # Notes:
 # A) 4/13/20 (IB) - Combines rand_cascon() and rand_srr() functions per iteration
@@ -29,7 +29,8 @@
 #     8. Switched order of ppp marks for plotting
 # L) 04/20/20 (IB) - Added functionality for parallel processing
 # M) 04/20/20 (IB) - Added updated paralell run time comparisons
-# N) 4/20/20 (IB) - Added functionality for global test statistics
+# N) 04/20/20 (IB) - Added functionality for global test statistics
+# O) 04/30/20 (IB) - Streamlined package call
 # ------------------------------------------ #
 
 spatial_power <- function(x_case, y_case,
@@ -57,9 +58,8 @@ spatial_power <- function(x_case, y_case,
                           ...) {
   
   # Packages
-  require(spatstat)
-  require(sparr)
-  require(foreach)
+  loadedPackages <- c("foreach", "sparr", "spatstat")
+  invisible(lapply(loadedPackages, require, character.only = T))
   
   # Custom Internal Functions
   ## Combine function used in foreach
@@ -232,8 +232,8 @@ spatial_power <- function(x_case, y_case,
   
   ## Set function used in foreach
   if (parallel == TRUE){
-    require(parallel)
-    require(doParallel)
+    loadedPackages <- c("doParallel", "parallel")
+    invisible(lapply(loadedPackages, require, character.only = T))
     if(is.null(n_core)){ n_core <- parallel::detectCores() - 1 }
     cl <- parallel::makeCluster(n_core)
     doParallel::registerDoParallel(cl)

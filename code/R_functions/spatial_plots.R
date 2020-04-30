@@ -5,16 +5,17 @@
 # Created on: April 13, 2020
 #
 # Recently modified by: @idblr
-# Recently modified on: April 16, 2020
+# Recently modified on: April 30, 2020
 #
 # Notes:
-# A) 4/13/20 (IB) - Creates multiple plots in one printout
-# B) 4/14/20 (IB) - Consistent size windows of plots
-# C) 4/14/20 (IB) - Option to display points on second plot
-# D) 4/14/20 (IB) - Options to customize size, character, and color of points
-# E) 4/15/20 (IB) - Matched formatting for spatial_data() to spatial_power() output
-# F) 4/15/20 (IB) - Forced limits in colorkey of second plot to be (0,1)
-# G) 4/15/20 (IB) - Changed default colors to hexadecimal
+# A) 04/13/20 (IB) - Creates multiple plots in one printout
+# B) 04/14/20 (IB) - Consistent size windows of plots
+# C) 04/14/20 (IB) - Option to display points on second plot
+# D) 04/14/20 (IB) - Options to customize size, character, and color of points
+# E) 04/15/20 (IB) - Matched formatting for spatial_data() to spatial_power() output
+# F) 04/15/20 (IB) - Forced limits in colorkey of second plot to be (0,1)
+# G) 04/15/20 (IB) - Changed default colors to hexadecimal
+# H) 04/30/20 (IB) - Streamlined package call
 # ------------------------------------------ #
 
 spatial_plots <- function(input,
@@ -28,9 +29,8 @@ spatial_plots <- function(input,
                           ...) {
   
   # Packages
-  require(fields)
-  require(raster)
-  require(sp)
+  loadedPackages <- c("fields", "raster", "sp")
+  invisible(lapply(loadedPackages, require, character.only = T))
   
   if("ppplist" %in% class(input)){
     return(sp::plot(input[1:n_sim], 

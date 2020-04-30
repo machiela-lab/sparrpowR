@@ -5,7 +5,7 @@
 # Created on: April 14, 2020
 #
 # Recently modified by: @idblr
-# Recently modified on: April 16, 2020
+# Recently modified on: April 30, 2020
 #
 # Notes:
 # A) 04/14/2020 (IB) - Adapted from spatial_power() function
@@ -17,6 +17,7 @@
 # G) 04/16/2020 (IB) - Renamed 'scalar' argument as 's_control' to match spatial_power() and spatial_data()
 # H) 04/16/2020 (IB) - Set the default bandwidth using the sparr::OS() function and capture bandwidth for each iteration
 # I) 04/16/2020 (IB) - Add capability for silent runs (verbose = FALSE)
+# J) 04/30/2020 (IB) - Added parallelization similar to spatial_power() 
 # ------------------------------------------ #
 
 jitter_power <- function(obs_data,
@@ -25,28 +26,21 @@ jitter_power <- function(obs_data,
                          s_control = 1,
                          upper_tail = 0.975,
                          lower_tail = 0.025,
-                         parallel = FALSE,
                          cascon = FALSE,
                          resolution = 128,
                          edge = "uniform",
                          adapt = FALSE,
                          h0 = NULL,
                          verbose = TRUE,
+                         parallel = FALSE,
+                         n_core = NULL,
                          ...) {
   
   # Packages
-  require(spatstat)
-  require(sparr)
-  require(foreach)
+  loadedPackages <- c("foreach", "sparr", "spatstat")
+  invisible(lapply(loadedPackages, require, character.only = T))
   
   # Custom Internal Functions
-  ## Set function used in foreach
-  if (parallel == TRUE){
-    `%fun%` <- `%dopar%`
-  } else {
-    `%fun%` <- `%do%`
-  }
-  
   ## Combine function used in foreach
   comb <- function(x, ...) {
     lapply(seq_along(x),
@@ -87,12 +81,24 @@ jitter_power <- function(obs_data,
   }
   
   # extract case locations
-  x <- obs_data[obs_data$marks == "case"]
-  marks(x) <- "case"
+  cas <- obs_data[obs_data$marks == "case"]
+  marks(cas) <- "case"
   
-  if (verbose == TRUE){
+  if (verbose == TRUE & parallel == FALSE){
     message("Generating Data, Estimating Relative Risk, Calculating Power")
     pb <- txtProgressBar(min = 0, max = sim_total, style = 3)
+  }
+  
+  ## Set function used in foreach
+  if (parallel == TRUE){
+    loadedPackages <- c("doParallel", "parallel")
+    invisible(lapply(loadedPackages, require, character.only = T))
+    if(is.null(n_core)){ n_core <- parallel::detectCores() - 1 }
+    cl <- parallel::makeCluster(n_core)
+    doParallel::registerDoParallel(cl)
+    `%fun%` <- `%dopar%`
+  } else {
+    `%fun%` <- `%do%`
   }
   
   # Iteratively calculate the log relative risk and asymptotic p-value surfaces
@@ -102,24 +108,24 @@ jitter_power <- function(obs_data,
                               .packages = c("sparr", "spatstat"),
                               .init = list(list(), list(), list(),
                                            list(), list(), list(), 
-                                           list(), list()
+                                           list(), list(), list(), list()
                                            )
                               ) %fun% {
     
     # Progress bar
-    if (verbose == TRUE){
+    if (verbose == TRUE & parallel == FALSE){
       setTxtProgressBar(pb, k)
       }
     
     # Create random cluster of controls
-    y <- rcluster_control(n = obs_data[obs_data$marks == "control"]$n,
+    con <- rcluster_control(n = obs_data[obs_data$marks == "control"]$n,
                           l = obs_data[obs_data$marks == "control"]$n / (diff(obs_data$window$xrange)*diff(obs_data$window$yrange)),
                           win = obs_data$window,
                           s = s_control,
                           ...)
     
     # Combine random clusters of cases and controls into one marked ppp
-    z <- spatstat::superimpose(y, x)
+    z <- spatstat::superimpose(con, cas)
     spatstat::marks(z) <- as.factor(spatstat::marks(z))
     
     # Bandwidth selection
@@ -138,19 +144,26 @@ jitter_power <- function(obs_data,
       if (i == 1){ ry <- rep(obs_lrr$rr$yrow[i], length(obs_lrr$rr$xcol))}
       if (i != 1){ ry <- c(ry, rep(obs_lrr$rr$yrow[i], length(obs_lrr$rr$xcol)))}
       }
+    
+    ### Estimated value (log relative risk and p-value) for each knot
+    sim_risk <- as.vector(t(obs_lrr$rr$v))
+    sim_pval <- as.vector(t(obs_lrr$P$v))
+    
+    ### Estimated global test statistics
+    #### Global maximum relative risk: H0 = 1
+    s_obs <- max(exp(obs_lrr$rr$v[!is.na(obs_lrr$rr$v)]))
+    #### Approximation for integral: H0 = 0
+    t_obs <- sum((obs_lrr$rr$v[!is.na(obs_lrr$rr$v) & is.finite(obs_lrr$rr$v)]/(diff(obs_lrr$rr$xcol)[1]*diff(obs_lrr$rr$yrow)[1]))^2)
+    
     ### Estimated value (log relative risk and p-value) for each knot
     if(k == 1) {
-      sim_risk = as.vector(t(obs_lrr$rr$v))
-      sim_pval = as.vector(t(obs_lrr$P$v))
       sim <- z
       out <- obs_lrr
       } else {
-      sim_risk <- as.vector(t(obs_lrr$rr$v))
-      sim_pval <- as.vector(t(obs_lrr$P$v))
-      sim <- NULL
-      out <- NULL
-      rx <- NULL
-      ry <- NULL
+        sim <- NULL
+        out <- NULL
+        rx <- NULL
+        ry <- NULL
       }
     
     # Output for each n-fold
@@ -160,11 +173,18 @@ jitter_power <- function(obs_data,
                         "ry" = ry,
                         "sim" = sim,
                         "out" = out,
-                        "n_con" = y$n,
-                        "bandw" = h0
+                        "n_con" = con$n,
+                        "bandw" = h0,
+                        "s_obs" = s_obs,
+                        "t_obs" = t_obs
                         )
     return(par_results)
     }
+  
+  # Stop clusters, if parallel
+  if(parallel == TRUE){
+    parallel::stopCluster(cl)
+  }
   
   # Summarize iterative results
   sim_rr <- out_par[[1]]
@@ -205,7 +225,9 @@ jitter_power <- function(obs_data,
                   "rx" = out_par[[3]][[1]],
                   "ry" = out_par[[4]][[1]],
                   "n_con" = unlist(out_par[[7]]),
-                  "bandw" = unlist(out_par[[8]])
+                  "bandw" = unlist(out_par[[8]]),
+                  "s_obs" = unlist(out_par[[9]]),
+                  "t_obs" = unlist(out_par[[10]])
   )
 }
 # -------------------- END OF CODE -------------------- #
