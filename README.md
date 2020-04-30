@@ -40,7 +40,7 @@ Adaptation of this R package to a webtool by the National Cancer Institute Cente
 
 ## Authors
 
-* **Ian Buller** - *Initial heavycoding with expertise in spatial statistics * - [GitHub](https://github.com/idblr)
+* **Ian Buller** - *Initial heavycoding with expertise in spatial statistics* - [GitHub](https://github.com/idblr)
 * **Derek Brown** - *Code conceptualization and QA/QC with expertise in power calculations* - [GitHub](https://github.com/derekbrown12)
 * **Tim Myers** - *Adaptation to an R package* - [GitHub](https://github.com/timyers)
 
