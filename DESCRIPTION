@@ -1,0 +1,23 @@
+Package: sparrpowR
+Title: Power Analysis to Detect Spatial Relative Clusters
+Version: 0.0.0.9000
+Authors@R: 
+    c(person(given = "Ian D.",
+             family = "Buller",
+             role = c("aut", "cre"),
+             email = "ian.buller@nih.gov"),
+      person(given = "Derek W.",
+             family = "Brown",
+             role = c("aut", "cre"),
+             email = "derek.brown@nih.gov"),
+      person(given = "Timothy A.",
+             family = "Myers",
+             role = "ctb"),
+Description: Calculate the statistical power to detect clusters using kernel-based 
+        spatial relative risk functions that are estimated using the sparr package.
+License: `use_mit_license()`, `use_gpl3_license()` or friends to
+    pick a license
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.0.2
