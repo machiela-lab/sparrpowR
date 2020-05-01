@@ -1,8 +1,27 @@
 # ------------------------------------------ #
-# Function to Estimate the Power of a Spatial Relative Risk using previously collected data
-#
-# ------------------------------------------ #
-
+#' Function to Estimate the Power of a Spatial Relative Risk using previously 
+#' collected data.
+#'
+#' @param obs_data 
+#' @param sim_total 
+#' @param samp_control 
+#' @param s_control 
+#' @param upper_tail 
+#' @param lower_tail 
+#' @param cascon 
+#' @param resolution 
+#' @param edge 
+#' @param adapt 
+#' @param h0 
+#' @param verbose 
+#' @param parallel 
+#' @param n_core 
+#' @param ... 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 jitter_power <- function(obs_data,
                          sim_total,
                          samp_control = c("uniform", "CSR", "MVN"),

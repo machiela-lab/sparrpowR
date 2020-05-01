@@ -1,8 +1,39 @@
-# ------------------------------------------ #
-# Function to Estimate the Power of a Spatial Relative Risk using Simulated Data
-#
-# ------------------------------------------ #
-
+#' Function to Estimate the Power of a Spatial Relative Risk using Simulated Data
+#'
+#' @param x_case 
+#' @param y_case 
+#' @param x_control 
+#' @param y_control 
+#' @param n_case 
+#' @param n_control 
+#' @param npc_control 
+#' @param r_case 
+#' @param r_control 
+#' @param s_case 
+#' @param s_control 
+#' @param l_case 
+#' @param l_control 
+#' @param e_control 
+#' @param sim_total 
+#' @param samp_case 
+#' @param samp_control 
+#' @param upper_tail 
+#' @param lower_tail 
+#' @param win 
+#' @param cascon 
+#' @param resolution 
+#' @param edge 
+#' @param adapt 
+#' @param h0 
+#' @param verbose 
+#' @param parallel 
+#' @param n_core 
+#' @param ... 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 spatial_power <- function(x_case, y_case,
                           x_control = NULL, y_control = NULL,
                           n_case = NULL, n_control = NULL, npc_control = NULL,

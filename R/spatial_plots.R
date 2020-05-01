@@ -1,8 +1,19 @@
-# ------------------------------------------ #
-# Function to Estimate the Power of a Spatial Relative Risk using Simulated Data
-#
-# ------------------------------------------ #
-
+#' Function to Estimate the Power of a Spatial Relative Risk using Simulated Data
+#'
+#' @param input 
+#' @param p_thresh 
+#' @param plot_text 
+#' @param n_sim 
+#' @param cols 
+#' @param chars 
+#' @param sizes 
+#' @param plot_pts 
+#' @param ... 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 spatial_plots <- function(input,
                           p_thresh = 0.8,
                           plot_text = FALSE,
