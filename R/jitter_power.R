@@ -1,23 +1,6 @@
 # ------------------------------------------ #
 # Function to Estimate the Power of a Spatial Relative Risk using previously collected data
 #
-# Created by: Ian Buller, Ph.D., M.A. (GitHub: @idblr)
-# Created on: April 14, 2020
-#
-# Recently modified by: @idblr
-# Recently modified on: April 30, 2020
-#
-# Notes:
-# A) 04/14/2020 (IB) - Adapted from spatial_power() function
-# B) 4/14/20 (IB) - Set 'cascon' argument default to FALSE
-# C) 04/14/2020 (IB) - Switched order of ppp marks for plotting
-# D) 04/15/2020 (IB) - Capture sample size of simulated data (controls) in each iteration
-# E) 04/15/2020 (IB) - Switched around "uniform" and "CSR"
-# F) 04/16/2020 (IB) - Fixed bug in "jittered" sampling and renamed "MVN"
-# G) 04/16/2020 (IB) - Renamed 'scalar' argument as 's_control' to match spatial_power() and spatial_data()
-# H) 04/16/2020 (IB) - Set the default bandwidth using the sparr::OS() function and capture bandwidth for each iteration
-# I) 04/16/2020 (IB) - Add capability for silent runs (verbose = FALSE)
-# J) 04/30/2020 (IB) - Added parallelization similar to spatial_power() 
 # ------------------------------------------ #
 
 jitter_power <- function(obs_data,

@@ -1,36 +1,6 @@
 # ------------------------------------------ #
 # Function to Estimate the Power of a Spatial Relative Risk using Simulated Data
 #
-# Created by: Ian Buller, Ph.D., M.A. (GitHub: @idblr)
-# Created on: April 13, 2020
-#
-# Recently modified by: @idblr
-# Recently modified on: April 30, 2020
-#
-# Notes:
-# A) 4/13/20 (IB) - Combines rand_cascon() and rand_srr() functions per iteration
-# B) 4/14/20 (IB) - Set 'cascon' argument default to FALSE
-# C) 4/14/20 (IB) - Removed "stratified" option for control sampling
-# D) 4/14/20 (IB) - Fixed 'lambda' parameter to be flexible to window
-# E) 04/14/2020 (IB) - Switched order of ppp marks for plotting
-# F) 04/15/2020 (IB) - "IPP" and "cluster" force the definition of these arguments. Curiously, "CSR" and "systematic" can run with sparr defaults without specifying. Added 'resolution', 'edge', 'adapt", and 'h0' arguments for now as a band-aid solution
-# G) 04/15/2020 (IB) - Capture sample size of simulated data (cases and controls) in each iteration
-# H) 04/15/2020 (IB) - Added "uniform" sampling for controls
-# I) 04/16/2020 (IB) - Set the default bandwidth using the sparr::OS() function and capture bandwidth for each iteration
-# J) 04/16/2020 (IB) - Add capability for silent runs (verbose = FALSE)
-# K) 04/16/20 (IB) - LARGE UPDATE
-#     1. Added functionality for multivariate normal case sampling
-#     2. Added functionality for multivariate normal control sampling at user-specified areas
-#     3. Improved parameter input of class double or vector 
-#     4. Removed consistent sample size (... for now)
-#     5. Fixed CSR sampling for cases and renamed 'Poisson' case sampling to IPP
-#     6. Fixed bug in parameter specification for 'clustered' control sampling
-#     7. Improved parameter specification of case clustering function across sampling types
-#     8. Switched order of ppp marks for plotting
-# L) 04/20/20 (IB) - Added functionality for parallel processing
-# M) 04/20/20 (IB) - Added updated paralell run time comparisons
-# N) 04/20/20 (IB) - Added functionality for global test statistics
-# O) 04/30/20 (IB) - Streamlined package call
 # ------------------------------------------ #
 
 spatial_power <- function(x_case, y_case,

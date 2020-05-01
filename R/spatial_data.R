@@ -1,35 +1,6 @@
 # ------------------------------------------ #
 # Function to Simulate and Combine User-Specified Case Clusters and Randomized Control Clusters
 #
-# Created by: Ian Buller, Ph.D., M.A. (GitHub: @idblr)
-# Created on: April 8, 2020
-#
-# Recently modified by: @idblr
-# Recently modified on: April 15, 2020
-#
-# Notes:
-# A) 4/8/20 (IB) - Potential simulation scheme for sparrpoweR package 0.0.0.9000
-# B) 4/8/20 (IB) - Simulates case clusters with user-specified parameters
-# C) 4/8/20 (IB) - Maintains the case clusters as constant while simulating random control locations
-# D) 4/8/20 (IB) - Initially provided functionality for complete spatial randomness of control locations
-# E) 4/8/20 (IB) - Allows functionality for user-specified, consistent sample sizes
-# F) 4/8/20 (IB) - Added functionality for systematic control locations
-# G) 4/8/20 (IB) - Added functionality for stratified random control locations. This is very similar to CSR, so likely not necessary
-# H) 4/8/20 (IB) - Added functionality for inhomogenous Poisson control locations
-# I) 4/9/20 (IB) - Added functionality for clustered control locations
-# J) 4/9/20 (IB) - Added functionality for case Poisson clustering within a disc (homogenous and inhomogeneous)
-# K) 4/9/20 (IB) - Renamed and reorganized function
-# L) 4/13/20 (IB) - Renamed function for R package development
-# M) 4/15/20 (IB) - Made consistent with spatial_power() updates
-# N) 4/16/20 (IB) - LARGE UPDATE
-#     1. Added functionality for multivariate normal case sampling
-#     2. Added functionality for multivariate normal control sampling at user-specified areas
-#     3. Improved parameter input of class double or vector 
-#     4. Removed consistent sample size (... for now)
-#     5. Fixed CSR sampling for cases and renamed 'Poisson' case sampling to IPP
-#     6. Fixed bug in parameter specification for 'clustered' control sampling
-#     7. Improved parameter specification of case clustering function across sampling types
-#     8. Switched order of ppp marks for plotting
 # ------------------------------------------ #
 
 spatial_data <- function(x_case, y_case,
