@@ -30,3 +30,12 @@ Imports:
     sp,
     sparr,
     spatstat
+Suggests: 
+    broom,
+    geojsonio,
+    ggmap,
+    maptools,
+    osmdata,
+    rgeos,
+    tibble,
+    tidyverse
