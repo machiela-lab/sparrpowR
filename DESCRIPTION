@@ -12,11 +12,12 @@ Authors@R:
              email = "derek.brown@nih.gov"),
       person(given = "Timothy A.",
              family = "Myers",
-             role = "ctb"),
+             role = "ctb")
+      )
+Maintainer: Ian D. Buller <ian.buller@nih.gov
 Description: Calculate the statistical power to detect clusters using kernel-based 
         spatial relative risk functions that are estimated using the sparr package.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+License: Apache License (>= 2.0)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -25,7 +26,7 @@ Imports:
     doParallel,
     fields,
     foreach,
+    raster,
     sp,
     sparr,
-    spatstat,
-    raster
+    spatstat
