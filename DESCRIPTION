@@ -8,14 +8,14 @@ Authors@R:
              email = "ian.buller@nih.gov"),
       person(given = "Derek W.",
              family = "Brown",
-             role = c("aut", "cre"),
+             role = "aut",
              email = "derek.brown@nih.gov"),
       person(given = "Timothy A.",
              family = "Myers",
              role = "ctb",
              email = "myersta@mail.nih.gov")
       )
-Maintainer: Ian D. Buller <ian.buller@nih.gov
+Maintainer: Ian D. Buller <ian.buller@nih.gov>
 Description: Calculate the statistical power to detect clusters using kernel-based 
         spatial relative risk functions that are estimated using the sparr package.
 License: Apache License (>= 2.0)
