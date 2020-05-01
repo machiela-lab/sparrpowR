@@ -21,3 +21,11 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.0.2
+Imports: 
+    doParallel,
+    fields,
+    foreach,
+    sp,
+    sparr,
+    spatstat,
+    raster
