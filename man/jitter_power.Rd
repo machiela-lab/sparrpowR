@@ -28,7 +28,7 @@ jitter_power(
 
 \item{sim_total}{Number of simulation iterations}
 
-\item{samp_control}{Type of random sampling for controls, 'CSR', 'uniform', 'MVN'}
+\item{samp_control}{Type of random sampling for controls ('CSR', 'uniform', 'MVN')}
 
 \item{s_control}{If MVN, the standard deviation of the random normal noise added to each coordinate of the control locations}
 
@@ -36,7 +36,7 @@ jitter_power(
 
 \item{lower_tail}{User-specified lower tail of a two-tailed significance level}
 
-\item{cascon}{TRUE for power to detect both relative case and control clustering, hot and coldspots}
+\item{cascon}{TRUE for power to detect both relative case and control clustering (hot and coldspots)}
 
 \item{resolution}{10 to calculate surfaces in a 10 x 10 grid}
 
@@ -44,7 +44,7 @@ jitter_power(
 
 \item{adapt}{FALSE to estimate using fixed smoothing, future direction: explore adaptive smoothing}
 
-\item{h0}{NULL for internal estimation of a common oversmoothing bandwidth computed via the sparr::OS() function in the sparr package, can be user specified if want to force same bandwidth across iterations}
+\item{h0}{NULL for internal estimation of a common oversmoothing bandwidth computed via the \code{sparr::OS()} function in the sparr package, can be user specified if want to force same bandwidth across iterations}
 
 \item{verbose}{TO ADD}
 
@@ -58,10 +58,18 @@ jitter_power(
 TO ADD, add output of the function here
 }
 \description{
-Function to Estimate the Power of a Spatial Relative Risk using previously
-collected data.
+There are other arguments for tuning (mostly for adaptive smoothing), see
+\code{sparr::risk()} helpfile.
+}
+\details{
+\itemize{
+\item NOTE: Force the \code{sparr::risk()} arguement tolerate = TRUE to always calculate asymptotic p-vlaue surfaces
+\item NOTE: Force the \code{sparr::risk()} arguement verbose = FALSE to clean-up presentation
+}
 }
 \examples{
+## From the 'sparr' package
+data(pbc)
 sim_power <- jitter_power(obs_data = pbc,
                           sim_total = 100,
                           samp_control = "MVN",

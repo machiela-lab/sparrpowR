@@ -2,17 +2,23 @@
 #' Function to Estimate the Power of a Spatial Relative Risk using previously 
 #' collected data.
 #'
+#' There are other arguments for tuning (mostly for adaptive smoothing), see 
+#' `sparr::risk()` helpfile.
+#' 
+#' * NOTE: Force the `sparr::risk()` arguement tolerate = TRUE to always calculate asymptotic p-vlaue surfaces
+#' * NOTE: Force the `sparr::risk()` arguement verbose = FALSE to clean-up presentation
+#' 
 #' @param obs_data TO ADD
 #' @param sim_total Number of simulation iterations
-#' @param samp_control Type of random sampling for controls, 'CSR', 'uniform', 'MVN'
+#' @param samp_control Type of random sampling for controls ('CSR', 'uniform', 'MVN')
 #' @param s_control If MVN, the standard deviation of the random normal noise added to each coordinate of the control locations
 #' @param upper_tail User-specified upper tail of a two-tailed significance level
 #' @param lower_tail User-specified lower tail of a two-tailed significance level
-#' @param cascon TRUE for power to detect both relative case and control clustering, hot and coldspots
+#' @param cascon TRUE for power to detect both relative case and control clustering (hot and coldspots)
 #' @param resolution 10 to calculate surfaces in a 10 x 10 grid
 #' @param edge "diggle" to employ the Diggle method that reweights each observation-specific kernel, default is "uniform"
 #' @param adapt FALSE to estimate using fixed smoothing, future direction: explore adaptive smoothing
-#' @param h0 NULL for internal estimation of a common oversmoothing bandwidth computed via the sparr::OS() function in the sparr package, can be user specified if want to force same bandwidth across iterations
+#' @param h0 NULL for internal estimation of a common oversmoothing bandwidth computed via the `sparr::OS()` function in the sparr package, can be user specified if want to force same bandwidth across iterations
 #' @param verbose TO ADD
 #' @param parallel TO ADD
 #' @param n_core TO ADD
@@ -22,6 +28,8 @@
 #' @export
 #'
 #' @examples
+#' ## From the 'sparr' package
+#' data(pbc)
 #' sim_power <- jitter_power(obs_data = pbc,
 #'                           sim_total = 100,
 #'                           samp_control = "MVN",
