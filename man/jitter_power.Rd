@@ -24,40 +24,54 @@ jitter_power(
 )
 }
 \arguments{
-\item{obs_data}{}
+\item{obs_data}{TO ADD}
 
-\item{sim_total}{}
+\item{sim_total}{Number of simulation iterations}
 
-\item{samp_control}{}
+\item{samp_control}{Type of random sampling for controls, 'CSR', 'uniform', 'MVN'}
 
-\item{s_control}{}
+\item{s_control}{If MVN, the standard deviation of the random normal noise added to each coordinate of the control locations}
 
-\item{upper_tail}{}
+\item{upper_tail}{User-specified upper tail of a two-tailed significance level}
 
-\item{lower_tail}{}
+\item{lower_tail}{User-specified lower tail of a two-tailed significance level}
 
-\item{cascon}{}
+\item{cascon}{TRUE for power to detect both relative case and control clustering, hot and coldspots}
 
-\item{resolution}{}
+\item{resolution}{10 to calculate surfaces in a 10 x 10 grid}
 
-\item{edge}{}
+\item{edge}{"diggle" to employ the Diggle method that reweights each observation-specific kernel, default is "uniform"}
 
-\item{adapt}{}
+\item{adapt}{FALSE to estimate using fixed smoothing, future direction: explore adaptive smoothing}
 
-\item{h0}{}
+\item{h0}{NULL for internal estimation of a common oversmoothing bandwidth computed via the sparr::OS() function in the sparr package, can be user specified if want to force same bandwidth across iterations}
 
-\item{verbose}{}
+\item{verbose}{TO ADD}
 
-\item{parallel}{}
+\item{parallel}{TO ADD}
 
-\item{n_core}{}
+\item{n_core}{TO ADD}
 
 \item{...}{}
 }
 \value{
-
+TO ADD, add output of the function here
 }
 \description{
 Function to Estimate the Power of a Spatial Relative Risk using previously
 collected data.
+}
+\examples{
+sim_power <- jitter_power(obs_data = pbc,
+                          sim_total = 100,
+                          samp_control = "MVN",
+                          parallel = TRUE,
+                          s_control = 10, # default = 1
+                          upper_tail = 0.995, # default = 0.975
+                          lower_tail = 0.005, # default = 0.025
+                          resolution = 100, # default = 128
+                          edge = "diggle", # default = "uniform"
+                          cascon = FALSE # default = FALSE
+                         )
+
 }
