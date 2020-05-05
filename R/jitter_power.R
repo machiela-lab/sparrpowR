@@ -22,13 +22,14 @@
 #' @param verbose TO ADD
 #' @param parallel TO ADD
 #' @param n_core TO ADD
-#' @param ... 
+#' @param ... TO ADD
 #'
 #' @return TO ADD, add output of the function here
 #' @export
 #'
 #' @examples
 #' ## From the 'sparr' package
+#' \dontrun{
 #' data(pbc)
 #' sim_power <- jitter_power(obs_data = pbc,
 #'                           sim_total = 100,
@@ -41,6 +42,7 @@
 #'                           edge = "diggle", # default = "uniform"
 #'                           cascon = FALSE # default = FALSE
 #'                          )
+#' }
 #' 
 jitter_power <- function(obs_data,
                          sim_total,

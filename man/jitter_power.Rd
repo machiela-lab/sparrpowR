@@ -52,7 +52,7 @@ jitter_power(
 
 \item{n_core}{TO ADD}
 
-\item{...}{}
+\item{...}{TO ADD}
 }
 \value{
 TO ADD, add output of the function here
@@ -69,6 +69,7 @@ There are other arguments for tuning (mostly for adaptive smoothing), see
 }
 \examples{
 ## From the 'sparr' package
+\dontrun{
 data(pbc)
 sim_power <- jitter_power(obs_data = pbc,
                           sim_total = 100,
@@ -81,5 +82,6 @@ sim_power <- jitter_power(obs_data = pbc,
                           edge = "diggle", # default = "uniform"
                           cascon = FALSE # default = FALSE
                          )
+}
 
 }
