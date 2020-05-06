@@ -43,7 +43,7 @@ Function to Estimate the Power of a Spatial Relative Risk using Simulated Data
 }
 \examples{
 \dontrun{
-Default colors = c("grey0", "grey80", "grey100", "red", "blue")
+# Default colors = c("grey0", "grey80", "grey100", "red", "blue")
 spatial_plots(input = sim_power, # use output of SRR simulation
               p_thresh = 0.8, # default = 0.8
               #plot_text = T, # default = FALSE in case resolution >> 10
