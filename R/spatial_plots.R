@@ -1,19 +1,31 @@
 #' Function to Estimate the Power of a Spatial Relative Risk using Simulated Data
 #'
-#' @param input 
-#' @param p_thresh 
-#' @param plot_text 
-#' @param n_sim 
-#' @param cols 
-#' @param chars 
-#' @param sizes 
-#' @param plot_pts 
-#' @param ... 
+#' @param input Use output of SRR simulation
+#' @param p_thresh p threshold, default is 0.8
+#' @param plot_text default is FALSE, in case resolution >> 10
+#' @param n_sim TO ADD
+#' @param cols colors, default colors = c("grey0", "grey80", "grey100", "red", "blue")
+#' @param chars case, control
+#' @param sizes case, control
+#' @param plot_pts TO ADD, default is TRUE
+#' @param ... TO ADD
 #'
-#' @return
-#' @export
+#' @return TO ADD, add output of the function here
+#' @export 
 #'
 #' @examples
+#' \dontrun{
+#' Default colors = c("grey0", "grey80", "grey100", "red", "blue")
+#' spatial_plots(input = sim_power, # use output of SRR simulation
+#'               p_thresh = 0.8, # default = 0.8
+#'               #plot_text = T, # default = FALSE in case resolution >> 10
+#'               plot_pts = T, # default = TRUE 
+#'               chars = c(4,5), # case, control
+#'               sizes = c(0.5,0.5), # case, control
+#'               cols = c("#0000ff", "#00ff00", "#ff0000", "#a020f0", "#ffa500") #c("blue", "green", "red", "purple", "orange") # insufficient, sufficient, text, case, control
+#'               )
+#' }
+#' 
 spatial_plots <- function(input,
                           p_thresh = 0.8,
                           plot_text = FALSE,
