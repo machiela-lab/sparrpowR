@@ -17,27 +17,41 @@ spatial_plots(
 )
 }
 \arguments{
-\item{input}{}
+\item{input}{Use output of SRR simulation}
 
-\item{p_thresh}{}
+\item{p_thresh}{p threshold, default is 0.8}
 
-\item{plot_text}{}
+\item{plot_text}{default is FALSE, in case resolution >> 10}
 
-\item{n_sim}{}
+\item{n_sim}{TO ADD}
 
-\item{cols}{}
+\item{cols}{colors, default colors = c("grey0", "grey80", "grey100", "red", "blue")}
 
-\item{chars}{}
+\item{chars}{case, control}
 
-\item{sizes}{}
+\item{sizes}{case, control}
 
-\item{plot_pts}{}
+\item{plot_pts}{TO ADD, default is TRUE}
 
-\item{...}{}
+\item{...}{TO ADD}
 }
 \value{
-
+TO ADD, add output of the function here
 }
 \description{
 Function to Estimate the Power of a Spatial Relative Risk using Simulated Data
+}
+\examples{
+\dontrun{
+Default colors = c("grey0", "grey80", "grey100", "red", "blue")
+spatial_plots(input = sim_power, # use output of SRR simulation
+              p_thresh = 0.8, # default = 0.8
+              #plot_text = T, # default = FALSE in case resolution >> 10
+              plot_pts = T, # default = TRUE 
+              chars = c(4,5), # case, control
+              sizes = c(0.5,0.5), # case, control
+              cols = c("#0000ff", "#00ff00", "#ff0000", "#a020f0", "#ffa500") #c("blue", "green", "red", "purple", "orange") # insufficient, sufficient, text, case, control
+              )
+}
+
 }
