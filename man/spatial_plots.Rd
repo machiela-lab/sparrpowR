@@ -50,7 +50,8 @@ spatial_plots(input = sim_power, # use output of SRR simulation
               plot_pts = T, # default = TRUE 
               chars = c(4,5), # case, control
               sizes = c(0.5,0.5), # case, control
-              cols = c("#0000ff", "#00ff00", "#ff0000", "#a020f0", "#ffa500") #c("blue", "green", "red", "purple", "orange") # insufficient, sufficient, text, case, control
+              cols = c("#0000ff", "#00ff00", "#ff0000", "#a020f0", "#ffa500") 
+                 #c("blue", "green", "red", "purple", "orange") 
               )
 }
 
