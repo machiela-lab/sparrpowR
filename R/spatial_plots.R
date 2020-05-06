@@ -11,6 +11,8 @@
 #' @param ... TO ADD
 #'
 #' @return TO ADD, add output of the function here
+#' @importFrom stats na.omit
+#' @importFrom graphics text
 #' @export 
 #'
 #' @examples
