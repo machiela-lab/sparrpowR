@@ -37,67 +37,106 @@ spatial_power(
 )
 }
 \arguments{
-\item{x_case}{}
+\item{x_case}{TO ADD}
 
-\item{y_case}{}
+\item{y_case}{TO ADD}
 
-\item{x_control}{}
+\item{x_control}{TO ADD}
 
-\item{y_control}{}
+\item{y_control}{TO ADD}
 
-\item{n_case}{}
+\item{n_case}{TO ADD}
 
-\item{n_control}{}
+\item{n_control}{TO ADD}
 
-\item{npc_control}{}
+\item{npc_control}{TO ADD}
 
-\item{r_case}{}
+\item{r_case}{TO ADD}
 
-\item{r_control}{}
+\item{r_control}{TO ADD}
 
-\item{s_case}{}
+\item{s_case}{TO ADD}
 
-\item{s_control}{}
+\item{s_control}{TO ADD}
 
-\item{l_case}{}
+\item{l_case}{TO ADD}
 
-\item{l_control}{}
+\item{l_control}{TO ADD}
 
-\item{e_control}{}
+\item{e_control}{TO ADD}
 
-\item{sim_total}{}
+\item{sim_total}{TO ADD}
 
-\item{samp_case}{}
+\item{samp_case}{TO ADD}
 
-\item{samp_control}{}
+\item{samp_control}{TO ADD}
 
-\item{upper_tail}{}
+\item{upper_tail}{TO ADD}
 
-\item{lower_tail}{}
+\item{lower_tail}{TO ADD}
 
-\item{win}{}
+\item{win}{TO ADD}
 
-\item{cascon}{}
+\item{cascon}{TO ADD}
 
-\item{resolution}{}
+\item{resolution}{TO ADD}
 
-\item{edge}{}
+\item{edge}{TO ADD}
 
-\item{adapt}{}
+\item{adapt}{TO ADD}
 
-\item{h0}{}
+\item{h0}{TO ADD}
 
-\item{verbose}{}
+\item{verbose}{TO ADD}
 
-\item{parallel}{}
+\item{parallel}{TO ADD}
 
-\item{n_core}{}
+\item{n_core}{TO ADD}
 
-\item{...}{}
+\item{...}{TO ADD}
 }
 \value{
-
+TO ADD, add output of the function here
 }
 \description{
 Function to Estimate the Power of a Spatial Relative Risk using Simulated Data
+}
+\examples{
+\dontrun{
+spatial_power(x_case = c(0.25, 0.5, 0.75),
+              y_case = c(0.75, 0.25, 0.75),
+              x_control = c(0.25, 0.5, 0.75),
+              y_control = c(0.75, 0.25, 0.75),
+                 #n_case = c(100, 100,100),
+              n_case = 100,
+              n_control = 700,
+                 #r_case = c(0.1, 0.2, 0.1),
+              r_case = 0.1,
+                 #s_case = c(0.05,0.01,0.05),
+              s_case = 0.05,
+                 #l_case = c(200,100,200),
+              l_case = 200,
+                 #l_case = l_cont,
+              sim_total = 10,
+              samp_case = "MVN", 
+              samp_control = "MVN",
+              npc_control = 100,
+              r_control = 0.1,
+              e_control = 0,
+              l_control = 100,
+                 #l_control = l_cont,
+              s_control = 0.1,
+                 #win = unit.circle,
+              upper_tail = 0.995, # default = 0.975
+              lower_tail = 0.005, # default = 0.025
+              resolution = 50, # default = 128
+              edge = "diggle", # default = "uniform"
+              adapt = FALSE,
+              h0 = NULL,
+              cascon = TRUE, # cascon = FALSE for only relative case clustering (hotspots)
+              parallel = T,
+              verbose = F
+              ) 
+}
+
 }

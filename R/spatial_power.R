@@ -1,39 +1,76 @@
 #' Function to Estimate the Power of a Spatial Relative Risk using Simulated Data
 #'
-#' @param x_case 
-#' @param y_case 
-#' @param x_control 
-#' @param y_control 
-#' @param n_case 
-#' @param n_control 
-#' @param npc_control 
-#' @param r_case 
-#' @param r_control 
-#' @param s_case 
-#' @param s_control 
-#' @param l_case 
-#' @param l_control 
-#' @param e_control 
-#' @param sim_total 
-#' @param samp_case 
-#' @param samp_control 
-#' @param upper_tail 
-#' @param lower_tail 
-#' @param win 
-#' @param cascon 
-#' @param resolution 
-#' @param edge 
-#' @param adapt 
-#' @param h0 
-#' @param verbose 
-#' @param parallel 
-#' @param n_core 
-#' @param ... 
+#' @param x_case TO ADD
+#' @param y_case TO ADD
+#' @param x_control TO ADD
+#' @param y_control TO ADD
+#' @param n_case TO ADD
+#' @param n_control TO ADD
+#' @param npc_control TO ADD
+#' @param r_case TO ADD
+#' @param r_control TO ADD
+#' @param s_case TO ADD
+#' @param s_control TO ADD
+#' @param l_case TO ADD
+#' @param l_control TO ADD
+#' @param e_control TO ADD
+#' @param sim_total TO ADD
+#' @param samp_case TO ADD
+#' @param samp_control TO ADD
+#' @param upper_tail TO ADD
+#' @param lower_tail TO ADD
+#' @param win TO ADD
+#' @param cascon TO ADD
+#' @param resolution TO ADD
+#' @param edge TO ADD
+#' @param adapt TO ADD
+#' @param h0 TO ADD
+#' @param verbose TO ADD
+#' @param parallel TO ADD
+#' @param n_core TO ADD
+#' @param ... TO ADD
 #'
-#' @return
+#' @return TO ADD, add output of the function here
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' spatial_power(x_case = c(0.25, 0.5, 0.75),
+#'               y_case = c(0.75, 0.25, 0.75),
+#'               x_control = c(0.25, 0.5, 0.75),
+#'               y_control = c(0.75, 0.25, 0.75),
+#'                  #n_case = c(100, 100,100),
+#'               n_case = 100,
+#'               n_control = 700,
+#'                  #r_case = c(0.1, 0.2, 0.1),
+#'               r_case = 0.1,
+#'                  #s_case = c(0.05,0.01,0.05),
+#'               s_case = 0.05,
+#'                  #l_case = c(200,100,200),
+#'               l_case = 200,
+#'                  #l_case = l_cont,
+#'               sim_total = 10,
+#'               samp_case = "MVN", 
+#'               samp_control = "MVN",
+#'               npc_control = 100,
+#'               r_control = 0.1,
+#'               e_control = 0,
+#'               l_control = 100,
+#'                  #l_control = l_cont,
+#'               s_control = 0.1,
+#'                  #win = unit.circle,
+#'               upper_tail = 0.995, # default = 0.975
+#'               lower_tail = 0.005, # default = 0.025
+#'               resolution = 50, # default = 128
+#'               edge = "diggle", # default = "uniform"
+#'               adapt = FALSE,
+#'               h0 = NULL,
+#'               cascon = TRUE, # cascon = FALSE for only relative case clustering (hotspots)
+#'               parallel = T,
+#'               verbose = F
+#'               ) 
+#' }
+#' 
 spatial_power <- function(x_case, y_case,
                           x_control = NULL, y_control = NULL,
                           n_case = NULL, n_control = NULL, npc_control = NULL,
