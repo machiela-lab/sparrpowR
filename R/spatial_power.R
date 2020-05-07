@@ -95,10 +95,7 @@ spatial_power <- function(x_case, y_case,
                           n_core = NULL,
                           ...) {
   
-  # Packages
-  # loadedPackages <- c("foreach", "sparr", "spatstat")
-  # invisible(lapply(loadedPackages, require, character.only = T))
-  
+
   # Custom Internal Functions
   ## Combine function used in foreach
   comb <- function(x, ...) {

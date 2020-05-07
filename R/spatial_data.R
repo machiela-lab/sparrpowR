@@ -67,8 +67,6 @@ spatial_data <- function(x_case, y_case,
                          win = unit.square(),
                          ...) {
   
-  # Package(s)
-  # require(spatstat)
   
   # Inputs
   if (length(x_case) != length(y_case)) {

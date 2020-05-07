@@ -64,10 +64,6 @@ jitter_power <- function(obs_data,
                          n_core = NULL,
                          ...) {
   
-  # Packages
-  # loadedPackages <- c("foreach", "sparr", "spatstat")
-  # invisible(lapply(loadedPackages, require, character.only = T))
-  
   # Custom Internal Functions
   ## Combine function used in foreach
   comb <- function(x, ...) {
