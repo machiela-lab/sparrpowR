@@ -25,6 +25,7 @@
 #' @param ... TO ADD
 #'
 #' @return TO ADD, add output of the function here
+#' @importFrom spatstat marks
 #' @importFrom stats sd
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @importFrom foreach %do% %dopar%
@@ -64,8 +65,8 @@ jitter_power <- function(obs_data,
                          ...) {
   
   # Packages
-  loadedPackages <- c("foreach", "sparr", "spatstat")
-  invisible(lapply(loadedPackages, require, character.only = T))
+  # loadedPackages <- c("foreach", "sparr", "spatstat")
+  # invisible(lapply(loadedPackages, require, character.only = T))
   
   # Custom Internal Functions
   ## Combine function used in foreach

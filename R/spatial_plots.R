@@ -40,8 +40,8 @@ spatial_plots <- function(input,
                           ...) {
   
   # Packages
-  loadedPackages <- c("fields", "raster", "sp")
-  invisible(lapply(loadedPackages, require, character.only = T))
+  # loadedPackages <- c("fields", "raster", "sp")
+  # invisible(lapply(loadedPackages, require, character.only = T))
   
   if("ppplist" %in% class(input)){
     return(sp::plot(input[1:n_sim], 
