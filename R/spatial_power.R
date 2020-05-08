@@ -1,3 +1,5 @@
+#' spatial_power()
+#' 
 #' Function to Estimate the Power of a Spatial Relative Risk using Simulated Data
 #'
 #' @param x_case TO ADD

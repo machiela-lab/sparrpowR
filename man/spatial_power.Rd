@@ -2,7 +2,7 @@
 % Please edit documentation in R/spatial_power.R
 \name{spatial_power}
 \alias{spatial_power}
-\title{Function to Estimate the Power of a Spatial Relative Risk using Simulated Data}
+\title{spatial_power()}
 \usage{
 spatial_power(
   x_case,

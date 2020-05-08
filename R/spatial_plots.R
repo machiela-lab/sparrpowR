@@ -1,3 +1,5 @@
+#' spatial_plots()
+#' 
 #' Function to Estimate the Power of a Spatial Relative Risk using Simulated Data
 #'
 #' @param input Use output of SRR simulation

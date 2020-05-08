@@ -2,7 +2,7 @@
 % Please edit documentation in R/spatial_plots.R
 \name{spatial_plots}
 \alias{spatial_plots}
-\title{Function to Estimate the Power of a Spatial Relative Risk using Simulated Data}
+\title{spatial_plots()}
 \usage{
 spatial_plots(
   input,
