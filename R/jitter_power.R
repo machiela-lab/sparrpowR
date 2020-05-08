@@ -105,7 +105,7 @@ jitter_power <- function(obs_data,
   }
   
   # extract case locations
-  cas <- split(obs_data)[levels(spatstat::marks(obs_data))[1]]
+  cas <- split(obs_data)[levels(spatstat::marks(obs_data))[1]][[1]]
   spatstat::marks(cas) <- "case"
   
   if (verbose == TRUE & parallel == FALSE){
