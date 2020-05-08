@@ -1,3 +1,5 @@
+#'spatial_data()
+#'
 #' Function to Simulate and Combine User-Specified Case Clusters and Randomized Control Clusters
 #'
 #' @param x_case TO ADD

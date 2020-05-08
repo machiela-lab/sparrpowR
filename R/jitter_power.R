@@ -1,4 +1,5 @@
-# ------------------------------------------ #
+#'jitter_power()
+#'
 #' Function to Estimate the Power of a Spatial Relative Risk using previously 
 #' collected data.
 #'
