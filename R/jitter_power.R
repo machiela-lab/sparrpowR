@@ -105,7 +105,7 @@ jitter_power <- function(obs_data,
   }
   
   # extract case locations
-  cas <- obs_data[levels(spatstat::marks(obs_data)[1]]
+  cas <- split(obs_data)[levels(spatstat::marks(obs_data))[1]]
   spatstat::marks(cas) <- "case"
   
   if (verbose == TRUE & parallel == FALSE){
@@ -142,8 +142,8 @@ jitter_power <- function(obs_data,
       }
     
     # Create random cluster of controls
-    con <- rcluster_control(n = obs_data[spatstat::marks(obs_data) == "control"]$n,
-                          l = obs_data[spatstat::marks(obs_data) == "control"]$n / (diff(obs_data$window$xrange)*diff(obs_data$window$yrange)),
+    con <- rcluster_control(n = split(obs_data)[levels(spatstat::marks(obs_data))[2]]$n,
+                          l = split(obs_data)[levels(spatstat::marks(obs_data))[1]]$n / (diff(obs_data$window$xrange)*diff(obs_data$window$yrange)),
                           win = obs_data$window,
                           s = s_control,
                           ...)
