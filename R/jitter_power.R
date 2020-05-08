@@ -55,9 +55,9 @@ jitter_power <- function(obs_data,
                          upper_tail = 0.975,
                          lower_tail = 0.025,
                          cascon = FALSE,
-                         resolution = 128,
-                         edge = "uniform",
-                         adapt = FALSE,
+                         #resolution = 128,
+                         #edge = "uniform",
+                         #adapt = FALSE,
                          h0 = NULL,
                          verbose = TRUE,
                          parallel = FALSE,
@@ -105,7 +105,7 @@ jitter_power <- function(obs_data,
   }
   
   # extract case locations
-  cas <- split(obs_data)[levels(spatstat::marks(obs_data))[1]][[1]]
+  cas <- split(obs_data)[[1]]
   spatstat::marks(cas) <- "case"
   
   # progress bar
@@ -140,11 +140,12 @@ jitter_power <- function(obs_data,
     # Progress bar
     if (verbose == TRUE & parallel == FALSE){
       setTxtProgressBar(pb, k)
+      if(k == sim_total) cat("\n")
       }
     
     # Create random cluster of controls
-    con <- rcluster_control(n = split(obs_data)[levels(spatstat::marks(obs_data))[2]]$n,
-                          l = split(obs_data)[levels(spatstat::marks(obs_data))[1]]$n / (diff(obs_data$window$xrange)*diff(obs_data$window$yrange)),
+    con <- rcluster_control(n = split(obs_data)[[2]]$n,
+                          l = split(obs_data)[[2]]$n / (diff(obs_data$window$xrange)*diff(obs_data$window$yrange)),
                           win = obs_data$window,
                           s = s_control,
                           ...)

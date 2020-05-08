@@ -86,7 +86,6 @@ rampbreaks <- seq(0, 1,
                   length.out = length(raster::values(pvalprop_raster))+1
                   )
 ## Continuous Output
-if(plot_pts == TRUE) {
 p2 <- spatstat::plot.ppp(input$sim, 
                pch = chars, 
                cex = sizes,
@@ -113,39 +112,13 @@ fields::image.plot(pvalprop_raster,
                                       cex = 0.67
                                       )
                    )
+if(plot_pts == TRUE) {
 spatstat::plot.ppp(input$sim, 
          pch = chars, 
          cex = sizes,
          cols = c(cols[4], cols[5]),
          add = T
          )
-} else {
-  p2 <- spatstat::plot.ppp(input$sim, 
-                           pch = chars, 
-                           cex = sizes,
-                           cols = c("transparent", "transparent"),
-                           leg.side = "bottom",
-                           leg.args = list(cex.axis = 0.0000000000000001),
-                           main = "Local power:\nProportion of simulations significant"
-  )
-  fields::image.plot(pvalprop_raster, 
-                     col = rampcols,
-                     breaks = rampbreaks,
-                     axes = F,
-                     cex.lab = 1,
-                     xlab = "",
-                     ylab = "",
-                     cex = 1,
-                     bigplot = c(0.25, 0.8, 0.2, 0.8),
-                     smallplot = c(0.82, 0.84, 0.32, 0.8),
-                     axis.args = list(cex.axis = 0.67),
-                     add = T,
-                     legend.args = list(text = "Power",
-                                        side = 4,
-                                        line = 2,
-                                        cex = 0.67
-                     )
-  )
 }
 
 rampbreaks <- NULL # conserve memory
@@ -200,6 +173,6 @@ fields::image.plot(pvalprop_reclass,
 if(plot_text == T){
   text(x = input$rx, y = input$ry, input$pval_prop, col = cols[3], cex = 0.5)
   }
-pvalprop_reclass <- NULL # conserve memory
+  pvalprop_reclass <- NULL # conserve memory
 }
 # -------------------- END OF CODE -------------------- #
