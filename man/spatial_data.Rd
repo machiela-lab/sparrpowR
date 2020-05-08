@@ -2,7 +2,7 @@
 % Please edit documentation in R/spatial_data.R
 \name{spatial_data}
 \alias{spatial_data}
-\title{Function to Simulate and Combine User-Specified Case Clusters and Randomized Control Clusters}
+\title{spatial_data()}
 \usage{
 spatial_data(
   x_case,

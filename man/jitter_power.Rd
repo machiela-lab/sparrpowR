@@ -2,8 +2,7 @@
 % Please edit documentation in R/jitter_power.R
 \name{jitter_power}
 \alias{jitter_power}
-\title{Function to Estimate the Power of a Spatial Relative Risk using previously
-collected data.}
+\title{jitter_power()}
 \usage{
 jitter_power(
   obs_data,
@@ -58,11 +57,13 @@ jitter_power(
 TO ADD, add output of the function here
 }
 \description{
-There are other arguments for tuning (mostly for adaptive smoothing), see
-\code{sparr::risk()} helpfile.
+Function to Estimate the Power of a Spatial Relative Risk using previously
+collected data.
 }
 \details{
 \itemize{
+\item There are other arguments for tuning (mostly for adaptive smoothing), see
+\code{sparr::risk()} helpfile.
 \item NOTE: Force the \code{sparr::risk()} arguement tolerate = TRUE to always calculate asymptotic p-vlaue surfaces
 \item NOTE: Force the \code{sparr::risk()} arguement verbose = FALSE to clean-up presentation
 }
