@@ -5,7 +5,7 @@
 A suite of `R` functions to calculate the statistical power to detect clusters using kernel-based spatial relative risk functions that are estimated using the  [sparr](https://cran.r-project.org/web/packages/sparr/index.html) package.
 
 ## Installation
-* This is a private repo and requires an access token for installation.     Generate a personal access token (PAT) at            "https://github.com/settings/tokens" and supply to this argument.
+* This is a private repo and requires an access token for installation.     Generate a personal access token (PAT) at            "https://github.com/settings/tokens" and supply as an argument in the step below.
 * remotes::install_github(repo = "machiela-lab/sparrpowR", auth_token = "my_token")
 
 ## Getting Started
