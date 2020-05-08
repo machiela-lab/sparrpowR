@@ -108,6 +108,7 @@ jitter_power <- function(obs_data,
   cas <- split(obs_data)[levels(spatstat::marks(obs_data))[1]][[1]]
   spatstat::marks(cas) <- "case"
   
+  # progress bar
   if (verbose == TRUE & parallel == FALSE){
     message("Generating Data, Estimating Relative Risk, Calculating Power")
     pb <- txtProgressBar(min = 0, max = sim_total, style = 3)
@@ -120,9 +121,9 @@ jitter_power <- function(obs_data,
     if(is.null(n_core)){ n_core <- parallel::detectCores() - 1 }
     cl <- parallel::makeCluster(n_core)
     doParallel::registerDoParallel(cl)
-    `%fun%` <- `%dopar%`
+    `%fun%` <- foreach::`%dopar%`
   } else {
-    `%fun%` <- `%do%`
+    `%fun%` <- foreach::`%do%`
   }
   
   # Iteratively calculate the log relative risk and asymptotic p-value surfaces
