@@ -2,9 +2,8 @@
 #' Function to Estimate the Power of a Spatial Relative Risk using previously 
 #' collected data.
 #'
-#' There are other arguments for tuning (mostly for adaptive smoothing), see 
-#' `sparr::risk()` helpfile.
-#' 
+#' * There are other arguments for tuning (mostly for adaptive smoothing), see 
+#'  `sparr::risk()` helpfile.
 #' * NOTE: Force the `sparr::risk()` arguement tolerate = TRUE to always calculate asymptotic p-vlaue surfaces
 #' * NOTE: Force the `sparr::risk()` arguement verbose = FALSE to clean-up presentation
 #' 
