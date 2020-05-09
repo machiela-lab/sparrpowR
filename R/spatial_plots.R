@@ -12,7 +12,7 @@
 #' @param plot_pts TO ADD, default is TRUE
 #' @param ... TO ADD
 #'
-#' @return TO ADD, add output of the function here
+#' @return Plots of simulated data and statistical power.
 #' @importFrom stats na.omit
 #' @importFrom graphics text
 #' @export 

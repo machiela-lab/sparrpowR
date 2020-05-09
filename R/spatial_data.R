@@ -22,7 +22,7 @@
 #' @param win TO ADD
 #' @param ... TO ADD
 #'
-#' @return TO ADD, add output of the function here
+#' @return Simulated point-level spatial data. 
 #' @importFrom stats rnorm
 #' @export
 #'
