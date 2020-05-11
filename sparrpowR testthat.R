@@ -397,8 +397,7 @@ test_that("spatial_power works", {
 # spatial_plots testthat #
 ##########################
 
-# Generate match_maker_output
-# spatial_power Example
+# Generate spatial_power_output
 spatial_power_output<- spatial_power(x_case = c(0.25),
                           x_control = c(0.25),
                           y_case = c(0.75),
