@@ -27,7 +27,6 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #'  spatial_data(x_case = c(0.5),
 #'               y_case = c(0.5),
 #'               x_control = c(0.5),
