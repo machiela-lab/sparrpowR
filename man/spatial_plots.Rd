@@ -36,7 +36,7 @@ spatial_plots(
 \item{...}{TO ADD}
 }
 \value{
-None
+None. (Creates plots of simulated data and statistical power.)
 }
 \description{
 Function to Estimate the Power of a Spatial Relative Risk using Simulated Data

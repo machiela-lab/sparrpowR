@@ -54,7 +54,7 @@ jitter_power(
 \item{...}{TO ADD}
 }
 \value{
-TO ADD, add output of the function here
+Simulated point-level spatial data and local power.
 }
 \description{
 Function to Estimate the Power of a Spatial Relative Risk using previously

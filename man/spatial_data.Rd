@@ -66,7 +66,7 @@ spatial_data(
 \item{...}{TO ADD}
 }
 \value{
-TO ADD, add output of the function here
+Simulated point-level spatial data.
 }
 \description{
 Function to Simulate and Combine User-Specified Case Clusters and Randomized Control Clusters

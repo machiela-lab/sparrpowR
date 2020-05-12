@@ -24,7 +24,7 @@
 #' @param n_core TO ADD
 #' @param ... TO ADD
 #'
-#' @return TO ADD, add output of the function here
+#' @return Simulated point-level spatial data and local power.
 #' @importFrom spatstat marks
 #' @importFrom stats sd
 #' @importFrom utils setTxtProgressBar txtProgressBar
