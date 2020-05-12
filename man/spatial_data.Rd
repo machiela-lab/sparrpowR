@@ -72,31 +72,24 @@ TO ADD, add output of the function here
 Function to Simulate and Combine User-Specified Case Clusters and Randomized Control Clusters
 }
 \examples{
-\dontrun{
- spatial_data(x_case = c(0.25, 0.5, 0.75),
-              y_case = c(0.75, 0.25, 0.75),
-              x_control = c(0.25, 0.5, 0.75),
-              y_control = c(0.75, 0.25, 0.75),
-                 # n_case = c(100, 100,100),
+ spatial_data(x_case = c(0.5),
+              y_case = c(0.5),
+              x_control = c(0.5),
+              y_control = c(0.5),
               n_case = 100,
               n_control = 700,
-                 # r_case = c(0.1, 0.2, 0.1),
               r_case = 0.1,
-                 # s_case = c(0.05,0.01,0.05),
               s_case = 0.05,
-                 # l_case = c(200,100,200),
-              l_case = l_cont,
-              sim_total = 2,
+              l_case = 200,
+              r_control = 0.1,
+              s_control = 0.05,
+              l_control = 100,
+              e_control = 0,
               samp_case = "MVN", 
               samp_control = "MVN",
+              sim_total = 1,
               npc_control = 10,
-              r_control = 0.1,
-              e_control = 0,
-                 # l_control = 100,
-              l_control = l_cont,
-              s_control = 0.1,
-              win = unit.circle
-              )
-}
+              win = spatstat::disc(radius = 0.5, centre = c(0.5,0.5))
+             )
 
 }

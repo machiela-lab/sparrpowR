@@ -36,22 +36,20 @@ spatial_plots(
 \item{...}{TO ADD}
 }
 \value{
-TO ADD, add output of the function here
+None
 }
 \description{
 Function to Estimate the Power of a Spatial Relative Risk using Simulated Data
 }
 \examples{
-\dontrun{
-# Default colors = c("grey0", "grey80", "grey100", "red", "blue")
-spatial_plots(input = sim_power, # use output of SRR simulation
-              p_thresh = 0.8, # default = 0.8
-              #plot_text = T, # default = FALSE in case resolution >> 10
-              plot_pts = T, # default = TRUE 
-              chars = c(4,5), # case, control
-              sizes = c(0.5,0.5), # case, control
-              cols = c("#0000ff", "#00ff00", "#ff0000", "#a020f0", "#ffa500") 
-                 #c("blue", "green", "red", "purple", "orange") 
+\donttest{
+spatial_plots(input = sparrpowR_object, 
+              p_thresh = 0.8, 
+              #plot_text = T,
+              plot_pts = T, 
+              chars = c(4,5),
+              sizes = c(0.5,0.5),
+              cols = c("grey0", "grey80", "grey100", "red", "blue")
               )
 }
 
