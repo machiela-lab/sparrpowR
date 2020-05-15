@@ -22,7 +22,7 @@ spatial_data(
   sim_total,
   samp_case = c("uniform", "MVN", "CSR", "IPP"),
   samp_control = c("uniform", "systematic", "MVN", "CSR", "IPP", "clustered"),
-  win = unit.square(),
+  win = spatstat::unit.square(),
   ...
 )
 }

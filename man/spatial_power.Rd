@@ -24,7 +24,7 @@ spatial_power(
   samp_control = c("uniform", "systematic", "MVN", "CSR", "IPP", "clustered"),
   upper_tail = 0.975,
   lower_tail = 0.025,
-  win = unit.square(),
+  win = spatstat::unit.square(),
   cascon = FALSE,
   resolution = 128,
   edge = "uniform",
