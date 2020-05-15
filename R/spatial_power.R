@@ -33,6 +33,7 @@
 #' @param ... TO ADD
 #'
 #' @return Simulated point-level spatial data and local power.
+#' @importFrom foreach foreach
 #' @export
 #'
 #' @examples

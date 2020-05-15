@@ -28,7 +28,7 @@
 #' @importFrom spatstat marks
 #' @importFrom stats sd
 #' @importFrom utils setTxtProgressBar txtProgressBar
-#' @importFrom foreach %do% %dopar%
+#' @importFrom foreach foreach %do% %dopar%
 #' @export
 #'
 #' @examples
