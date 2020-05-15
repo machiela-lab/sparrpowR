@@ -4,15 +4,15 @@
 #' 
 #' @param obs_data A bivariate point pattern (a multitype point pattern of object of class "ppp") with two types of points in a factor valued mark.
 #' @param sim_total Integer, specifying the number of simulation iterations to perform.
-#' #' @param ... Arguments passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.
 #' @param samp_control Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), with complete spatial randomness (\code{samp_control="CSR"}), or multivariate normal (\code{samp_control="MVN"}).
 #' @param s_control Optional. Numberic value for the standard deviation of the multivariate normal distribution in the units of the \code{obs_data}.  The default value (1) assumes a unit square window. Ignored if (\code{samp_control="uniform"}) or (\code{samp_control="CSR"}).
 #' @param cascon Logical. If FALSE (the default) computes the power to detect only relative case clustering. If TRUE, computes power to detect both case and control clustering. 
 #' @param lower_tail Optional. Numeric value of lower p-value threshold (default=0.025).
-#' @param upper_tail Optional. Numeric value of upper p-value threshold (default=0.975).Ignored if cascon=FALSE.
+#' @param upper_tail Optional. Numeric value of upper p-value threshold (default=0.975). Ignored if cascon=FALSE.
 #' @param parallel Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.
 #' @param n_core Optional. Integer specifying the number of CPU cores on current host to use for parallelization. If NULL (the default), will execute with n-1 CPU cores on the current host.
 #' @param verbose Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.
+#' @param ... Arguments passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.
 #' 
 #' @details This function computes the statistical power of the spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) for previously collected studies with known case and control locations. 
 #' 
@@ -27,11 +27,11 @@
 #' @return An object of class "list". This is a named list with the following components:
 #' 
 #' \describe{
-#' \item{\code{sim}}{An object of class 'rrs' for the first iteration of simulated data}
-#' \item{\code{out}}{An object of class 'rrs' for the observed spatial relative risk function without randomization}
-#' \item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the mean relative risk values at each gridded knot}
-#' \item{\code{pval_mean}}{Vector of length \code{[resolution x resolution]} of the mean asymptotic p-value at each gridded knot}
-#' \item{\code{rr_sd}}{Vector of length \code{[resolution x resolution]} of the standard deviation of relative risk values at each gridded knot}
+#' \item{\code{sim}}{An object of class 'rrs' for the first iteration of simulated data.}
+#' \item{\code{out}}{An object of class 'rrs' for the observed spatial relative risk function without randomization.}
+#' \item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the mean relative risk values at each gridded knot.}
+#' \item{\code{pval_mean}}{Vector of length \code{[resolution x resolution]} of the mean asymptotic p-value at each gridded knot.}
+#' \item{\code{rr_sd}}{Vector of length \code{[resolution x resolution]} of the standard deviation of relative risk values at each gridded knot.}
 #' \item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values were significant at each gridded knot.}
 #' \item{\code{rx}}{Vector of length \code{[resolution x resolution]} of the x-coordinates of each gridded knot.}
 #' \item{\code{ry}}{Vector of length \code{[resolution x resolution]} of the y-coordinates of each gridded knot.}
@@ -66,7 +66,6 @@
 #' 
 jitter_power <- function(obs_data,
                          sim_total,
-                         ...,
                          samp_control = c("uniform", "CSR", "MVN"),
                          s_control = 1,
                          cascon = FALSE,
@@ -74,7 +73,8 @@ jitter_power <- function(obs_data,
                          upper_tail = 0.975,
                          parallel = FALSE,
                          n_core = NULL,
-                         verbose = TRUE) {
+                         verbose = TRUE,
+                         ...,) {
   
   # Custom Internal Functions
   ## Combine function used in foreach
