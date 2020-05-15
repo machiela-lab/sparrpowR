@@ -126,6 +126,7 @@ jitter_power <- function(obs_data,
   }
   
   # Iteratively calculate the log relative risk and asymptotic p-value surfaces
+  k <- NULL # define variable
   out_par <- foreach::foreach(k = 1:sim_total, 
                               .combine = comb, 
                               .multicombine = TRUE, 

@@ -265,6 +265,7 @@ spatial_power <- function(x_case, y_case,
   }
   
   # Iteratively calculate the log relative risk and asymptotic p-value surfaces
+  k <- NULL # define varialbe
   out_par <- foreach::foreach(k = 1:sim_total, 
                               .combine = comb, 
                               .multicombine = TRUE, 
