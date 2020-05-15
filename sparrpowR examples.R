@@ -1,14 +1,12 @@
 # spatial_jitter Example
 
+# Using the \code{\link[spatstat.data]{chorley}} dataset
+data(chorley)
 jitter_power(obs_data = unique(chorley),
              sim_total = 2,
              samp_control = "MVN",
-             s_control = .01, 
-             upper_tail = 0.995,
-             lower_tail = 0.005, 
-             resolution = 10, 
-             edge = "uniform", 
-             cascon = FALSE
+             s_control = 0.01
+
 )
 
 
