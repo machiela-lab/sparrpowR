@@ -1,68 +1,80 @@
-#'jitter_power()
+#' Power of SRR function for previously collected data.
 #'
-#' Function to Estimate the Power of a Spatial Relative Risk using previously 
-#' collected data.
-#'
-#' * There are other arguments for tuning (mostly for adaptive smoothing), see 
-#'  `sparr::risk()` helpfile.
-#' * NOTE: Force the `sparr::risk()` arguement tolerate = TRUE to always calculate asymptotic p-vlaue surfaces
-#' * NOTE: Force the `sparr::risk()` arguement verbose = FALSE to clean-up presentation
+#' Compute the statistical power of a spatial relative risk function using previously collected data.
 #' 
-#' @param obs_data TO ADD
-#' @param sim_total Number of simulation iterations
-#' @param samp_control Type of random sampling for controls ('CSR', 'uniform', 'MVN')
-#' @param s_control If MVN, the standard deviation of the random normal noise added to each coordinate of the control locations
-#' @param upper_tail User-specified upper tail of a two-tailed significance level
-#' @param lower_tail User-specified lower tail of a two-tailed significance level
-#' @param cascon TRUE for power to detect both relative case and control clustering (hot and coldspots)
-#' @param resolution 10 to calculate surfaces in a 10 x 10 grid
-#' @param edge "diggle" to employ the Diggle method that reweights each observation-specific kernel, default is "uniform"
-#' @param adapt FALSE to estimate using fixed smoothing, future direction: explore adaptive smoothing
-#' @param h0 NULL for internal estimation of a common oversmoothing bandwidth computed via the `sparr::OS()` function in the sparr package, can be user specified if want to force same bandwidth across iterations
-#' @param verbose TO ADD
-#' @param parallel TO ADD
-#' @param n_core TO ADD
-#' @param ... TO ADD
+#' @param obs_data A bivariate point pattern (a multitype point pattern of object of class "ppp") with two types of points in a factor valued mark.
+#' @param sim_total Integer, specifying the number of simulation iterations to perform.
+#' #' @param ... Arguments passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.
+#' @param samp_control Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), with complete spatial randomness (\code{samp_control="CSR"}), or multivariate normal (\code{samp_control="MVN"}).
+#' @param s_control Optional. Numberic value for the standard deviation of the multivariate normal distribution in the units of the \code{obs_data}.  The default value (1) assumes a unit square window. Ignored if (\code{samp_control="uniform"}) or (\code{samp_control="CSR"}).
+#' @param cascon Logical. If FALSE (the default) computes the power to detect only relative case clustering. If TRUE, computes power to detect both case and control clustering. 
+#' @param lower_tail Optional. Numeric value of lower p-value threshold (default=0.025).
+#' @param upper_tail Optional. Numeric value of upper p-value threshold (default=0.975).Ignored if cascon=FALSE.
+#' @param parallel Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.
+#' @param n_core Optional. Integer specifying the number of CPU cores on current host to use for parallelization. If NULL (the default), will execute with n-1 CPU cores on the current host.
+#' @param verbose Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.
+#' 
+#' @details This function computes the statistical power of the spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) for previously collected studies with known case and control locations. 
+#' 
+#' The function uses the \code{\link[sparr]{risk}} function to estimate the spatial relative risk function and forces the \code{tolerate} argument to be TRUE in order to calculate asymptotic p-values.
+#' 
+#' If \code{samp_control = "uniform"} the control locations are randomly generated uniformly the within the window of \code{obs_data}. By default, the resolution is an integer value of 128 and can be specified using the \code{resolution} argument.
+#' 
+#' If \code{samp_control = "CSR"} the control locations are randomly generated assuming complete spatial randomness (homogeneous Poisson process) in the within the window of \code{obs_data} with a \code{lambda = number of controls / [resolution x resolution]}. By default, the resolution is an integer value of 128 and can be specified using the \code{resolution} argument.
+#' 
+#' If \code{samp_control = "MVN"} the control locations are randomly generated assuming a multivariate normal distribution \emph{centered at each observed location}. The optional argument \code{s_control} specifies the standard deviation of the multivariate normal distribution (1 by default) in the units of the \code{obs_data}. 
 #'
-#' @return Simulated point-level spatial data and local power. 
-#' @importFrom spatstat marks
+#' @return An object of class "list". This is a named list with the following components:
+#' 
+#' \describe{
+#' \item{\code{sim}}{An object of class 'rrs' for the first iteration of simulated data}
+#' \item{\code{out}}{An object of class 'rrs' for the observed spatial relative risk function without randomization}
+#' \item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the mean relative risk values at each gridded knot}
+#' \item{\code{pval_mean}}{Vector of length \code{[resolution x resolution]} of the mean asymptotic p-value at each gridded knot}
+#' \item{\code{rr_sd}}{Vector of length \code{[resolution x resolution]} of the standard deviation of relative risk values at each gridded knot}
+#' \item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values were significant at each gridded knot.}
+#' \item{\code{rx}}{Vector of length \code{[resolution x resolution]} of the x-coordinates of each gridded knot.}
+#' \item{\code{ry}}{Vector of length \code{[resolution x resolution]} of the y-coordinates of each gridded knot.}
+#' \item{\code{rx}}{Vector of length \code{sim_total} of the number of control locations simulated in each iteration.}
+#' \item{\code{bandw}}{Vector of length \code{sim_total} of the bandwidth (of numerator) used in each iteration.}
+#' \item{\code{bandw}}{Vector of length \code{sim_total} of the global s statistic.}
+#' \item{\code{bandw}}{Vector of length \code{sim_total} of the global t statistic.}
+#' }
+#' 
+#' @importFrom spatstat marks runifpoint rpoispp ppp superimpose
+#' @importFrom spatstat.data chorley
 #' @importFrom stats sd
 #' @importFrom utils setTxtProgressBar txtProgressBar
-#' @importFrom foreach %do% %dopar%
+#' @importFrom foreach %do% %dopar% foreach
+#' @importFrom parallel detectCores makeCluster stopCluster
+#' @importFrom doParallel registerDoParallel
+#' @importFrom sparr risk
 #' @export
+#' 
+#' @seealso \code{\link[sparr]{risk}} for additional arguments for bandwidth selection, edge correction, and resolution.
 #'
 #' @examples
-#' ## From the 'sparr' package
 #' \dontrun{
-#' data(pbc)
-#' sim_power <- jitter_power(obs_data = pbc,
-#'                           sim_total = 100,
-#'                           samp_control = "MVN",
-#'                           parallel = TRUE,
-#'                           s_control = 10, # default = 1
-#'                           upper_tail = 0.995, # default = 0.975
-#'                           lower_tail = 0.005, # default = 0.025
-#'                           resolution = 100, # default = 128
-#'                           edge = "diggle", # default = "uniform"
-#'                           cascon = FALSE # default = FALSE
-#'                          )
+#' # Using the \code{\link[spatstat.data]{chorley}} dataset
+#' data(chorley)
+#' f1 <- jitter_power(obs_data = unique(chorley),
+#'                    sim_total = 2,
+#'                    samp_control = "MVN",
+#'                    s_control = 0.01
+#'                    )
 #' }
 #' 
 jitter_power <- function(obs_data,
                          sim_total,
+                         ...,
                          samp_control = c("uniform", "CSR", "MVN"),
                          s_control = 1,
-                         upper_tail = 0.975,
-                         lower_tail = 0.025,
                          cascon = FALSE,
-                         #resolution = 128,
-                         #edge = "uniform",
-                         #adapt = FALSE,
-                         h0 = NULL,
-                         verbose = TRUE,
+                         lower_tail = 0.025,
+                         upper_tail = 0.975,
                          parallel = FALSE,
                          n_core = NULL,
-                         ...) {
+                         verbose = TRUE) {
   
   # Custom Internal Functions
   ## Combine function used in foreach
@@ -154,11 +166,6 @@ jitter_power <- function(obs_data,
     z <- spatstat::superimpose(con, cas)
     spatstat::marks(z) <- as.factor(spatstat::marks(z))
     
-    # Bandwidth selection
-    if(is.null(h0)){
-      h0 <- sparr::OS(z, nstar = "geometric")
-    }
-    
     # Calculate observed kernel density ratio
     obs_lrr <- sparr::risk(z, tolerate = T, verbose = F, ...)
     
@@ -200,7 +207,7 @@ jitter_power <- function(obs_data,
                         "sim" = sim,
                         "out" = out,
                         "n_con" = con$n,
-                        "bandw" = h0,
+                        "bandw" = obs_lrr$f$h0,
                         "s_obs" = s_obs,
                         "t_obs" = t_obs
                         )
@@ -256,4 +263,3 @@ jitter_power <- function(obs_data,
                   "t_obs" = unlist(out_par[[10]])
   )
 }
-# -------------------- END OF CODE -------------------- #
