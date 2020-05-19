@@ -53,7 +53,6 @@
 #' @seealso \code{\link[sparr]{risk}} for additional arguments for bandwidth selection, edge correction, and resolution.
 #'
 #' @examples
-#'
 #' # Using the \code{\link[spatstat.data]{chorley}} dataset
 #' data(chorley)
 #' f1 <- jitter_power(obs_data = unique(chorley),

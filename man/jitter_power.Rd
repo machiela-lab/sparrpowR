@@ -74,16 +74,13 @@ If \code{samp_control = "CSR"} the control locations are randomly generated assu
 If \code{samp_control = "MVN"} the control locations are randomly generated assuming a multivariate normal distribution \emph{centered at each observed location}. The optional argument \code{s_control} specifies the standard deviation of the multivariate normal distribution (1 by default) in the units of the \code{obs_data}.
 }
 \examples{
-
 # Using the \code{\link[spatstat.data]{chorley}} dataset
-\dontrun{
 data(chorley)
 f1 <- jitter_power(obs_data = unique(chorley),
                    sim_total = 2,
                    samp_control = "MVN",
                    s_control = 0.01
                    )
-}
 
 }
 \seealso{
