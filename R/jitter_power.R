@@ -5,7 +5,7 @@
 #' @param obs_data A bivariate point pattern (a multitype point pattern of object of class "ppp") with two types of points in a factor valued mark.
 #' @param sim_total Integer, specifying the number of simulation iterations to perform.
 #' @param samp_control Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), with complete spatial randomness (\code{samp_control="CSR"}), or multivariate normal (\code{samp_control="MVN"}).
-#' @param s_control Optional. Numberic value for the standard deviation of the multivariate normal distribution in the units of the \code{obs_data}.  The default value (1) assumes a unit square window. Ignored if \code{samp_control="uniform"} or \code{samp_control="CSR"}.
+#' @param s_control Optional. Numeric value for the standard deviation of the multivariate normal distribution in the units of the \code{obs_data}.  The default value (1) assumes a unit square window. Ignored if \code{samp_control="uniform"} or \code{samp_control="CSR"}.
 #' @param cascon Logical. If FALSE (the default) computes the power to detect only relative case clustering. If TRUE, computes power to detect both case and control clustering. 
 #' @param lower_tail Optional. Numeric value of lower p-value threshold (default=0.025).
 #' @param upper_tail Optional. Numeric value of upper p-value threshold (default=0.975). Ignored if cascon=FALSE.
