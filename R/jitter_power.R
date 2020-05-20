@@ -5,7 +5,7 @@
 #' @param obs_data A bivariate point pattern (a multitype point pattern of object of class "ppp") with two types of points in a factor valued mark.
 #' @param sim_total Integer, specifying the number of simulation iterations to perform.
 #' @param samp_control Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), with complete spatial randomness (\code{samp_control="CSR"}), or multivariate normal (\code{samp_control="MVN"}).
-#' @param s_control Optional. Numberic value for the standard deviation of the multivariate normal distribution in the units of the \code{obs_data}.  The default value (1) assumes a unit square window. Ignored if (\code{samp_control="uniform"}) or (\code{samp_control="CSR"}).
+#' @param s_control Optional. Numberic value for the standard deviation of the multivariate normal distribution in the units of the \code{obs_data}.  The default value (1) assumes a unit square window. Ignored if \code{samp_control="uniform"} or \code{samp_control="CSR"}.
 #' @param cascon Logical. If FALSE (the default) computes the power to detect only relative case clustering. If TRUE, computes power to detect both case and control clustering. 
 #' @param lower_tail Optional. Numeric value of lower p-value threshold (default=0.025).
 #' @param upper_tail Optional. Numeric value of upper p-value threshold (default=0.975). Ignored if cascon=FALSE.
@@ -18,9 +18,9 @@
 #' 
 #' The function uses the \code{\link[sparr]{risk}} function to estimate the spatial relative risk function and forces the \code{tolerate} argument to be TRUE in order to calculate asymptotic p-values.
 #' 
-#' If \code{samp_control = "uniform"} the control locations are randomly generated uniformly the within the window of \code{obs_data}. By default, the resolution is an integer value of 128 and can be specified using the \code{resolution} argument.
+#' If \code{samp_control = "uniform"} the control locations are randomly generated uniformly within the window of \code{obs_data}. By default, the resolution is an integer value of 128 and can be specified using the \code{resolution} argument in the internally called \code{\link[sparr]{risk}} function.
 #' 
-#' If \code{samp_control = "CSR"} the control locations are randomly generated assuming complete spatial randomness (homogeneous Poisson process) in the within the window of \code{obs_data} with a \code{lambda = number of controls / [resolution x resolution]}. By default, the resolution is an integer value of 128 and can be specified using the \code{resolution} argument.
+#' If \code{samp_control = "CSR"} the control locations are randomly generated assuming complete spatial randomness (homogeneous Poisson process) within the window of \code{obs_data} with a \code{lambda = number of controls / [resolution x resolution]}. By default, the resolution is an integer value of 128 and can be specified using the \code{resolution} argument in the internally called \code{\link[sparr]{risk}} function.
 #' 
 #' If \code{samp_control = "MVN"} the control locations are randomly generated assuming a multivariate normal distribution \emph{centered at each observed location}. The optional argument \code{s_control} specifies the standard deviation of the multivariate normal distribution (1 by default) in the units of the \code{obs_data}. 
 #'
@@ -107,8 +107,8 @@ jitter_power <- function(obs_data,
     }
     
     if (samp_control == "MVN") {
-        x1 <- obs_data$x + rnorm(length(obs_data$x), 0, s) 
-        y1 <- obs_data$y + rnorm(length(obs_data$y), 0, s) 
+        x1 <- obs_data$x + stats::rnorm(length(obs_data$x), 0, s) 
+        y1 <- obs_data$y + stats::rnorm(length(obs_data$y), 0, s) 
         x <- spatstat::ppp(x1, y1, window = win)
     }
     

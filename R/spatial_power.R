@@ -1,38 +1,80 @@
-#' spatial_power()
+#' Power of SRR function for randomly generated data.
 #' 
-#' Function to Estimate the Power of a Spatial Relative Risk using Simulated Data
+#' Compute the statistical power of a spatial relative risk function using randomly generated data.
 #'
-#' @param x_case TO ADD
-#' @param y_case TO ADD
-#' @param x_control TO ADD
-#' @param y_control TO ADD
-#' @param n_case TO ADD
-#' @param n_control TO ADD
-#' @param npc_control TO ADD
-#' @param r_case TO ADD
-#' @param r_control TO ADD
-#' @param s_case TO ADD
-#' @param s_control TO ADD
-#' @param l_case TO ADD
-#' @param l_control TO ADD
-#' @param e_control TO ADD
-#' @param sim_total TO ADD
-#' @param samp_case TO ADD
-#' @param samp_control TO ADD
-#' @param upper_tail TO ADD
-#' @param lower_tail TO ADD
-#' @param win TO ADD
-#' @param cascon TO ADD
-#' @param resolution TO ADD
-#' @param edge TO ADD
-#' @param adapt TO ADD
-#' @param h0 TO ADD
-#' @param verbose TO ADD
-#' @param parallel TO ADD
-#' @param n_core TO ADD
-#' @param ... TO ADD
+#' @param win Window in which to simulate the random data. An object of class "owin" or something acceptable to \code{\link[spatstat]{as.owin}}.
+#' @param sim_total Integer, specifying the number of simulation iterations to perform.
+#' @param x_case Numeric value, or numeric vector, of x-coordinate(s) of case cluater(s).
+#' @param y_case Numeric value, or numeric vector, of y-coordinate(s) of case cluater(s).
+#' @param samp_case Character string specifying whether to randomize the case locations uniformly (\code{samp_control="uniform"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), or using the inhomogeneous Poisson process (\code{samp_control="IPP"}) around each case centroid.
+#' @param samp_control Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), systematically (\code{samp_control="systematic"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), using the inhomogeneous Poisson process (\code{samp_control="IPP"}), or a realisation of the Neyman-Scott cluster process (\code{samp_control="clustered"}).
+#' @param n_case Numeric value, or numeric vector, of the sample size for case locations in each cluster.
+#' @param n_control Numeric value, or numeric vector, of the sample size for control locations in each cluster.
+#' @param npc_control Optional. Numeric value of the numer of clusters of   control locations. Ignored if Ignored if \code{samp_control!="clustered"}.
+#' @param x_control Numeric value, or numeric vector, of x-coordinate(s) of case cluater(s). Ignored if \code{samp_control!="MVN"}.
+#' @param y_control Numeric value, or numeric vector, of y-coordinate(s) of case cluater(s). Ignored if \code{samp_control!="MVN"}.
+#' @param r_case Optional. Numeric value, or numeric vector, of radius (radii) of case cluater(s) in the units of \code{win}. Ignored if \code{samp_case="MVN"}.
+#' @param r_control Optional. Numeric value, or numeric vector, of radius (radii) of control cluater(s) in the units of \code{win}. Ignored if \code{samp_control!="clustered"}.
+#' @param s_case Optional. Numberic value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for case locations in the units of \code{win}.  Ignored if \code{samp_control!="MVN"}.
+#' @param s_control Optional. Numberic value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for control locations in the units of \code{win}. Ignored if \code{samp_control!="MVN"}.
+#' @param l_case Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for case clusters. Ignored if \code{samp_control!="IPP"}.
+#' @param l_control Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for control clusters. Ignored if \code{samp_control="uniform"}, \code{samp_control="systematic"}, \code{samp_control="MVN"}, or \code{samp_control="CSR"}.
+#' @param e_control Optional. A single non-negative number for the size of the expansion of the simulation window for generating parent points. Ignored if \code{samp_control!="clustered"}.
+#' @param lower_tail Optional. Numeric value of lower p-value threshold (default=0.025).
+#' @param upper_tail Optional. Numeric value of upper p-value threshold (default=0.975). Ignored if cascon=FALSE.
+#' @param parallel Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.
+#' @param n_core Optional. Integer specifying the number of CPU cores on current host to use for parallelization. If NULL (the default), will execute with n-1 CPU cores on the current host.
+#' @param verbose Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.
+#' @param ... Arguments passed to \code{\link[spatstat]{runifdisc}}, \code{\link[spatstat]{disc}}, \code{\link[spatstat]{rpoispp}}, \code{\link[spatstat]{rsyst}}, or \code{\link[spatstat]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}. Arguments also passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.
 #'
-#' @return Simulated point-level spatial data and local power. 
+#' @details This function computes the statistical power of the spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) for randomly generated data using various random point pattern generators from the \code{\link{spatstat}} package.
+#' 
+#' The function uses the \code{\link[sparr]{risk}} function to estimate the spatial relative risk function and forces the \code{tolerate} argument to be TRUE in order to calculate asymptotic p-values.
+#' 
+#' If \code{samp_case = "uniform"} the case locations are randomly generated uniformly within a disc of radius \code{r_case} (or discs of radii \code{r_case}) centered at coordinates (\code{x_case}, \code{y_case}). 
+#' 
+#' If \code{samp_case = "MVN"} the case locations are randomly generated assuming a multivariate normal distribution centered at coordinates (\code{x_case}, \code{y_case}) with a standard deviation of \code{s_case}.
+#' 
+#' If \code{samp_case = "CSR"} the case locations are randomly generated assuming complete spatial randomness (homogeneous Poisson process) within a disc of radius \code{r_case} (or discs of radii \code{r_case}) centered at coordinates (\code{x_case}, \code{y_case}) with \code{lambda = n_case / area of disc}.
+#' 
+#' #' If \code{samp_case = "IPP"} the case locations are randomly generated assuming an inhomogeneous Poisson process with a disc of radius \code{r_case} (or discs of radii \code{r_case}) centered at coordinates (\code{x_case}, \code{y_case}) with \code{lambda = l_case}, a function.
+#' 
+#' If \code{samp_control = "uniform"} the control locations are randomly generated uniformly within the window \code{win}.
+#' 
+#' If \code{samp_control = "systematic"} the control locations are randomly generated systematicaly within the window \code{win} consisting of a grid of equally-spaced points with a random common displacement.
+#' 
+#' If \code{samp_control = "MVN"} the control locations are randomly generated assuming a multivariate normal distribution centered at coordinates (\code{x_control}, \code{y_control}) with a standard deviation of \code{s_control}.
+#' 
+#' If \code{samp_control = "CSR"} the control locations are randomly generated assuming complete spatial randomness (homogeneous Poisson process) within the window \code{win} with a \code{lambda = n_control / [resolution x resolution]} By default, the resolution is an integer value of 128 and can be specified using the \code{resolution} argument in the internally called \code{\link[sparr]{risk}} function.
+#' 
+#' If \code{samp_control = "IPP"} the control locations are randomly generated assuming an inhomogeneous Poisson process within the window \code{win} with a \code{lambda = l_control}, a function.
+#' 
+#' If \code{samp_control = "clustered"} the control locations are randomly generated with a realisation of the Neyman-Scott process within the window \code{win} with the intensity of the Poisson process cluster centres (\code{kappa = l_control}), the size of the expansion of the simulation window for generative parent points (\code{e_control}), and the radius (or radii) of the disc for each cluster (\code{r_control}).
+#' 
+#' @return An object of class "list". This is a named list with the following components:
+#' 
+#' #' \describe{
+#' \item{\code{sim}}{An object of class 'rrs' for the first iteration of simulated data.}
+#' \item{\code{out}}{An object of class 'rrs' for the observed spatial relative risk function without randomization.}
+#' \item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the mean relative risk values at each gridded knot.}
+#' \item{\code{pval_mean}}{Vector of length \code{[resolution x resolution]} of the mean asymptotic p-value at each gridded knot.}
+#' \item{\code{rr_sd}}{Vector of length \code{[resolution x resolution]} of the standard deviation of relative risk values at each gridded knot.}
+#' \item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values were significant at each gridded knot.}
+#' \item{\code{rx}}{Vector of length \code{[resolution x resolution]} of the x-coordinates of each gridded knot.}
+#' \item{\code{ry}}{Vector of length \code{[resolution x resolution]} of the y-coordinates of each gridded knot.}
+#' \item{\code{rx}}{Vector of length \code{sim_total} of the number of control locations simulated in each iteration.}
+#' \item{\code{bandw}}{Vector of length \code{sim_total} of the bandwidth (of numerator) used in each iteration.}
+#' \item{\code{bandw}}{Vector of length \code{sim_total} of the global s statistic.}
+#' \item{\code{bandw}}{Vector of length \code{sim_total} of the global t statistic.}
+#' }
+#' 
+#' @importFrom stats rnorm sd
+#' @importFrom spatstat disc marks ppp rNeymanScott rpoispp rsyst runifdisc runifpoint shift superimpose unit.square
+#' @importFrom utils setTxtProgressBar txtProgressBar
+#' @importFrom foreach %do% %dopar% foreach
+#' @importFrom parallel detectCores makeCluster stopCluster
+#' @importFrom doParallel registerDoParallel
+#' @importFrom sparr risk
 #' @export
 #'
 #' @examples
@@ -88,10 +130,10 @@ spatial_power <- function(x_case, y_case,
                           lower_tail = 0.025,
                           win = spatstat::unit.square(),
                           cascon = FALSE,
-                          resolution = 128,
-                          edge = "uniform",
-                          adapt = FALSE,
-                          h0 = NULL,
+                          # resolution = 128,
+                          # edge = "uniform",
+                          # adapt = FALSE,
+                          #h0 = NULL,
                           verbose = TRUE,
                           parallel = FALSE,
                           n_core = NULL,
@@ -173,8 +215,8 @@ spatial_power <- function(x_case, y_case,
     if (samp_case == "MVN"){
       x1 <- rep(x0, n)
       y1 <- rep(y0, n)
-      x2 <- x1 + rnorm(n, 0, scalar) 
-      y2 <- y1 + rnorm(n, 0, scalar) 
+      x2 <- x1 + stats::rnorm(n, 0, scalar) 
+      y2 <- y1 + stats::rnorm(n, 0, scalar) 
       x <- spatstat::ppp(x2, y2, window = wind)
     }  
     
@@ -211,8 +253,8 @@ spatial_power <- function(x_case, y_case,
     if (samp_control == "MVN"){
       x1 <- rep(x0, n)
       y1 <- rep(y0, n)
-      x2 <- x1 + rnorm(n, 0, scalar) 
-      y2 <- y1 + rnorm(n, 0, scalar) 
+      x2 <- x1 + stats::rnorm(n, 0, scalar) 
+      y2 <- y1 + stats::rnorm(n, 0, scalar) 
       x <- spatstat::ppp(x2, y2, window = wind)
       }  
     
@@ -274,9 +316,9 @@ spatial_power <- function(x_case, y_case,
     if(is.null(n_core)){ n_core <- parallel::detectCores() - 1 }
     cl <- parallel::makeCluster(n_core)
     doParallel::registerDoParallel(cl)
-    `%fun%` <- `%dopar%`
+    `%fun%` <- foreach::`%dopar%`
   } else {
-    `%fun%` <- `%do%`
+    `%fun%` <- foreach::`%do%`
   }
   
   # Iteratively calculate the log relative risk and asymptotic p-value surfaces
@@ -330,18 +372,8 @@ spatial_power <- function(x_case, y_case,
     z <- spatstat::superimpose(con, cas)
     spatstat::marks(z) <- as.factor(spatstat::marks(z))
     
-    # Bandwidth selection
-    if(is.null(h0)){
-      h0 <- sparr::OS(z, nstar = "geometric")
-    }
-    
     # Calculate observed kernel density ratio
-    obs_lrr <- sparr::risk(z, tolerate = T, verbose = F,
-                           resolution = resolution, ## SEE NOTE (F)
-                           edge = edge,
-                           adapt = adapt,
-                           h0 = h0,
-                           ...)
+    obs_lrr <- sparr::risk(z, tolerate = T, verbose = F, ...)
     
     # Output processing for visualization and summary across iterations
     ## Convert output matrix to two output vectors
@@ -381,7 +413,7 @@ spatial_power <- function(x_case, y_case,
                         "out" = out,
                         "n_con" = con$n,
                         "n_cas" = cas$n,
-                        "bandw" = h0,
+                        "bandw" = obs_lrr$f$h0,
                         "s_obs" = s_obs,
                         "t_obs" = t_obs
                         )
