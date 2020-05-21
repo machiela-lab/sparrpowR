@@ -4,18 +4,18 @@
 #'
 #' @param win Window in which to simulate the random data. An object of class "owin" or something acceptable to \code{\link[spatstat]{as.owin}}.
 #' @param sim_total Integer, specifying the number of simulation iterations to perform.
-#' @param x_case Numeric value, or numeric vector, of x-coordinate(s) of case cluater(s).
-#' @param y_case Numeric value, or numeric vector, of y-coordinate(s) of case cluater(s).
+#' @param x_case Numeric value, or numeric vector, of x-coordinate(s) of case cluster(s).
+#' @param y_case Numeric value, or numeric vector, of y-coordinate(s) of case cluster(s).
 #' @param samp_case Character string specifying whether to randomize the case locations uniformly (\code{samp_control="uniform"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), or using the inhomogeneous Poisson process (\code{samp_control="IPP"}) around each case centroid.
 #' @param samp_control Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), systematically (\code{samp_control="systematic"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), using the inhomogeneous Poisson process (\code{samp_control="IPP"}), or a realisation of the Neyman-Scott cluster process (\code{samp_control="clustered"}).
 #' @param n_case Numeric value, or numeric vector, of the sample size for case locations in each cluster.
 #' @param n_control Numeric value, or numeric vector, of the sample size for control locations in each cluster.
-#' @param npc_control Optional. Numeric value of the numer of clusters of   control locations. Ignored if Ignored if \code{samp_control!="clustered"}.
-#' @param x_control Numeric value, or numeric vector, of x-coordinate(s) of case cluater(s). Ignored if \code{samp_control!="MVN"}.
-#' @param y_control Numeric value, or numeric vector, of y-coordinate(s) of case cluater(s). Ignored if \code{samp_control!="MVN"}.
-#' @param r_case Optional. Numeric value, or numeric vector, of radius (radii) of case cluater(s) in the units of \code{win}. Ignored if \code{samp_case="MVN"}.
-#' @param r_control Optional. Numeric value, or numeric vector, of radius (radii) of control cluater(s) in the units of \code{win}. Ignored if \code{samp_control!="clustered"}.
-#' @param s_case Optional. Numberic value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for case locations in the units of \code{win}.  Ignored if \code{samp_control!="MVN"}.
+#' @param npc_control Optional. Numeric value of the numer of clusters of control locations. Ignored if \code{samp_control!="clustered"}.
+#' @param x_control Numeric value, or numeric vector, of x-coordinate(s) of case cluster(s). Ignored if \code{samp_control!="MVN"}.
+#' @param y_control Numeric value, or numeric vector, of y-coordinate(s) of case cluster(s). Ignored if \code{samp_control!="MVN"}.
+#' @param r_case Optional. Numeric value, or numeric vector, of radius (radii) of case cluster(s) in the units of \code{win}. Ignored if \code{samp_case="MVN"}.
+#' @param r_control Optional. Numeric value, or numeric vector, of radius (radii) of control cluster(s) in the units of \code{win}. Ignored if \code{samp_control!="clustered"}.
+#' @param s_case Optional. Numberic value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for case locations in the units of \code{win}. Ignored if \code{samp_control!="MVN"}.
 #' @param s_control Optional. Numberic value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for control locations in the units of \code{win}. Ignored if \code{samp_control!="MVN"}.
 #' @param l_case Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for case clusters. Ignored if \code{samp_control!="IPP"}.
 #' @param l_control Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for control clusters. Ignored if \code{samp_control="uniform"}, \code{samp_control="systematic"}, \code{samp_control="MVN"}, or \code{samp_control="CSR"}.
@@ -37,7 +37,7 @@
 #' 
 #' If \code{samp_case = "CSR"} the case locations are randomly generated assuming complete spatial randomness (homogeneous Poisson process) within a disc of radius \code{r_case} (or discs of radii \code{r_case}) centered at coordinates (\code{x_case}, \code{y_case}) with \code{lambda = n_case / area of disc}.
 #' 
-#' #' If \code{samp_case = "IPP"} the case locations are randomly generated assuming an inhomogeneous Poisson process with a disc of radius \code{r_case} (or discs of radii \code{r_case}) centered at coordinates (\code{x_case}, \code{y_case}) with \code{lambda = l_case}, a function.
+#' If \code{samp_case = "IPP"} the case locations are randomly generated assuming an inhomogeneous Poisson process with a disc of radius \code{r_case} (or discs of radii \code{r_case}) centered at coordinates (\code{x_case}, \code{y_case}) with \code{lambda = l_case}, a function.
 #' 
 #' If \code{samp_control = "uniform"} the control locations are randomly generated uniformly within the window \code{win}.
 #' 
@@ -59,7 +59,7 @@
 #' \item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the mean relative risk values at each gridded knot.}
 #' \item{\code{pval_mean}}{Vector of length \code{[resolution x resolution]} of the mean asymptotic p-value at each gridded knot.}
 #' \item{\code{rr_sd}}{Vector of length \code{[resolution x resolution]} of the standard deviation of relative risk values at each gridded knot.}
-#' \item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values were significant at each gridded knot.}
+#' \item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values that were significant at each gridded knot.}
 #' \item{\code{rx}}{Vector of length \code{[resolution x resolution]} of the x-coordinates of each gridded knot.}
 #' \item{\code{ry}}{Vector of length \code{[resolution x resolution]} of the y-coordinates of each gridded knot.}
 #' \item{\code{rx}}{Vector of length \code{sim_total} of the number of control locations simulated in each iteration.}

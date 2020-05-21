@@ -10,11 +10,11 @@
 #' @param samp_control Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), systematically (\code{samp_control="systematic"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), using the inhomogeneous Poisson process (\code{samp_control="IPP"}), or a realisation of the Neyman-Scott cluster process (\code{samp_control="clustered"}).
 #' @param n_case Numeric value, or numeric vector, of the sample size for case locations in each cluster.
 #' @param n_control Numeric value, or numeric vector, of the sample size for control locations in each cluster.
-#' @param npc_control Optional. Numeric value of the numer of clusters of   control locations. Ignored if Ignored if \code{samp_control!="clustered"}.
-#' @param x_control Numeric value, or numeric vector, of x-coordinate(s) of case cluater(s). Ignored if \code{samp_control!="MVN"}.
-#' @param y_control Numeric value, or numeric vector, of y-coordinate(s) of case cluater(s). Ignored if \code{samp_control!="MVN"}.
+#' @param npc_control Optional. Numeric value of the numer of clusters of control locations. Ignored if \code{samp_control!="clustered"}.
+#' @param x_control Numeric value, or numeric vector, of x-coordinate(s) of case cluster(s). Ignored if \code{samp_control!="MVN"}.
+#' @param y_control Numeric value, or numeric vector, of y-coordinate(s) of case cluster(s). Ignored if \code{samp_control!="MVN"}.
 #' @param r_case Optional. Numeric value, or numeric vector, of radius (radii) of case cluater(s) in the units of \code{win}. Ignored if \code{samp_case="MVN"}.
-#' @param r_control Optional. Numeric value, or numeric vector, of radius (radii) of control cluater(s) in the units of \code{win}. Ignored if \code{samp_control!="clustered"}.
+#' @param r_control Optional. Numeric value, or numeric vector, of radius (radii) of control cluster(s) in the units of \code{win}. Ignored if \code{samp_control!="clustered"}.
 #' @param s_case Optional. Numberic value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for case locations in the units of \code{win}.  Ignored if \code{samp_control!="MVN"}.
 #' @param s_control Optional. Numberic value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for control locations in the units of \code{win}. Ignored if \code{samp_control!="MVN"}.
 #' @param l_case Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for case clusters. Ignored if \code{samp_control!="IPP"}.
@@ -30,7 +30,7 @@
 #' 
 #' If \code{samp_case = "CSR"} the case locations are randomly generated assuming complete spatial randomness (homogeneous Poisson process) within a disc of radius \code{r_case} (or discs of radii \code{r_case}) centered at coordinates (\code{x_case}, \code{y_case}) with \code{lambda = n_case / area of disc}.
 #' 
-#' #' If \code{samp_case = "IPP"} the case locations are randomly generated assuming an inhomogeneous Poisson process with a disc of radius \code{r_case} (or discs of radii \code{r_case}) centered at coordinates (\code{x_case}, \code{y_case}) with \code{lambda = l_case}, a function.
+#' If \code{samp_case = "IPP"} the case locations are randomly generated assuming an inhomogeneous Poisson process with a disc of radius \code{r_case} (or discs of radii \code{r_case}) centered at coordinates (\code{x_case}, \code{y_case}) with \code{lambda = l_case}, a function.
 #' 
 #' If \code{samp_control = "uniform"} the control locations are randomly generated uniformly within the window \code{win}.
 #' 
@@ -38,7 +38,7 @@
 #' 
 #' If \code{samp_control = "MVN"} the control locations are randomly generated assuming a multivariate normal distribution centered at coordinates (\code{x_control}, \code{y_control}) with a standard deviation of \code{s_control}.
 #' 
-#' If \code{samp_control = "CSR"} the control locations are randomly generated assuming complete spatial randomness (homogeneous Poisson process) within the window \code{win} with a \code{lambda = n_control / [resolution x resolution]} By default, the resolution is an integer value of 128 and can be specified using the \code{resolution} argument in the internally called \code{\link[sparr]{risk}} function.
+#' If \code{samp_control = "CSR"} the control locations are randomly generated assuming complete spatial randomness (homogeneous Poisson process) within the window \code{win} with a \code{lambda = n_control / [resolution x resolution]}. By default, the resolution is an integer value of 128 and can be specified using the \code{resolution} argument in the internally called \code{\link[sparr]{risk}} function.
 #' 
 #' If \code{samp_control = "IPP"} the control locations are randomly generated assuming an inhomogeneous Poisson process within the window \code{win} with a \code{lambda = l_control}, a function.
 #' 
@@ -50,7 +50,7 @@
 #' @importFrom spatstat disc marks ppp rNeymanScott rpoispp rsyst runifdisc runifpoint shift superimpose unit.square
 #' @export
 #'
-#'#' @seealso \code{\link[spatstat]{runifdisc}}, \code{\link[spatstat]{disc}}, \code{\link[spatstat]{rpoispp}}, \code{\link[spatstat]{rsyst}}, or \code{\link[spatstat]{rNeymanScott}} for additional arguments for random point pattern generation.
+#' @seealso \code{\link[spatstat]{runifdisc}}, \code{\link[spatstat]{disc}}, \code{\link[spatstat]{rpoispp}}, \code{\link[spatstat]{rsyst}}, or \code{\link[spatstat]{rNeymanScott}} for additional arguments for random point pattern generation.
 #'
 #' @examples
 #' \dontrun{
