@@ -47,4 +47,8 @@ Suggests:
     rgeos,
     tibble,
     tidyverse,
-    testthat
+    testthat,
+    rgdal,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

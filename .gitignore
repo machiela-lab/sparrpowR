@@ -45,3 +45,4 @@ rsconnect/
 
 # Sandboxes
 */sandbox.R
+inst/doc
