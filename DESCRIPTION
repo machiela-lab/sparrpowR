@@ -49,6 +49,7 @@ Suggests:
     tidyverse,
     testthat,
     rgdal,
+    ggplot2,
     knitr,
     rmarkdown
 VignetteBuilder: knitr
