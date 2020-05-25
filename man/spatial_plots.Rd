@@ -2,55 +2,48 @@
 % Please edit documentation in R/spatial_plots.R
 \name{spatial_plots}
 \alias{spatial_plots}
-\title{spatial_plots()}
+\title{Plots for statistical power estimates of the SRR function}
 \usage{
 spatial_plots(
   input,
   p_thresh = 0.8,
-  plot_text = FALSE,
-  n_sim = 4,
-  cols = c("#000000", "#cccccc", "ffffff", "ff0000", "0000ff"),
+  n_sim = 1,
+  cols = c("#000000", "#cccccc", "#ffffff", "#ff0000", "#0000ff"),
   chars = c(1, 1),
-  sizes = c(0.1, 0.1),
+  sizes = c(1, 1),
   plot_pts = TRUE,
+  plot_text = FALSE,
   ...
 )
 }
 \arguments{
-\item{input}{Use output of SRR simulation}
+\item{input}{An object of class "pplist" from the \code{\link{spatial_data}} function or an object of class "list" from the \code{\link{spatial_power}} or \code{\link{jitter_power}} functions.}
 
-\item{p_thresh}{p threshold, default is 0.8}
+\item{p_thresh}{A numeric value between 0 and 1 (default = 0.8) for the power threshold.}
 
-\item{plot_text}{default is FALSE, in case resolution >> 10}
+\item{n_sim}{Integer. The number of simulated iterations to plot. The default is one (1).}
 
-\item{n_sim}{TO ADD}
+\item{cols}{Character string of length five (5) specifying the colors for ploting: 1) sufficiently powered, midpoint, insufficiently powered, case locations, control locations. The default colors in hex are \code{c("#0000ff", "#00ff00", "#ff0000", "#a020f0", "#ffa500")} or \code{c("grey0", "grey80", "grey100", "red", "blue")}.}
 
-\item{cols}{colors, default colors = c("grey0", "grey80", "grey100", "red", "blue")}
+\item{chars}{Vector of integers or character string of length two (2) for symbols of case and control locations. Default is \code{c(1,1)}.}
 
-\item{chars}{case, control}
+\item{sizes}{Vector of integers of length two (2) for the size of the symbols for case and control locations. Default is \code{c(1,1)}.}
 
-\item{sizes}{case, control}
+\item{plot_pts}{Logical. If TRUE (the default), the points from the first simulation iteration will be added to second plot. Not if FALSE.}
 
-\item{plot_pts}{TO ADD, default is TRUE}
+\item{plot_text}{Logical. If TRUE, the local statistical power will be printed at each grid cell. Not if FALSE (the default).}
 
-\item{...}{TO ADD}
+\item{...}{Arguments passed to \code{sp::plot}, \code{\link[spatstat]{plot.ppp}}, and \code{\link[fields]{image.plot}} for additional graphical features.}
 }
 \value{
-None. (Creates plots of simulated data and statistical power.)
+This function produces up to three plots: 1) example input, 2) local power, and 3) local power above a threshold. If the input is from the \code{\link{spatial_data}} function, this function will only display the first plot.
 }
 \description{
-Function to Estimate the Power of a Spatial Relative Risk using Simulated Data
+Create multiple plots of output from \code{\link{spatial_data}}, \code{\link{spatial_power}} and \code{\link{jitter_power}} functions.
 }
 \examples{
-\donttest{
-spatial_plots(input = sparrpowR_object, 
-              p_thresh = 0.8, 
-              #plot_text = T,
-              plot_pts = T, 
-              chars = c(4,5),
-              sizes = c(0.5,0.5),
-              cols = c("grey0", "grey80", "grey100", "red", "blue")
-              )
+\dontrun{
+spatial_plots(input = sim_power)
 }
 
 }
