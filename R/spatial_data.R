@@ -54,9 +54,7 @@
 #'
 #' @examples
 #' \dontrun{
-#'  spatial_data(win = spatstat::unit.square(),
-#                sim_total = 2,
-#'               x_case = c(0.25, 0.5, 0.75),
+#'  spatial_data(x_case = c(0.25, 0.5, 0.75),
 #'               y_case = c(0.75, 0.25, 0.75),
 #'               samp_case = "MVN", 
 #'               samp_control = "MVN",
@@ -66,11 +64,12 @@
 #'               n_control = c(100,500,300),
 #'               s_case = c(0.05,0.01,0.05),
 #'               s_control = 0.05,
+#'               verbose = FALSE
 #'               )
 #'  }
 #' 
 spatial_data <- function(win = spatstat::unit.square(),
-                         sim_total,
+                         sim_total = 2,
                          x_case, y_case,
                          samp_case = c("uniform", "MVN", "CSR", "IPP"),
                          samp_control = c("uniform", "systematic","MVN",
@@ -83,7 +82,6 @@ spatial_data <- function(win = spatstat::unit.square(),
                          l_case = NULL, l_control = NULL, 
                          e_control = NULL,
                          ...) {
-  
   
   # Inputs
   if (length(x_case) != length(y_case)) {

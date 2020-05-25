@@ -3,7 +3,6 @@
 #' Compute the statistical power of a spatial relative risk function using randomly generated data.
 #'
 #' @param win Window in which to simulate the random data. An object of class "owin" or something acceptable to \code{\link[spatstat]{as.owin}}.
-#' @param cascon Case/control status.  Default is FALSE.
 #' @param sim_total Integer, specifying the number of simulation iterations to perform.
 #' @param x_case Numeric value, or numeric vector, of x-coordinate(s) of case cluster(s).
 #' @param y_case Numeric value, or numeric vector, of y-coordinate(s) of case cluster(s).
@@ -21,6 +20,7 @@
 #' @param l_case Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for case clusters. Ignored if \code{samp_control!="IPP"}.
 #' @param l_control Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for control clusters. Ignored if \code{samp_control="uniform"}, \code{samp_control="systematic"}, \code{samp_control="MVN"}, or \code{samp_control="CSR"}.
 #' @param e_control Optional. A single non-negative number for the size of the expansion of the simulation window for generating parent points. Ignored if \code{samp_control!="clustered"}.
+#' @param cascon Logical. If TRUE, computes the statistical power to detect case clusters and control clusters. If FALSE (the default), computes the statistical power to detect case clusters only. 
 #' @param lower_tail Optional. Numeric value of lower p-value threshold (default=0.025).
 #' @param upper_tail Optional. Numeric value of upper p-value threshold (default=0.975). Ignored if cascon=FALSE.
 #' @param parallel Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.
@@ -80,66 +80,40 @@
 #'
 #' @examples
 #' \dontrun{
-#' spatial_power(x_case = c(0.25, 0.5, 0.75),
-#'               y_case = c(0.75, 0.25, 0.75),
-#'               x_control = c(0.25, 0.5, 0.75),
-#'               y_control = c(0.75, 0.25, 0.75),
-#'                  #n_case = c(100, 100,100),
-#'               n_case = 100,
-#'               n_control = 700,
-#'                  #r_case = c(0.1, 0.2, 0.1),
-#'               r_case = 0.1,
-#'                  #s_case = c(0.05,0.01,0.05),
-#'               s_case = 0.05,
-#'                  #l_case = c(200,100,200),
-#'               l_case = 200,
-#'                  #l_case = l_cont,
-#'               sim_total = 10,
-#'               samp_case = "MVN", 
-#'               samp_control = "MVN",
-#'               npc_control = 100,
-#'               r_control = 0.1,
-#'               e_control = 0,
-#'               l_control = 100,
-#'                  #l_control = l_cont,
-#'               s_control = 0.1,
-#'                  #win = unit.circle,
-#'               upper_tail = 0.995, # default = 0.975
-#'               lower_tail = 0.005, # default = 0.025
-#'               resolution = 50, # default = 128
-#'               edge = "diggle", # default = "uniform"
-#'               adapt = FALSE,
-#'               h0 = NULL,
-#'               cascon = TRUE, # cascon = FALSE for only relative case clustering (hotspots)
-#'               parallel = T,
-#'               verbose = F
-#'               ) 
+#'  spatial_power(x_case = c(0.25, 0.5, 0.75),
+#'                y_case = c(0.75, 0.25, 0.75),
+#'                samp_case = "MVN", 
+#'                samp_control = "MVN",
+#'                x_control = c(0.25, 0.5, 0.75),
+#'                y_control = c(0.75, 0.25, 0.75),
+#'                n_case = 100,
+#'                n_control = c(100,500,300),
+#'                s_case = c(0.05,0.01,0.05),
+#'                s_control = 0.05,
+#'                verbose = FALSE
+#'                )
 #' }
 #' 
-spatial_power <- function(x_case, y_case,
+spatial_power <- function(win = spatstat::unit.square(),
+                          sim_total = 2,
+                          x_case, y_case,
+                          samp_case = c("uniform", "MVN", "CSR", "IPP"),
+                          samp_control = c("uniform", "systematic", "MVN",
+                                           "CSR", "IPP", "clustered"), 
                           x_control = NULL, y_control = NULL,
-                          n_case = NULL, n_control = NULL, npc_control = NULL,
+                          n_case = NULL, n_control = NULL,
+                          npc_control = NULL,
                           r_case = NULL, r_control = NULL,
                           s_case = NULL, s_control = NULL,
                           l_case = NULL, l_control = NULL,
                           e_control = NULL,
-                          sim_total = 1,
-                          samp_case = c("uniform", "MVN", "CSR", "IPP"),
-                          samp_control = c("uniform", "systematic", "MVN",
-                                           "CSR", "IPP", "clustered"), 
-                          upper_tail = 0.975,
                           lower_tail = 0.025,
-                          win = spatstat::unit.square(),
+                          upper_tail = 0.975, 
                           cascon = FALSE,
-                          # resolution = 128,
-                          # edge = "uniform",
-                          # adapt = FALSE,
-                          #h0 = NULL,
                           verbose = TRUE,
                           parallel = FALSE,
                           n_core = NULL,
                           ...) {
-  
   
   # Custom Internal Functions
   ## Combine function used in foreach
@@ -313,7 +287,7 @@ spatial_power <- function(x_case, y_case,
   ## Set function used in foreach
   if (parallel == TRUE){
     loadedPackages <- c("doParallel", "parallel")
-    invisible(lapply(loadedPackages, require, character.only = T))
+    invisible(lapply(loadedPackages, require, character.only = TRUE))
     if(is.null(n_core)){ n_core <- parallel::detectCores() - 1 }
     cl <- parallel::makeCluster(n_core)
     doParallel::registerDoParallel(cl)
@@ -323,7 +297,7 @@ spatial_power <- function(x_case, y_case,
   }
   
   # Iteratively calculate the log relative risk and asymptotic p-value surfaces
-  k <- NULL # define variable
+  k <- NULL # define indexing variable
   out_par <- foreach::foreach(k = 1:sim_total, 
                               .combine = comb, 
                               .multicombine = TRUE, 
@@ -375,7 +349,7 @@ spatial_power <- function(x_case, y_case,
     spatstat::marks(z) <- as.factor(spatstat::marks(z))
     
     # Calculate observed kernel density ratio
-    obs_lrr <- sparr::risk(z, tolerate = T, verbose = F, ...)
+    obs_lrr <- sparr::risk(z, tolerate = TRUE, verbose = FALSE, ...)
     
     # Output processing for visualization and summary across iterations
     ## Convert output matrix to two output vectors

@@ -58,7 +58,8 @@
 #' f1 <- jitter_power(obs_data = unique(chorley),
 #'                    sim_total = 2,
 #'                    samp_control = "MVN",
-#'                    s_control = 0.01
+#'                    s_control = 0.01,
+#'                    verbose = FALSE
 #'                    )
 #' 
 jitter_power <- function(obs_data,
@@ -66,7 +67,7 @@ jitter_power <- function(obs_data,
                          samp_control = c("uniform", "CSR", "MVN"),
                          s_control = 1,
                          cascon = FALSE,
-                         lower_tail = 0.025,
+                         lower_tail = 0.025, 
                          upper_tail = 0.975,
                          parallel = FALSE,
                          n_core = NULL,
@@ -126,7 +127,7 @@ jitter_power <- function(obs_data,
   ## Set function used in foreach
   if (parallel == TRUE){
     loadedPackages <- c("doParallel", "parallel")
-    invisible(lapply(loadedPackages, require, character.only = T))
+    invisible(lapply(loadedPackages, require, character.only = TRUE))
     if(is.null(n_core)){ n_core <- parallel::detectCores() - 1 }
     cl <- parallel::makeCluster(n_core)
     doParallel::registerDoParallel(cl)
@@ -136,15 +137,15 @@ jitter_power <- function(obs_data,
   }
   
   # Iteratively calculate the log relative risk and asymptotic p-value surfaces
-  k <- NULL
+  k <- NULL # define indexing variable
   out_par <- foreach::foreach(k = 1:sim_total, 
                               .combine = comb, 
                               .multicombine = TRUE, 
                               .packages = c("sparr", "spatstat"),
                               .init = list(list(), list(), list(),
                                            list(), list(), list(), 
-                                           list(), list(), list(), list()
-                              )
+                                           list(), list(), list(),
+                                           list())
   ) %fun% {
     
     # Progress bar
@@ -165,7 +166,7 @@ jitter_power <- function(obs_data,
     spatstat::marks(z) <- as.factor(spatstat::marks(z))
     
     # Calculate observed kernel density ratio
-    obs_lrr <- sparr::risk(z, tolerate = T, verbose = F, ...)
+    obs_lrr <- sparr::risk(z, tolerate = TRUE, verbose = FALSE, ...)
     
     # Output processing for visualization and summary across iterations
     ## Convert output matrix to two output vectors

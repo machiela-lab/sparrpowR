@@ -10,13 +10,13 @@
 #' @param sizes Vector of integers of length two (2) for the size of the symbols for case and control locations. Default is \code{c(1,1)}. 
 #' @param plot_pts Logical. If TRUE (the default), the points from the first simulation iteration will be added to second plot. Not if FALSE.
 #' @param plot_text Logical. If TRUE, the local statistical power will be printed at each grid cell. Not if FALSE (the default).
-#' @param ... Arguments passed to `sp::plot`, \code{\link[spatstat]{plot.ppp}}, and \code{\link[fields]{image.plot}} for additional graphical features.
+#' @param ... Arguments passed to \code{\link[spatstat]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.
 #'
 #' @return This function produces up to three plots: 1) example input, 2) local power, and 3) local power above a threshold. If the input is from the \code{\link{spatial_data}} function, this function will only display the first plot. 
 #' 
 #' @importFrom stats na.omit
 #' @importFrom graphics text
-#' @importFrom sp plot coordinates gridded
+#' @importFrom sp coordinates gridded
 #' @importFrom spatstat plot.ppp
 #' @importFrom raster raster values reclassify
 #' @importFrom grDevices colorRampPalette
@@ -41,7 +41,7 @@ spatial_plots <- function(input,
   
   
   if("ppplist" %in% class(input)){
-    return(sp::plot(input[1:n_sim], 
+    return(spatstat::plot.ppp(input[1:n_sim], 
                     pch = chars,
                     cex = sizes,
                     cols = c(cols[4], cols[5]),
@@ -92,7 +92,7 @@ spatial_plots <- function(input,
   fields::image.plot(pvalprop_raster, 
                      col = rampcols,
                      breaks = rampbreaks,
-                     axes = F,
+                     axes = FALSE,
                      cex.lab = 1,
                      xlab = "",
                      ylab = "",
@@ -100,7 +100,7 @@ spatial_plots <- function(input,
                      bigplot = c(0.25, 0.8, 0.2, 0.8),
                      smallplot = c(0.82, 0.84, 0.32, 0.8),
                      axis.args = list(cex.axis = 0.67),
-                     add = T,
+                     add = TRUE,
                      legend.args = list(text = "Power",
                                         side = 4,
                                         line = 2,
@@ -112,7 +112,7 @@ spatial_plots <- function(input,
                        pch = chars, 
                        cex = sizes,
                        cols = c(cols[4], cols[5]),
-                       add = T,
+                       add = TRUE,
                        ...)
   }
   
@@ -142,10 +142,10 @@ spatial_plots <- function(input,
                                         sep = " "),
                            ...)
   fields::image.plot(pvalprop_reclass, 
-                     add = T,
+                     add = TRUE,
                      col = cols[1:2],
                      breaks = c(1, 1.5, 2),
-                     axes = F,
+                     axes = FALSE,
                      cex.lab = 1,
                      xlab = "",
                      ylab = "",
@@ -163,7 +163,7 @@ spatial_plots <- function(input,
                      ),
                      ...)
   ### Add text of local power to each knot
-  if(plot_text == T){
+  if(plot_text == TRUE){
     graphics::text(x = input$rx, y = input$ry, input$pval_prop, col = cols[3], cex = 0.5)
   }
   pvalprop_reclass <- NULL # conserve memory
