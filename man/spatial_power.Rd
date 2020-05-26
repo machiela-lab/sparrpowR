@@ -130,7 +130,6 @@ If \code{samp_control = "IPP"} the control locations are randomly generated assu
 If \code{samp_control = "clustered"} the control locations are randomly generated with a realisation of the Neyman-Scott process within the window \code{win} with the intensity of the Poisson process cluster centres (\code{kappa = l_control}), the size of the expansion of the simulation window for generative parent points (\code{e_control}), and the radius (or radii) of the disc for each cluster (\code{r_control}).
 }
 \examples{
-\dontrun{
  spatial_power(x_case = c(0.25, 0.5, 0.75),
                y_case = c(0.75, 0.25, 0.75),
                samp_case = "MVN", 
@@ -143,6 +142,5 @@ If \code{samp_control = "clustered"} the control locations are randomly generate
                s_control = 0.05,
                verbose = FALSE
                )
-}
 
 }
