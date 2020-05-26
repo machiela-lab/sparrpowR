@@ -1,6 +1,6 @@
 Package: sparrpowR
 Title: Power Analysis to Detect Spatial Relative Clusters
-Version: 0.0.0.9002
+Version: 0.1.0
 Authors@R: 
     c(person(given = "Ian D.",
              family = "Buller",
