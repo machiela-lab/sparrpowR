@@ -115,6 +115,9 @@ spatial_plots(foo,
               cols = c("blue", "green", "red", "purple", "orange"))
 ```
 <p align="center">
+
 ![](man/figures/power_continuous.png)
+
 ![](man/figures/power_categorical.png)
+
 </p>
