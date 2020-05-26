@@ -53,7 +53,6 @@
 #' @seealso \code{\link[spatstat]{runifdisc}}, \code{\link[spatstat]{disc}}, \code{\link[spatstat]{rpoispp}}, \code{\link[spatstat]{rsyst}}, or \code{\link[spatstat]{rNeymanScott}} for additional arguments for random point pattern generation.
 #'
 #' @examples
-#' \dontrun{
 #'  spatial_data(x_case = c(0.25, 0.5, 0.75),
 #'               y_case = c(0.75, 0.25, 0.75),
 #'               samp_case = "MVN", 
@@ -66,7 +65,7 @@
 #'               s_control = 0.05,
 #'               verbose = FALSE
 #'               )
-#'  }
+#'  
 #' 
 spatial_data <- function(win = spatstat::unit.square(),
                          sim_total = 2,
