@@ -79,7 +79,6 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #'  spatial_power(x_case = c(0.25, 0.5, 0.75),
 #'                y_case = c(0.75, 0.25, 0.75),
 #'                samp_case = "MVN", 
@@ -92,7 +91,6 @@
 #'                s_control = 0.05,
 #'                verbose = FALSE
 #'                )
-#' }
 #' 
 spatial_power <- function(win = spatstat::unit.square(),
                           sim_total = 2,
@@ -297,7 +295,6 @@ spatial_power <- function(win = spatstat::unit.square(),
   }
   
   # Iteratively calculate the log relative risk and asymptotic p-value surfaces
-  k <- NULL # define indexing variable
   out_par <- foreach::foreach(k = 1:sim_total, 
                               .combine = comb, 
                               .multicombine = TRUE, 
