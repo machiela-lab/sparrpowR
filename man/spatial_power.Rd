@@ -5,8 +5,12 @@
 \title{Power of SRR function for randomly generated data.}
 \usage{
 spatial_power(
+  win = spatstat::unit.square(),
+  sim_total = 2,
   x_case,
   y_case,
+  samp_case = c("uniform", "MVN", "CSR", "IPP"),
+  samp_control = c("uniform", "systematic", "MVN", "CSR", "IPP", "clustered"),
   x_control = NULL,
   y_control = NULL,
   n_case = NULL,
@@ -19,12 +23,8 @@ spatial_power(
   l_case = NULL,
   l_control = NULL,
   e_control = NULL,
-  sim_total = 1,
-  samp_case = c("uniform", "MVN", "CSR", "IPP"),
-  samp_control = c("uniform", "systematic", "MVN", "CSR", "IPP", "clustered"),
-  upper_tail = 0.975,
   lower_tail = 0.025,
-  win = spatstat::unit.square(),
+  upper_tail = 0.975,
   cascon = FALSE,
   verbose = TRUE,
   parallel = FALSE,
@@ -33,9 +33,17 @@ spatial_power(
 )
 }
 \arguments{
+\item{win}{Window in which to simulate the random data. An object of class "owin" or something acceptable to \code{\link[spatstat]{as.owin}}.}
+
+\item{sim_total}{Integer, specifying the number of simulation iterations to perform.}
+
 \item{x_case}{Numeric value, or numeric vector, of x-coordinate(s) of case cluster(s).}
 
 \item{y_case}{Numeric value, or numeric vector, of y-coordinate(s) of case cluster(s).}
+
+\item{samp_case}{Character string specifying whether to randomize the case locations uniformly (\code{samp_control="uniform"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), or using the inhomogeneous Poisson process (\code{samp_control="IPP"}) around each case centroid.}
+
+\item{samp_control}{Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), systematically (\code{samp_control="systematic"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), using the inhomogeneous Poisson process (\code{samp_control="IPP"}), or a realisation of the Neyman-Scott cluster process (\code{samp_control="clustered"}).}
 
 \item{x_control}{Numeric value, or numeric vector, of x-coordinate(s) of case cluster(s). Ignored if \code{samp_control!="MVN"}.}
 
@@ -61,19 +69,11 @@ spatial_power(
 
 \item{e_control}{Optional. A single non-negative number for the size of the expansion of the simulation window for generating parent points. Ignored if \code{samp_control!="clustered"}.}
 
-\item{sim_total}{Integer, specifying the number of simulation iterations to perform.}
-
-\item{samp_case}{Character string specifying whether to randomize the case locations uniformly (\code{samp_control="uniform"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), or using the inhomogeneous Poisson process (\code{samp_control="IPP"}) around each case centroid.}
-
-\item{samp_control}{Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), systematically (\code{samp_control="systematic"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), using the inhomogeneous Poisson process (\code{samp_control="IPP"}), or a realisation of the Neyman-Scott cluster process (\code{samp_control="clustered"}).}
+\item{lower_tail}{Optional. Numeric value of lower p-value threshold (default=0.025).}
 
 \item{upper_tail}{Optional. Numeric value of upper p-value threshold (default=0.975). Ignored if cascon=FALSE.}
 
-\item{lower_tail}{Optional. Numeric value of lower p-value threshold (default=0.025).}
-
-\item{win}{Window in which to simulate the random data. An object of class "owin" or something acceptable to \code{\link[spatstat]{as.owin}}.}
-
-\item{cascon}{Case/control status.  Default is FALSE.}
+\item{cascon}{Logical. If TRUE, computes the statistical power to detect case clusters and control clusters. If FALSE (the default), computes the statistical power to detect case clusters only.}
 
 \item{verbose}{Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.}
 
@@ -131,40 +131,18 @@ If \code{samp_control = "clustered"} the control locations are randomly generate
 }
 \examples{
 \dontrun{
-spatial_power(x_case = c(0.25, 0.5, 0.75),
-              y_case = c(0.75, 0.25, 0.75),
-              x_control = c(0.25, 0.5, 0.75),
-              y_control = c(0.75, 0.25, 0.75),
-                 #n_case = c(100, 100,100),
-              n_case = 100,
-              n_control = 700,
-                 #r_case = c(0.1, 0.2, 0.1),
-              r_case = 0.1,
-                 #s_case = c(0.05,0.01,0.05),
-              s_case = 0.05,
-                 #l_case = c(200,100,200),
-              l_case = 200,
-                 #l_case = l_cont,
-              sim_total = 10,
-              samp_case = "MVN", 
-              samp_control = "MVN",
-              npc_control = 100,
-              r_control = 0.1,
-              e_control = 0,
-              l_control = 100,
-                 #l_control = l_cont,
-              s_control = 0.1,
-                 #win = unit.circle,
-              upper_tail = 0.995, # default = 0.975
-              lower_tail = 0.005, # default = 0.025
-              resolution = 50, # default = 128
-              edge = "diggle", # default = "uniform"
-              adapt = FALSE,
-              h0 = NULL,
-              cascon = TRUE, # cascon = FALSE for only relative case clustering (hotspots)
-              parallel = T,
-              verbose = F
-              ) 
+ spatial_power(x_case = c(0.25, 0.5, 0.75),
+               y_case = c(0.75, 0.25, 0.75),
+               samp_case = "MVN", 
+               samp_control = "MVN",
+               x_control = c(0.25, 0.5, 0.75),
+               y_control = c(0.75, 0.25, 0.75),
+               n_case = 100,
+               n_control = c(100,500,300),
+               s_case = c(0.05,0.01,0.05),
+               s_control = 0.05,
+               verbose = FALSE
+               )
 }
 
 }

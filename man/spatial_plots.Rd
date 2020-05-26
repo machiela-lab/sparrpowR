@@ -33,7 +33,7 @@ spatial_plots(
 
 \item{plot_text}{Logical. If TRUE, the local statistical power will be printed at each grid cell. Not if FALSE (the default).}
 
-\item{...}{Arguments passed to \code{sp::plot}, \code{\link[spatstat]{plot.ppp}}, and \code{\link[fields]{image.plot}} for additional graphical features.}
+\item{...}{Arguments passed to \code{\link[spatstat]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.}
 }
 \value{
 This function produces up to three plots: 1) example input, 2) local power, and 3) local power above a threshold. If the input is from the \code{\link{spatial_data}} function, this function will only display the first plot.

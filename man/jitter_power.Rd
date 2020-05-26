@@ -79,7 +79,8 @@ data(chorley)
 f1 <- jitter_power(obs_data = unique(chorley),
                    sim_total = 2,
                    samp_control = "MVN",
-                   s_control = 0.01
+                   s_control = 0.01,
+                   verbose = FALSE
                    )
 
 }

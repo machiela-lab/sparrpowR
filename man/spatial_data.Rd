@@ -6,7 +6,7 @@
 \usage{
 spatial_data(
   win = spatstat::unit.square(),
-  sim_total,
+  sim_total = 2,
   x_case,
   y_case,
   samp_case = c("uniform", "MVN", "CSR", "IPP"),
@@ -96,8 +96,7 @@ If \code{samp_control = "clustered"} the control locations are randomly generate
 }
 \examples{
 \dontrun{
- spatial_data(win = spatstat::unit.square(),
-              x_case = c(0.25, 0.5, 0.75),
+ spatial_data(x_case = c(0.25, 0.5, 0.75),
               y_case = c(0.75, 0.25, 0.75),
               samp_case = "MVN", 
               samp_control = "MVN",
@@ -107,6 +106,7 @@ If \code{samp_control = "clustered"} the control locations are randomly generate
               n_control = c(100,500,300),
               s_case = c(0.05,0.01,0.05),
               s_control = 0.05,
+              verbose = FALSE
               )
  }
 
