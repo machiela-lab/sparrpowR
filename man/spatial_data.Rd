@@ -31,9 +31,9 @@ spatial_data(
 
 \item{sim_total}{Integer, specifying the number of simulation iterations to perform.}
 
-\item{x_case}{Numeric value, or numeric vector, of x-coordinate(s) of case cluater(s).}
+\item{x_case}{Numeric value, or numeric vector, of x-coordinate(s) of case cluster(s).}
 
-\item{y_case}{Numeric value, or numeric vector, of y-coordinate(s) of case cluater(s).}
+\item{y_case}{Numeric value, or numeric vector, of y-coordinate(s) of case cluster(s).}
 
 \item{samp_case}{Character string specifying whether to randomize the case locations uniformly (\code{samp_control="uniform"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), or using the inhomogeneous Poisson process (\code{samp_control="IPP"}) around each case centroid.}
 
@@ -49,7 +49,7 @@ spatial_data(
 
 \item{npc_control}{Optional. Numeric value of the number of clusters of control locations. Ignored if \code{samp_control!="clustered"}.}
 
-\item{r_case}{Optional. Numeric value, or numeric vector, of radius (radii) of case cluater(s) in the units of \code{win}. Ignored if \code{samp_case="MVN"}.}
+\item{r_case}{Optional. Numeric value, or numeric vector, of radius (radii) of case cluster(s) in the units of \code{win}. Ignored if \code{samp_case="MVN"}.}
 
 \item{r_control}{Optional. Numeric value, or numeric vector, of radius (radii) of control cluster(s) in the units of \code{win}. Ignored if \code{samp_control!="clustered"}.}
 

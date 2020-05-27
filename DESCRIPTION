@@ -32,7 +32,6 @@ Depends:
     spatstat
 Imports: 
     doParallel,
-    dplyr,
     fields,
     foreach,
     raster,
