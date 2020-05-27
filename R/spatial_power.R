@@ -10,13 +10,13 @@
 #' @param samp_control Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), systematically (\code{samp_control="systematic"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), using the inhomogeneous Poisson process (\code{samp_control="IPP"}), or a realisation of the Neyman-Scott cluster process (\code{samp_control="clustered"}).
 #' @param n_case Numeric value, or numeric vector, of the sample size for case locations in each cluster.
 #' @param n_control Numeric value, or numeric vector, of the sample size for control locations in each cluster.
-#' @param npc_control Optional. Numeric value of the numer of clusters of control locations. Ignored if \code{samp_control!="clustered"}.
+#' @param npc_control Optional. Numeric value of the number of clusters of control locations. Ignored if \code{samp_control!="clustered"}.
 #' @param x_control Numeric value, or numeric vector, of x-coordinate(s) of case cluster(s). Ignored if \code{samp_control!="MVN"}.
 #' @param y_control Numeric value, or numeric vector, of y-coordinate(s) of case cluster(s). Ignored if \code{samp_control!="MVN"}.
 #' @param r_case Optional. Numeric value, or numeric vector, of radius (radii) of case cluster(s) in the units of \code{win}. Ignored if \code{samp_case="MVN"}.
 #' @param r_control Optional. Numeric value, or numeric vector, of radius (radii) of control cluster(s) in the units of \code{win}. Ignored if \code{samp_control!="clustered"}.
-#' @param s_case Optional. Numberic value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for case locations in the units of \code{win}. Ignored if \code{samp_control!="MVN"}.
-#' @param s_control Optional. Numberic value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for control locations in the units of \code{win}. Ignored if \code{samp_control!="MVN"}.
+#' @param s_case Optional. Numeric value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for case locations in the units of \code{win}. Ignored if \code{samp_control!="MVN"}.
+#' @param s_control Optional. Numeric value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for control locations in the units of \code{win}. Ignored if \code{samp_control!="MVN"}.
 #' @param l_case Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for case clusters. Ignored if \code{samp_control!="IPP"}.
 #' @param l_control Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for control clusters. Ignored if \code{samp_control="uniform"}, \code{samp_control="systematic"}, \code{samp_control="MVN"}, or \code{samp_control="CSR"}.
 #' @param e_control Optional. A single non-negative number for the size of the expansion of the simulation window for generating parent points. Ignored if \code{samp_control!="clustered"}.
@@ -42,7 +42,7 @@
 #' 
 #' If \code{samp_control = "uniform"} the control locations are randomly generated uniformly within the window \code{win}.
 #' 
-#' If \code{samp_control = "systematic"} the control locations are randomly generated systematicaly within the window \code{win} consisting of a grid of equally-spaced points with a random common displacement.
+#' If \code{samp_control = "systematic"} the control locations are randomly generated systematically within the window \code{win} consisting of a grid of equally-spaced points with a random common displacement.
 #' 
 #' If \code{samp_control = "MVN"} the control locations are randomly generated assuming a multivariate normal distribution centered at coordinates (\code{x_control}, \code{y_control}) with a standard deviation of \code{s_control}.
 #' 

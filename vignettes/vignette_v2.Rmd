@@ -42,7 +42,7 @@ plot(census,  main = "American Community Survey\n2018")
 plot(dcc, main = "Clipped Boundary")
 ```
 
-Our developed method, `sparrpowR`, relies on the `spatstat` package to simulate data, which assumes point locations are on a planar (i.e., flat) surface. Our boundary is made up of geographical coordiantes on Earth (i.e., a sphere), so we need to flatten our boundary by spatially projecting it with an appropriate spatial reference system (CRS). For the District of Columbia, we are going to use the World Geodetic System 1984 (WGS84) Universal Transverse Mercator (UTM) Zone 18N [EPSG:32619](https://epsg.io/32618). We then convert the boundary into a `owin` object required by the `spatstat` package
+Our developed method, `sparrpowR`, relies on the `spatstat` package to simulate data, which assumes point locations are on a planar (i.e., flat) surface. Our boundary is made up of geographical coordinates on Earth (i.e., a sphere), so we need to flatten our boundary by spatially projecting it with an appropriate spatial reference system (CRS). For the District of Columbia, we are going to use the World Geodetic System 1984 (WGS84) Universal Transverse Mercator (UTM) Zone 18N [EPSG:32619](https://epsg.io/32618). We then convert the boundary into a `owin` object required by the `spatstat` package
 ```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
 dcp <- sp::spTransform(dcc, CRS("+init=EPSG:32618"))
 dco <- spatstat::as.owin(dcp)
@@ -60,7 +60,7 @@ legend("bottom", xpd = T, y.intersp = -1.5, legend = c("Navy Yard"), col = "red"
 
 We will assume that approximately 50 cases (e.g., `n_case = 50`) were clustered around the center of the Navy Yard (e.g., `samp_case = "MVN"`) with more cases near the center and fewer cases about 1 kilometers away (e.g., `s_case = 1000`).
 
-If we were to conduct a study, where would we be sufficiently statistically powered to detect this spatial case cluster? To answer this question we will randomly sample approximately 950 participants (e.g., `n_conrol = 950` or 5% disease prevalence) around the Navy Yard (e.g., `samp_control = "MVN"`) sampling more participants near the center and fewer particiaptns about 2 kilometers away (e.g., `s_control = 2000`). These participants would test negative for a disease (i.e., controls) were we to conduct a study. We can then resample control locations iteratively, as if we conducted the same study multiple times (e.g., `sim_total = 10`). We can conclude that we are sufficiently powered to detect a spatial case cluster in areas where a statistically significant (e.g., two-tailed alpha level of 0.05 or `lower_tail = 0.025`) spatial case cluster was located in at least 80% (e.g., `p_thresh = 0.8`) of these theoretical studies. 
+If we were to conduct a study, where would we be sufficiently statistically powered to detect this spatial case cluster? To answer this question we will randomly sample approximately 950 participants (e.g., `n_conrol = 950` or 5% disease prevalence) around the Navy Yard (e.g., `samp_control = "MVN"`) sampling more participants near the center and fewer participants about 2 kilometers away (e.g., `s_control = 2000`). These participants would test negative for a disease (i.e., controls) were we to conduct a study. We can then resample control locations iteratively, as if we conducted the same study multiple times (e.g., `sim_total = 10`). We can conclude that we are sufficiently powered to detect a spatial case cluster in areas where a statistically significant (e.g., two-tailed alpha level of 0.05 or `lower_tail = 0.025`) spatial case cluster was located in at least 80% (e.g., `p_thresh = 0.8`) of these theoretical studies. 
 
 ```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
 start_time <- Sys.time() # record start time
@@ -99,7 +99,7 @@ spatial_plots(input = sim_power, # use output of above simulation
               cols = cols) # colors of plot
 ```
 
-Now, lets overlay our results ontop of a basemap. Here, we will use an open-source map from [Stamen](http://maps.stamen.com/#terrain/12/37.7706/-122.3782), that is unprojected in WGS84. We extract the rectagular box (i.e., bounding box) surrounding our polygon boundary of the District of Columbia (WGS84) and enlarge it using the custom function `expandbb` to the size of basemap we want to import. 
+Now, lets overlay our results on top of a basemap. Here, we will use an open-source map from [Stamen](http://maps.stamen.com/#terrain/12/37.7706/-122.3782), that is unprojected in WGS84. We extract the rectangular box (i.e., bounding box) surrounding our polygon boundary of the District of Columbia (WGS84) and enlarge it using the custom function `expandbb` to the size of basemap we want to import. 
 ```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE, fig.align='center'}
 expandbb <- function(bb, f) {
   x <- bb[3] - bb[1] # range of x values

@@ -2,10 +2,10 @@
 #' 
 #' Create multiple plots of output from \code{\link{spatial_data}}, \code{\link{spatial_power}} and \code{\link{jitter_power}} functions.
 #' 
-#' @param input An object of class "pplist" from the \code{\link{spatial_data}} function or an object of class "list" from the \code{\link{spatial_power}} or \code{\link{jitter_power}} functions.
+#' @param input An object of class "ppplist" from the \code{\link{spatial_data}} function or an object of class "list" from the \code{\link{spatial_power}} or \code{\link{jitter_power}} functions.
 #' @param p_thresh A numeric value between 0 and 1 (default = 0.8) for the power threshold.
 #' @param n_sim Integer. The number of simulated iterations to plot. The default is one (1).
-#' @param cols Character string of length five (5) specifying the colors for ploting: 1) sufficiently powered, midpoint, insufficiently powered, case locations, control locations. The default colors in hex are \code{c("#0000ff", "#00ff00", "#ff0000", "#a020f0", "#ffa500")} or \code{c("grey0", "grey80", "grey100", "red", "blue")}.
+#' @param cols Character string of length five (5) specifying the colors for plotting: 1) sufficiently powered, midpoint, insufficiently powered, case locations, control locations. The default colors in hex are \code{c("#0000ff", "#00ff00", "#ff0000", "#a020f0", "#ffa500")} or \code{c("grey0", "grey80", "grey100", "red", "blue")}.
 #' @param chars Vector of integers or character string of length two (2) for symbols of case and control locations. Default is \code{c(1,1)}. 
 #' @param sizes Vector of integers of length two (2) for the size of the symbols for case and control locations. Default is \code{c(1,1)}. 
 #' @param plot_pts Logical. If TRUE (the default), the points from the first simulation iteration will be added to second plot. Not if FALSE.
