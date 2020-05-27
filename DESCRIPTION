@@ -51,5 +51,7 @@ Suggests:
     rgdal,
     ggplot2,
     knitr,
-    rmarkdown
+    rmarkdown,
+    spelling
 VignetteBuilder: knitr
+Language: en-US
