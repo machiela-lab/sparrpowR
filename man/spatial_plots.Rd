@@ -17,13 +17,13 @@ spatial_plots(
 )
 }
 \arguments{
-\item{input}{An object of class "pplist" from the \code{\link{spatial_data}} function or an object of class "list" from the \code{\link{spatial_power}} or \code{\link{jitter_power}} functions.}
+\item{input}{An object of class "ppplist" from the \code{\link{spatial_data}} function or an object of class "list" from the \code{\link{spatial_power}} or \code{\link{jitter_power}} functions.}
 
 \item{p_thresh}{A numeric value between 0 and 1 (default = 0.8) for the power threshold.}
 
 \item{n_sim}{Integer. The number of simulated iterations to plot. The default is one (1).}
 
-\item{cols}{Character string of length five (5) specifying the colors for ploting: 1) sufficiently powered, midpoint, insufficiently powered, case locations, control locations. The default colors in hex are \code{c("#0000ff", "#00ff00", "#ff0000", "#a020f0", "#ffa500")} or \code{c("grey0", "grey80", "grey100", "red", "blue")}.}
+\item{cols}{Character string of length five (5) specifying the colors for plotting: 1) sufficiently powered, midpoint, insufficiently powered, case locations, control locations. The default colors in hex are \code{c("#0000ff", "#00ff00", "#ff0000", "#a020f0", "#ffa500")} or \code{c("grey0", "grey80", "grey100", "red", "blue")}.}
 
 \item{chars}{Vector of integers or character string of length two (2) for symbols of case and control locations. Default is \code{c(1,1)}.}
 

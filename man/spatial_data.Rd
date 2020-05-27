@@ -47,15 +47,15 @@ spatial_data(
 
 \item{n_control}{Numeric value, or numeric vector, of the sample size for control locations in each cluster.}
 
-\item{npc_control}{Optional. Numeric value of the numer of clusters of control locations. Ignored if \code{samp_control!="clustered"}.}
+\item{npc_control}{Optional. Numeric value of the number of clusters of control locations. Ignored if \code{samp_control!="clustered"}.}
 
 \item{r_case}{Optional. Numeric value, or numeric vector, of radius (radii) of case cluater(s) in the units of \code{win}. Ignored if \code{samp_case="MVN"}.}
 
 \item{r_control}{Optional. Numeric value, or numeric vector, of radius (radii) of control cluster(s) in the units of \code{win}. Ignored if \code{samp_control!="clustered"}.}
 
-\item{s_case}{Optional. Numberic value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for case locations in the units of \code{win}.  Ignored if \code{samp_control!="MVN"}.}
+\item{s_case}{Optional. Numeric value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for case locations in the units of \code{win}.  Ignored if \code{samp_control!="MVN"}.}
 
-\item{s_control}{Optional. Numberic value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for control locations in the units of \code{win}. Ignored if \code{samp_control!="MVN"}.}
+\item{s_control}{Optional. Numeric value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for control locations in the units of \code{win}. Ignored if \code{samp_control!="MVN"}.}
 
 \item{l_case}{Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for case clusters. Ignored if \code{samp_control!="IPP"}.}
 
@@ -84,7 +84,7 @@ If \code{samp_case = "IPP"} the case locations are randomly generated assuming a
 
 If \code{samp_control = "uniform"} the control locations are randomly generated uniformly within the window \code{win}.
 
-If \code{samp_control = "systematic"} the control locations are randomly generated systematicaly within the window \code{win} consisting of a grid of equally-spaced points with a random common displacement.
+If \code{samp_control = "systematic"} the control locations are randomly generated systematically within the window \code{win} consisting of a grid of equally-spaced points with a random common displacement.
 
 If \code{samp_control = "MVN"} the control locations are randomly generated assuming a multivariate normal distribution centered at coordinates (\code{x_control}, \code{y_control}) with a standard deviation of \code{s_control}.
 
