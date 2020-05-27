@@ -4,11 +4,11 @@ Version: 0.1.0
 Authors@R: 
     c(person(given = "Ian D.",
              family = "Buller",
-             role = c("aut", "cre"),
+             role = c("aut", "cre", "cph"),
              email = "ian.buller@nih.gov"),
       person(given = "Derek W.",
              family = "Brown",
-             role = "aut",
+             role = c("aut", "cph"),
              email = "derek.brown@nih.gov"),
       person(given = "Mitchell J.",
              family = "Machiela",
@@ -17,7 +17,9 @@ Authors@R:
       person(given = "Timothy A.",
              family = "Myers",
              role = "ctb",
-             email = "myersta@mail.nih.gov")
+             email = "myersta@mail.nih.gov"),
+      person(given = "NCI",
+             role = c("cph", "fnd"))
       )
 Maintainer: Ian D. Buller <ian.buller@nih.gov>
 Description: Calculate the statistical power to detect clusters using kernel-based 
