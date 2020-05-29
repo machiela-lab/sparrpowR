@@ -49,7 +49,6 @@ Suggests:
     tibble,
     tidyverse,
     testthat,
-    rgdal,
     ggplot2,
     knitr,
     rmarkdown,
