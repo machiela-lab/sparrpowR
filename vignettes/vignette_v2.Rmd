@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.width = 7, fig.height = 7, fig.show = "ho
 
 Start with the necessary packages and seed for the vignette
 ```{r echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE}
-loadedPackages <- c("sparrpowR", "rgdal")
+loadedPackages <- c("broom", "geojsonio", "ggmap", "ggplot2", "maptools",  "raster", "rgeos", "sp", "sparrpowR","spatstat", "tibble")
 invisible(lapply(loadedPackages, require, character.only = TRUE))
 set.seed(1234) # for reproducibility
 ```
@@ -162,7 +162,7 @@ ggmap::ggmap(base_map) + # basemap
   ggplot2::scale_fill_gradientn(colours = rampcols) + # colors for polygons
   ggplot2::geom_point(data = sim_pts_df, # simulated point-locations
              ggplot2::aes(x = mx, y = my, color = marks, shape = marks),
-             alpha = 0.8) + 
+             alpha = 1) + 
   ggplot2::scale_color_manual(values = cols[4:5]) + # fill of point-locations
   ggplot2::scale_shape_manual(values = chars) + # shope of point-locations
   ggplot2::labs(x = "", y = "", fill = "Power", color = "", shape = "") # legend labels
