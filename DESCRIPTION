@@ -48,6 +48,7 @@ Suggests:
     rgeos,
     tibble,
     tidyverse,
+    rgdal,
     testthat,
     ggplot2,
     knitr,
