@@ -15,11 +15,10 @@ knitr::opts_chunk$set(echo = TRUE, fig.width = 7, fig.height = 7, fig.show = "ho
 ```
 
 Start with the necessary packages and seed for the vignette
-```{r packages, echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE}
-loadedPackages <- c("broom", "geojsonio", "ggmap", "ggplot2", "maptools",  "raster", "rgdal", "rgeos", "sp", "sparrpowR","spatstat", "tibble")
+```{r echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE}
+loadedPackages <- c("sparrpowR", "rgdal")
 invisible(lapply(loadedPackages, require, character.only = TRUE))
 set.seed(1234) # for reproducibility
-rgeos::set_RGEOS_CheckValidity(0L) # do not check union validity (use with caution)
 ```
 
 Import data from Open Data DC [website](https://opendata.dc.gov/datasets/washington-dc-boundary)
@@ -45,7 +44,7 @@ plot(dcc, main = "Clipped Boundary")
 
 Our developed method, `sparrpowR`, relies on the `spatstat` package to simulate data, which assumes point locations are on a planar (i.e., flat) surface. Our boundary is made up of geographical coordinates on Earth (i.e., a sphere), so we need to flatten our boundary by spatially projecting it with an appropriate spatial reference system (CRS). For the District of Columbia, we are going to use the World Geodetic System 1984 (WGS84) Universal Transverse Mercator (UTM) Zone 18N [EPSG:32619](https://epsg.io/32618). We then convert the boundary into a `owin` object required by the `spatstat` package
 ```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
-dcp <- sp::spTransform(dcc, sp::CRS("+init=EPSG:32618"))
+dcp <- sp::spTransform(dcc, CRS("+init=EPSG:32618"))
 dco <- spatstat::as.owin(dcp)
 ```
 
@@ -120,7 +119,7 @@ Prepare the points from the first simulation for plotting in `ggplot2` suite.
 sim_pts <- sim_power$sim  # extract points from first iteration
 sim_pts <- maptools::as.SpatialPointsDataFrame.ppp(sim_pts) # convert to spatial data frame
 raster::crs(sim_pts) <- sp::proj4string(dcp) # set initial projection
-sim_pts_wgs84 <-  sp::spTransform(sim_pts, sp::CRS("+init=epsg:4326")) # project to basemap
+sim_pts_wgs84 <-  sp::spTransform(sim_pts, CRS("+init=epsg:4326")) # project to basemap
 sim_pts_df <- tibble::tibble(data.frame(sim_pts_wgs84)) # convert to tidy data frame
 ```
 
@@ -163,7 +162,7 @@ ggmap::ggmap(base_map) + # basemap
   ggplot2::scale_fill_gradientn(colours = rampcols) + # colors for polygons
   ggplot2::geom_point(data = sim_pts_df, # simulated point-locations
              ggplot2::aes(x = mx, y = my, color = marks, shape = marks),
-             alpha = 1) + 
+             alpha = 0.8) + 
   ggplot2::scale_color_manual(values = cols[4:5]) + # fill of point-locations
   ggplot2::scale_shape_manual(values = chars) + # shope of point-locations
   ggplot2::labs(x = "", y = "", fill = "Power", color = "", shape = "") # legend labels
