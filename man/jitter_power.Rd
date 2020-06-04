@@ -13,7 +13,7 @@ jitter_power(
   lower_tail = 0.025,
   upper_tail = 0.975,
   parallel = FALSE,
-  n_core = NULL,
+  n_core = 2,
   verbose = TRUE,
   ...
 )
@@ -35,7 +35,7 @@ jitter_power(
 
 \item{parallel}{Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.}
 
-\item{n_core}{Optional. Integer specifying the number of CPU cores on current host to use for parallelization. If NULL (the default), will execute with n-1 CPU cores on the current host.}
+\item{n_core}{Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).}
 
 \item{verbose}{Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.}
 

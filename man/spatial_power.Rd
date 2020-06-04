@@ -28,7 +28,7 @@ spatial_power(
   cascon = FALSE,
   verbose = TRUE,
   parallel = FALSE,
-  n_core = NULL,
+  n_core = 2,
   ...
 )
 }
@@ -79,7 +79,7 @@ spatial_power(
 
 \item{parallel}{Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.}
 
-\item{n_core}{Optional. Integer specifying the number of CPU cores on current host to use for parallelization. If NULL (the default), will execute with n-1 CPU cores on the current host.}
+\item{n_core}{Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).}
 
 \item{...}{Arguments passed to \code{\link[spatstat]{runifdisc}}, \code{\link[spatstat]{disc}}, \code{\link[spatstat]{rpoispp}}, \code{\link[spatstat]{rsyst}}, or \code{\link[spatstat]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}. Arguments also passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.}
 }

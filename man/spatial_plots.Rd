@@ -42,7 +42,7 @@ This function produces up to three plots: 1) example input, 2) local power, and 
 Create multiple plots of output from \code{\link{spatial_data}}, \code{\link{spatial_power}} and \code{\link{jitter_power}} functions.
 }
 \examples{
-\dontrun{
+\donttest{
 spatial_plots(input = sim_power)
 }
 
