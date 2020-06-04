@@ -10,7 +10,7 @@
 #' @param lower_tail Optional. Numeric value of lower p-value threshold (default=0.025).
 #' @param upper_tail Optional. Numeric value of upper p-value threshold (default=0.975). Ignored if cascon=FALSE.
 #' @param parallel Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.
-#' @param n_core Optional. Integer specifying the number of CPU cores on current host to use for parallelization. If NULL (the default), will execute with n-1 CPU cores on the current host.
+#' @param n_core Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).
 #' @param verbose Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.
 #' @param ... Arguments passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.
 #' 
@@ -45,7 +45,7 @@
 #' @importFrom stats sd
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @importFrom foreach %do% %dopar% foreach
-#' @importFrom parallel detectCores makeCluster stopCluster
+#' @importFrom parallel makeCluster stopCluster
 #' @importFrom doParallel registerDoParallel
 #' @importFrom sparr risk
 #' @export
@@ -70,7 +70,7 @@ jitter_power <- function(obs_data,
                          lower_tail = 0.025, 
                          upper_tail = 0.975,
                          parallel = FALSE,
-                         n_core = NULL,
+                         n_core = 2,
                          verbose = TRUE,
                          ...) {
   
@@ -128,7 +128,6 @@ jitter_power <- function(obs_data,
   if (parallel == TRUE){
     loadedPackages <- c("doParallel", "parallel")
     invisible(lapply(loadedPackages, require, character.only = TRUE))
-    if(is.null(n_core)){ n_core <- parallel::detectCores() - 1 }
     cl <- parallel::makeCluster(n_core)
     doParallel::registerDoParallel(cl)
     `%fun%` <- foreach::`%dopar%`

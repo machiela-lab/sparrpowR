@@ -17,7 +17,7 @@
 #' @importFrom stats na.omit
 #' @importFrom graphics text
 #' @importFrom sp coordinates gridded
-#' @importFrom spatstat plot.ppp
+#' @importFrom spatstat plot.ppp plot.anylist
 #' @importFrom raster raster values reclassify
 #' @importFrom grDevices colorRampPalette
 #' @importFrom fields image.plot
@@ -41,7 +41,7 @@ spatial_plots <- function(input,
   
   
   if("ppplist" %in% class(input)){
-    return(spatstat::plot.ppp(input[1:n_sim], 
+    return(spatstat::plot.anylist(input[1:n_sim], 
                     pch = chars,
                     cex = sizes,
                     cols = c(cols[4], cols[5]),
