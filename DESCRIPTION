@@ -24,8 +24,8 @@ Authors@R:
 Maintainer: Ian D. Buller <ian.buller@nih.gov>
 Description: Calculate the statistical power to detect clusters using kernel-based 
         spatial relative risk functions that are estimated using the 'sparr' package.
-        Details about the method can be found in Tilman M. Davies, Jonathan C. Marshall,
-        Martin L. Hazelton (2017) <doi:10.1002/sim.7577>.
+        Details about the method can be found in the tutorial: Tilman M. Davies, Jonathan C. Marshall,
+        Martin L. Hazelton (2018) <doi:10.1002/sim.7577>.
 License: Apache License (>= 2.0)
 Encoding: UTF-8
 LazyData: true
