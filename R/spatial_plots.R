@@ -25,7 +25,7 @@
 #' @export 
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' spatial_plots(input = sim_power)
 #' }
 #' 
