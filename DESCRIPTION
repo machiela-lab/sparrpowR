@@ -1,6 +1,6 @@
 Package: sparrpowR
 Title: Power Analysis to Detect Spatial Relative Clusters
-Version: 0.1.1
+Version: 0.1.1.9000
 Authors@R: 
     c(person(given = "Ian D.",
              family = "Buller",
@@ -26,7 +26,7 @@ Description: Calculate the statistical power to detect clusters using kernel-bas
         spatial relative risk functions that are estimated using the 'sparr' package.
         Details about the 'sparr' package methods can be found in the tutorial: Davies
         et al. (2018) <doi:10.1002/sim.7577>.  Details about kernel density estimation 
-        can be found in J. F. Bethell (1990) <doi:10.1002/sim.4780090616>.  For more 
+        can be found in J. F. Bethell (1990) <doi:10.1002/sim.4780090616>.  More 
         information about relative risk functions using kernel-density estimation can 
         be found in J. F. Bithell (1991) <doi:10.1002/sim.4780101112>.
 License: Apache License (>= 2.0)
