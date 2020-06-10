@@ -1,7 +1,7 @@
 ---
-title: "*sparrpowR*: Power Analysis to Detect Spatial Relative Risk Clusters"
+title: "sparrpowR: Power Analysis to Detect Spatial Relative Risk Clusters"
 author: 'Ian D. Buller (Github: @idblr)'
-date: "5/22/2020"
+date: "6/10/2020"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{sparrpowR*: power analysis to detect spatial relative risk clusters}
@@ -12,6 +12,7 @@ vignette: >
 ```{r setup, include=FALSE}
 library(knitr)
 knitr::opts_chunk$set(echo = TRUE, fig.width = 7, fig.height = 7, fig.show = "hold")
+options("rgdal_show_exportToProj4_warnings" = "none") # to mute warnings of possible GDAL/OSR exportToProj4() degradation
 ```
 
 Start with the necessary packages and seed for the vignette
@@ -44,14 +45,14 @@ plot(dcc, main = "Clipped Boundary")
 
 Our developed method, `sparrpowR`, relies on the `spatstat` package to simulate data, which assumes point locations are on a planar (i.e., flat) surface. Our boundary is made up of geographical coordinates on Earth (i.e., a sphere), so we need to flatten our boundary by spatially projecting it with an appropriate spatial reference system (CRS). For the District of Columbia, we are going to use the World Geodetic System 1984 (WGS84) Universal Transverse Mercator (UTM) Zone 18N [EPSG:32619](https://epsg.io/32618). We then convert the boundary into a `owin` object required by the `spatstat` package
 ```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
-dcp <- sp::spTransform(dcc, CRS("+init=EPSG:32618"))
+dcp <- sp::spTransform(dcc, CRSobj = sp::CRS(projargs = "+init=EPSG:32618"))
 dco <- spatstat::as.owin(dcp)
 ```
 
 In this hypothetical example, we want to estimate the local power of detecting a spatial case cluster relative to control locations. Study participants that tested positive for a disease (i.e., cases) are hypothesized to be located in a circular area around the Navy Yard, an Environmental Protection Agency (EPA) Superfund Site [(see the success story)](https://cumulis.epa.gov/supercpad/cursites/csitinfo.cfm?id=0300031).
 ```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
 navy <- data.frame(lon = 326414.70444451, lat = 4304571.1539442)
-spf <- sp::SpatialPoints(coords = navy, proj4string = sp::CRS("+init=EPSG:32618"))
+spf <- sp::SpatialPoints(coords = navy, proj4string = sp::CRS(projargs = "+init=EPSG:32618"))
 # Plot
 sp::plot(dcp, main = "Location of Hypothetical\nDisease Cluster")
 sp::plot(spf, col = "red", add = T)
@@ -119,7 +120,7 @@ Prepare the points from the first simulation for plotting in `ggplot2` suite.
 sim_pts <- sim_power$sim  # extract points from first iteration
 sim_pts <- maptools::as.SpatialPointsDataFrame.ppp(sim_pts) # convert to spatial data frame
 raster::crs(sim_pts) <- sp::proj4string(dcp) # set initial projection
-sim_pts_wgs84 <-  sp::spTransform(sim_pts, CRS("+init=epsg:4326")) # project to basemap
+sim_pts_wgs84 <-  sp::spTransform(sim_pts, CRSobj = sp::CRS(projargs = "+init=epsg:4326")) # project to basemap
 sim_pts_df <- tibble::tibble(data.frame(sim_pts_wgs84)) # convert to tidy data frame
 ```
 
