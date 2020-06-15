@@ -1,8 +1,8 @@
-## This is the first re-submission
-* Actions taken regarding feedback from Swetlana Herbrandt
-  * Added 3 references describing methods to DESCRIPTION in the format: authors (year) <doi:...>
-  * Replaced \dontrun{} with \donttest{} in the spatial_plot() example
-  * To ensure no more than 2 cores are used, we changed the default cores in the appropriate functions from NULL to 2 cores
+## This is the second submission
+* Actions taken regarding message from Prof Brian Ripley to be corrected before 
+2020-06-24 to safely retain the package on CRAN.
+  * In vignette, specified 'sp' package in calls to the CRS() function.
+  * Added a mute option to the vignette. 
   
 ## Test environments
 * local OS X install, R 3.6.2
