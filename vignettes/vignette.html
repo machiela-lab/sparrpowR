@@ -319,7 +319,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 <p>Start with the necessary packages and seed for the vignette</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>loadedPackages &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;sparrpowR&quot;</span>, <span class="st">&quot;rgdal&quot;</span>)</span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>loadedPackages &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;broom&quot;</span>, <span class="st">&quot;geojsonio&quot;</span>, <span class="st">&quot;ggmap&quot;</span>, <span class="st">&quot;ggplot2&quot;</span>, <span class="st">&quot;grDevices&quot;</span>, <span class="st">&quot;maptools&quot;</span>, <span class="st">&quot;raster&quot;</span>, <span class="st">&quot;rgdal&quot;</span>, <span class="st">&quot;rgeos&quot;</span>, <span class="st">&quot;sp&quot;</span>, <span class="st">&quot;sparrpowR&quot;</span>, <span class="st">&quot;spatstat&quot;</span>, <span class="st">&quot;tibble&quot;</span>)</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="kw">invisible</span>(<span class="kw">lapply</span>(loadedPackages, require, <span class="dt">character.only =</span> <span class="ot">TRUE</span>))</span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="kw">set.seed</span>(<span class="dv">1234</span>) <span class="co"># for reproducibility</span></span></code></pre></div>
 <p>Import data from Open Data DC <a href="https://opendata.dc.gov/datasets/washington-dc-boundary">website</a></p>

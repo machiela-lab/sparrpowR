@@ -17,7 +17,7 @@ options("rgdal_show_exportToProj4_warnings" = "none") # to mute warnings of poss
 
 Start with the necessary packages and seed for the vignette
 ```{r echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE}
-loadedPackages <- c("sparrpowR", "rgdal")
+loadedPackages <- c("broom", "geojsonio", "ggmap", "ggplot2", "grDevices", "maptools", "raster", "rgdal", "rgeos", "sp", "sparrpowR", "spatstat", "tibble")
 invisible(lapply(loadedPackages, require, character.only = TRUE))
 set.seed(1234) # for reproducibility
 ```
