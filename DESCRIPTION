@@ -1,6 +1,6 @@
 Package: sparrpowR
 Title: Power Analysis to Detect Spatial Relative Clusters
-Version: 0.1.2
+Version: 0.1.2.9000
 Authors@R: 
     c(person(given = "Ian D.",
              family = "Buller",
@@ -58,6 +58,7 @@ Suggests:
     ggplot2,
     knitr,
     rmarkdown,
-    spelling
-VignetteBuilder: knitr
+    spelling,
+    R.rsp
+VignetteBuilder: R.rsp
 Language: en-US
