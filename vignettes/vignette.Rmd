@@ -1,10 +1,10 @@
 ---
-title: "sparrpowR: Power Analysis to Detect Spatial Relative Risk Clusters"
+title: "sparrpowR: Power analysis to detect spatial relative risk clusters"
 author: 'Ian D. Buller (Github: @idblr)'
 date: "6/10/2020"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{sparrpowR*: power analysis to detect spatial relative risk clusters}
+  %\VignetteIndexEntry{sparrpowR: Power analysis to detect spatial relative risk clusters}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
