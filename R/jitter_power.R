@@ -41,7 +41,7 @@
 #' \item{\code{bandw}}{Vector of length \code{sim_total} of the global t statistic.}
 #' }
 #' 
-#' @importFrom spatstat marks runifpoint rpoispp ppp superimpose
+#' @importFrom spatstat.core marks runifpoint rpoispp ppp superimpose
 #' @importFrom stats sd
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @importFrom foreach %do% %dopar% foreach
@@ -95,28 +95,28 @@ jitter_power <- function(obs_data,
   rcluster_control <- function(n, l, win, s, types = "control", ...) {
     if (samp_control == "uniform") {
       repeat {  
-        x <- spatstat::runifpoint(n = n, win = win, ...)
+        x <- spatstat.core::runifpoint(n = n, win = win, ...)
         if (x$n == n) break
       }
     }
     
     if (samp_control == "CSR") {
-      x <- spatstat::rpoispp(lambda = l, win = win, ...)
+      x <- spatstat.core::rpoispp(lambda = l, win = win, ...)
     }
     
     if (samp_control == "MVN") {
       x1 <- obs_data$x + rnorm(length(obs_data$x), 0, s) 
       y1 <- obs_data$y + rnorm(length(obs_data$y), 0, s) 
-      x <- spatstat::ppp(x1, y1, window = win)
+      x <- spatstat.core::ppp(x1, y1, window = win)
     }
     
-    spatstat::marks(x) <- types
+    spatstat.core::marks(x) <- types
     return(x)
   }
   
   # extract case locations
   cas <- split(obs_data)[[1]]
-  spatstat::marks(cas) <- "case"
+  spatstat.core::marks(cas) <- "case"
   
   # progress bar
   if (verbose == TRUE & parallel == FALSE){
@@ -139,7 +139,7 @@ jitter_power <- function(obs_data,
   out_par <- foreach::foreach(k = 1:sim_total, 
                               .combine = comb, 
                               .multicombine = TRUE, 
-                              .packages = c("sparr", "spatstat"),
+                              .packages = c("sparr", "spatstat.core"),
                               .init = list(list(), list(), list(),
                                            list(), list(), list(), 
                                            list(), list(), list(),
@@ -160,8 +160,8 @@ jitter_power <- function(obs_data,
                             ...)
     
     # Combine random clusters of cases and controls into one marked ppp
-    z <- spatstat::superimpose(con, cas)
-    spatstat::marks(z) <- as.factor(spatstat::marks(z))
+    z <- spatstat.core::superimpose(con, cas)
+    spatstat.core::marks(z) <- as.factor(spatstat.core::marks(z))
     
     # Calculate observed kernel density ratio
     obs_lrr <- sparr::risk(z, tolerate = TRUE, verbose = FALSE, ...)

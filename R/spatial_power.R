@@ -2,7 +2,7 @@
 #' 
 #' Compute the statistical power of a spatial relative risk function using randomly generated data.
 #'
-#' @param win Window in which to simulate the random data. An object of class "owin" or something acceptable to \code{\link[spatstat]{as.owin}}.
+#' @param win Window in which to simulate the random data. An object of class "owin" or something acceptable to \code{\link[spatstat.core]{as.owin}}.
 #' @param sim_total Integer, specifying the number of simulation iterations to perform.
 #' @param x_case Numeric value, or numeric vector, of x-coordinate(s) of case cluster(s).
 #' @param y_case Numeric value, or numeric vector, of y-coordinate(s) of case cluster(s).
@@ -26,9 +26,9 @@
 #' @param parallel Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.
 #' @param n_core Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).
 #' @param verbose Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.
-#' @param ... Arguments passed to \code{\link[spatstat]{runifdisc}}, \code{\link[spatstat]{disc}}, \code{\link[spatstat]{rpoispp}}, \code{\link[spatstat]{rsyst}}, or \code{\link[spatstat]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}. Arguments also passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.
+#' @param ... Arguments passed to \code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.core]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.core]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}. Arguments also passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.
 #'
-#' @details This function computes the statistical power of the spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) for randomly generated data using various random point pattern generators from the \code{\link{spatstat}} package.
+#' @details This function computes the statistical power of the spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) for randomly generated data using various random point pattern generators from the \code{\link{spatstat.core}} package.
 #' 
 #' The function uses the \code{\link[sparr]{risk}} function to estimate the spatial relative risk function and forces the \code{tolerate} argument to be TRUE in order to calculate asymptotic p-values.
 #' 
@@ -54,23 +54,24 @@
 #' 
 #' @return An object of class "list". This is a named list with the following components:
 #' 
-#' #' \describe{
+#' \describe{
 #' \item{\code{sim}}{An object of class 'rrs' for the first iteration of simulated data.}
 #' \item{\code{out}}{An object of class 'rrs' for the observed spatial relative risk function without randomization.}
 #' \item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the mean relative risk values at each gridded knot.}
 #' \item{\code{pval_mean}}{Vector of length \code{[resolution x resolution]} of the mean asymptotic p-value at each gridded knot.}
 #' \item{\code{rr_sd}}{Vector of length \code{[resolution x resolution]} of the standard deviation of relative risk values at each gridded knot.}
-#' \item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values that were significant at each gridded knot.}
+#' \item{\code{pval_prop}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values that were significant at each gridded knot.}
 #' \item{\code{rx}}{Vector of length \code{[resolution x resolution]} of the x-coordinates of each gridded knot.}
 #' \item{\code{ry}}{Vector of length \code{[resolution x resolution]} of the y-coordinates of each gridded knot.}
-#' \item{\code{rx}}{Vector of length \code{sim_total} of the number of control locations simulated in each iteration.}
+#' \item{\code{n_cas}}{Vector of length \code{sim_total} of the number of case locations simulated in each iteration.}
+#' \item{\code{n_con}}{Vector of length \code{sim_total} of the number of control locations simulated in each iteration.}
 #' \item{\code{bandw}}{Vector of length \code{sim_total} of the bandwidth (of numerator) used in each iteration.}
-#' \item{\code{bandw}}{Vector of length \code{sim_total} of the global s statistic.}
-#' \item{\code{bandw}}{Vector of length \code{sim_total} of the global t statistic.}
+#' \item{\code{s_obs}}{Vector of length \code{sim_total} of the global s statistic.}
+#' \item{\code{t_obs}}{Vector of length \code{sim_total} of the global t statistic.}
 #' }
 #' 
 #' @importFrom stats rnorm sd
-#' @importFrom spatstat disc marks ppp rNeymanScott rpoispp rsyst runifdisc runifpoint shift superimpose unit.square
+#' @importFrom spatstat.core disc marks ppp rNeymanScott rpoispp rsyst runifdisc runifpoint shift superimpose unit.square
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @importFrom foreach %do% %dopar% foreach
 #' @importFrom parallel makeCluster stopCluster
@@ -92,7 +93,7 @@
 #'                verbose = FALSE
 #'                )
 #' 
-spatial_power <- function(win = spatstat::unit.square(),
+spatial_power <- function(win = spatstat.core::unit.square(),
                           sim_total = 2,
                           x_case, y_case,
                           samp_case = c("uniform", "MVN", "CSR", "IPP"),
@@ -182,7 +183,7 @@ spatial_power <- function(win = spatstat::unit.square(),
   rcluster_case <- function(x0, y0, rad, n, scalar, lamb, wind, types = "case", ...) {
     
     if (samp_case == "uniform"){
-      x <- spatstat::runifdisc(n = n, radius = rad, centre = c(x0, y0), win = wind, ...)
+      x <- spatstat.core::runifdisc(n = n, radius = rad, centre = c(x0, y0), win = wind, ...)
     }  
     
     if (samp_case == "MVN"){
@@ -190,37 +191,37 @@ spatial_power <- function(win = spatstat::unit.square(),
       y1 <- rep(y0, n)
       x2 <- x1 + stats::rnorm(n, 0, scalar) 
       y2 <- y1 + stats::rnorm(n, 0, scalar) 
-      x <- spatstat::ppp(x2, y2, window = wind)
+      x <- spatstat.core::ppp(x2, y2, window = wind)
     }  
     
     if (samp_case == "CSR"){
-      win_case <- spatstat::disc(radius = rad, centre = c(0.5, 0.5), ...)
+      win_case <- spatstat.core::disc(radius = rad, centre = c(0.5, 0.5), ...)
       l <- n/(diff(win_case$xrange)*diff(win_case$yrange))
-      x <- spatstat::rpoispp(lambda = l, win = win_case, ...)
-      x <- spatstat::shift(x, c(x0 - 0.5, y0 - 0.5))
+      x <- spatstat.core::rpoispp(lambda = l, win = win_case, ...)
+      x <- spatstat.core::shift(x, c(x0 - 0.5, y0 - 0.5))
     }
     
     if (samp_case == "IPP"){
       if (class(lamb) != "function") {
         stop("The argument 'l_case' should be an intensity function")
       }
-      win_case <- spatstat::disc(radius = rad, centre = c(0.5, 0.5), ...)
-      x <- spatstat::rpoispp(lambda = lamb, win = win_case, ...)
-      x <- spatstat::shift(x, c(x0 - 0.5, y0 - 0.5))
+      win_case <- spatstat.core::disc(radius = rad, centre = c(0.5, 0.5), ...)
+      x <- spatstat.core::rpoispp(lambda = lamb, win = win_case, ...)
+      x <- spatstat.core::shift(x, c(x0 - 0.5, y0 - 0.5))
     }
     
-    spatstat::marks(x) <- types
+    spatstat.core::marks(x) <- types
     return(x)
   }
   
   # marked uniform ppp for controls
   rcluster_control <- function(x0, y0, scalar, n, lamb, ex, nclust, rad, types = "control", wind, ...) {
     if (samp_control == "uniform"){ 
-      x <- spatstat::runifpoint(n, win = wind, ...) 
+      x <- spatstat.core::runifpoint(n, win = wind, ...) 
     }
     
     if (samp_control == "systematic") {
-      x <- spatstat::rsyst(nx = sqrt(n), win = wind, ...)
+      x <- spatstat.core::rsyst(nx = sqrt(n), win = wind, ...)
     }
     
     if (samp_control == "MVN"){
@@ -228,27 +229,27 @@ spatial_power <- function(win = spatstat::unit.square(),
       y1 <- rep(y0, n)
       x2 <- x1 + stats::rnorm(n, 0, scalar) 
       y2 <- y1 + stats::rnorm(n, 0, scalar) 
-      x <- spatstat::ppp(x2, y2, window = wind)
+      x <- spatstat.core::ppp(x2, y2, window = wind)
     }  
     
     if (samp_control == "CSR") {
       l <- n/(diff(wind$xrange)*diff(wind$yrange))
-      x <- spatstat::rpoispp(lambda = l, win = wind, ...)
+      x <- spatstat.core::rpoispp(lambda = l, win = wind, ...)
     }
     
     if (samp_control == "IPP") {
       if (class(lamb) != "function") {
         stop("The argument 'l_control' should be an intensity function")
       }
-      x <- spatstat::rpoispp(lambda = lamb, win = wind, ...)
+      x <- spatstat.core::rpoispp(lambda = lamb, win = wind, ...)
     }
     
     if (samp_control == "clustered") {
       control_clustering <- function(x0, y0, radius, n) {
-        X <- spatstat::runifdisc(n, radius, centre = c(x0, y0))
+        X <- spatstat.core::runifdisc(n, radius, centre = c(x0, y0))
         return(X)
       }
-      x <- spatstat::rNeymanScott(kappa = lamb,
+      x <- spatstat.core::rNeymanScott(kappa = lamb,
                                   expand = ex,
                                   rcluster = control_clustering, 
                                   n = nclust,
@@ -256,7 +257,7 @@ spatial_power <- function(win = spatstat::unit.square(),
                                   win = wind,
                                   ...)
     }
-    spatstat::marks(x) <- types
+    spatstat.core::marks(x) <- types
     return(x)
   }
   
@@ -274,7 +275,7 @@ spatial_power <- function(win = spatstat::unit.square(),
     pppCase[[i]] <- x1
   }
   class(pppCase) <- c("ppplist", "solist",  "anylist", "listof", "list")
-  cas <- spatstat::superimpose(pppCase)
+  cas <- spatstat.core::superimpose(pppCase)
   
   # Progress bar
   if (verbose == TRUE & parallel == FALSE){
@@ -297,7 +298,7 @@ spatial_power <- function(win = spatstat::unit.square(),
   out_par <- foreach::foreach(k = 1:sim_total, 
                               .combine = comb, 
                               .multicombine = TRUE, 
-                              .packages = c("sparr", "spatstat"),
+                              .packages = c("sparr", "spatstat.core"),
                               .init = list(list(), list(), list(),
                                            list(), list(), list(),
                                            list(), list(), list(),
@@ -324,7 +325,7 @@ spatial_power <- function(win = spatstat::unit.square(),
         pppControl[[i]] <- y1
       }
       class(pppControl) <- c("ppplist", "solist",  "anylist", "listof", "list")
-      con <- spatstat::superimpose(pppControl)
+      con <- spatstat.core::superimpose(pppControl)
       
     } else { 
       suppressWarnings(
@@ -341,8 +342,8 @@ spatial_power <- function(win = spatstat::unit.square(),
     }
     
     # Combine random clusters of cases and controls into one marked ppp
-    z <- spatstat::superimpose(con, cas)
-    spatstat::marks(z) <- as.factor(spatstat::marks(z))
+    z <- spatstat.core::superimpose(con, cas)
+    spatstat.core::marks(z) <- as.factor(spatstat.core::marks(z))
     
     # Calculate observed kernel density ratio
     obs_lrr <- sparr::risk(z, tolerate = TRUE, verbose = FALSE, ...)
@@ -383,8 +384,8 @@ spatial_power <- function(win = spatstat::unit.square(),
                         "ry" = ry,
                         "sim" = sim,
                         "out" = out,
-                        "n_con" = con$n,
                         "n_cas" = cas$n,
+                        "n_con" = con$n,
                         "bandw" = obs_lrr$f$h0,
                         "s_obs" = s_obs,
                         "t_obs" = t_obs
@@ -436,8 +437,8 @@ spatial_power <- function(win = spatstat::unit.square(),
                   "pval_prop" = pval_prop,
                   "rx" = out_par[[3]][[1]],
                   "ry" = out_par[[4]][[1]],
-                  "n_con" = unlist(out_par[[7]]),
-                  "n_cas" = unlist(out_par[[8]]),
+                  "n_cas" = unlist(out_par[[7]]),
+                  "n_con" = unlist(out_par[[8]]),
                   "bandw" = unlist(out_par[[9]]),
                   "s_obs" = unlist(out_par[[10]]),
                   "t_obs" = unlist(out_par[[11]])
