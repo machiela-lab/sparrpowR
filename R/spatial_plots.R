@@ -60,6 +60,7 @@ spatial_plots <- function(input,
                     leg.side = "bottom",
                     leg.args = list(cex.axis = 0.9, cex = 1, pch = chars),
                     main = plot_titles[1],
+                    main.panel = "",
                     ...
     )
     )
@@ -73,6 +74,7 @@ spatial_plots <- function(input,
                            leg.side = "bottom",
                            leg.args = list(cex.axis = 0.9, cex = 1, pch = chars),
                            main = plot_titles[1],
+                           main.panel = "",
                            ...)
   
   # Plot 2: Power, Continuous
