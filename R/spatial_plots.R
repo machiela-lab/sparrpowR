@@ -10,6 +10,7 @@
 #' @param sizes Vector of integers of length two (2) for the size of the symbols for case and control locations. Default is \code{c(1,1)}. 
 #' @param plot_pts Logical. If TRUE (the default), the points from the first simulation iteration will be added to second plot. Not if FALSE.
 #' @param plot_text Logical. If TRUE, the local statistical power will be printed at each grid cell. Not if FALSE (the default).
+#' @param plot_title Logical. If TRUE (the default), a title will be included in the plot(s). Not if FALSE.
 #' @param ... Arguments passed to \code{\link[spatstat.core]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.
 #'
 #' @return This function produces up to three plots: 1) example input, 2) local power, and 3) local power above a threshold. If the input is from the \code{\link{spatial_data}} function, this function will only display the first plot. 
@@ -37,9 +38,20 @@ spatial_plots <- function(input,
                           sizes = c(1,1),
                           plot_pts = TRUE,
                           plot_text = FALSE,
+                          plot_title = TRUE,
                           ...) {
   
+  # Defaykt Titles for plots
+  if(plot_title == TRUE){
+    plot3_title <- paste("Local power:\nProportion significant above", p_thresh, "threshold", sep = " ")
+    plot_titles <- c("First iteration(s)\nof simulated data",
+                     "Local power:\nProportion of simulations significant",
+                     plot3_title)
+  } else {
+    plot_titles <- c("", "", "")
+  }
   
+  # If input from spatial_data() function
   if("ppplist" %in% class(input)){
     return(spatstat.core::plot.anylist(input[1:n_sim], 
                     pch = chars,
@@ -47,7 +59,7 @@ spatial_plots <- function(input,
                     cols = c(cols[4], cols[5]),
                     leg.side = "bottom",
                     leg.args = list(cex.axis = 0.9, cex = 1, pch = chars),
-                    main = "First iteration(s)\nof simulated data",
+                    main = plot_titles[1],
                     ...
     )
     )
@@ -60,7 +72,7 @@ spatial_plots <- function(input,
                            cols = c(cols[4], cols[5]),
                            leg.side = "bottom",
                            leg.args = list(cex.axis = 0.9, cex = 1, pch = chars),
-                           main = "First iterations of simulated data",
+                           main = plot_titles[1],
                            ...)
   
   # Plot 2: Power, Continuous
@@ -87,7 +99,7 @@ spatial_plots <- function(input,
                            cols = c(cols[4], cols[5]),
                            leg.side = "bottom",
                            leg.args = list(cex.axis = 0.9, cex = 1, pch = chars),
-                           main = "Local power:\nProportion of simulations significant",
+                           main = plot_titles[2],
                            ...)
   fields::image.plot(pvalprop_raster, 
                      col = rampcols,
@@ -136,10 +148,7 @@ spatial_plots <- function(input,
                            cols = c("transparent", "transparent"),
                            leg.side = "bottom",
                            leg.args = list(cex.axis = 0.0000000000000001),
-                           main = paste("Local power:\nProportion significant above",
-                                        p_thresh,
-                                        "threshold",
-                                        sep = " "),
+                           main = plot_titles[3],
                            ...)
   fields::image.plot(pvalprop_reclass, 
                      add = TRUE,
