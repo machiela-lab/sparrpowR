@@ -6,11 +6,10 @@
 #' @param p_thresh A numeric value between 0 and 1 (default = 0.8) for the power threshold.
 #' @param cascon Logical. If TRUE, displays the statistical power to detect case clusters and control clusters. If FALSE (the default), displays the statistical power to detect case clusters only. 
 #' @param n_sim Integer. The number of simulated iterations to plot. The default is one (1).
-#' @param cols Character string of length five (5) specifying the colors for plotting: 1) sufficiently powered, midpoint, insufficiently powered, case locations, control locations. The default colors in hex are \code{c("#0000ff", "#00ff00", "#ff0000", "#a020f0", "#ffa500")} or \code{c("grey0", "grey80", "grey100", "red", "blue")}.
+#' @param cols Character string of length four (4) specifying the colors for plotting: 1) sufficiently powered, 2) insufficiently powered, 3) case locations, 4) control locations. The default colors in hex are \code{c("#000000", "#cccccc", "#ff0000", "#0000ff")} or \code{c("grey0", "grey80", "red", "blue")}.
 #' @param chars Vector of integers or character string of length two (2) for symbols of case and control locations. Default is \code{c(1,1)}. 
 #' @param sizes Vector of integers of length two (2) for the size of the symbols for case and control locations. Default is \code{c(1,1)}. 
 #' @param plot_pts Logical. If TRUE (the default), the points from the first simulation iteration will be added to second plot. Not if FALSE.
-#' @param plot_text Logical. If TRUE, the local statistical power will be printed at each grid cell. Not if FALSE (the default).
 #' @param plot_title Logical. If TRUE (the default), a title will be included in the plot(s). Not if FALSE.
 #' @param ... Arguments passed to \code{\link[spatstat.core]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.
 #'
@@ -35,11 +34,10 @@ spatial_plots <- function(input,
                           p_thresh = 0.8,
                           cascon = FALSE,
                           n_sim = 1,
-                          cols = c("#000000", "#cccccc", "#ffffff", "#ff0000", "#0000ff"),
+                          cols = c("#000000", "#cccccc", "#ff0000", "#0000ff"),
                           chars = c(1,1),
                           sizes = c(1,1),
                           plot_pts = TRUE,
-                          plot_text = FALSE,
                           plot_title = TRUE,
                           ...) {
   
@@ -65,7 +63,7 @@ spatial_plots <- function(input,
     return(spatstat.core::plot.anylist(input[1:n_sim], 
                     pch = chars,
                     cex = sizes,
-                    cols = c(cols[4], cols[5]),
+                    cols = c(cols[3], cols[4]),
                     leg.side = "bottom",
                     leg.args = list(cex.axis = 0.9, cex = 1, pch = chars),
                     main = plot_titles[1],
@@ -79,7 +77,7 @@ spatial_plots <- function(input,
   p1 <- spatstat.core::plot.ppp(input$sim, 
                            pch = chars, 
                            cex = sizes,
-                           cols = c(cols[4], cols[5]),
+                           cols = c(cols[3], cols[4]),
                            leg.side = "bottom",
                            leg.args = list(cex.axis = 0.9, cex = 1, pch = chars),
                            main = plot_titles[1],
@@ -106,7 +104,7 @@ spatial_plots <- function(input,
   p2 <- spatstat.core::plot.ppp(input$sim, 
                            pch = chars, 
                            cex = sizes,
-                           cols = c(cols[4], cols[5]),
+                           cols = c(cols[3], cols[4]),
                            leg.side = "bottom",
                            leg.args = list(cex.axis = 0.9, cex = 1, pch = chars),
                            main = plot_titles[2],
@@ -133,7 +131,7 @@ spatial_plots <- function(input,
     spatstat.core::plot.ppp(input$sim, 
                        pch = chars, 
                        cex = sizes,
-                       cols = c(cols[4], cols[5]),
+                       cols = c(cols[3], cols[4]),
                        add = TRUE,
                        ...)
   }
@@ -181,9 +179,5 @@ spatial_plots <- function(input,
                                         cex = 0.67
                      ),
                      ...)
-  ### Add text of local power to each knot
-  if(plot_text == TRUE){
-    graphics::text(x = input$rx, y = input$ry, input$pval_prop, col = cols[3], cex = 0.5)
-  }
   pvalprop_reclass <- NULL # conserve memory
 }
