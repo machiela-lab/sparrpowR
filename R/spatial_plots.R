@@ -4,6 +4,7 @@
 #' 
 #' @param input An object of class "ppplist" from the \code{\link{spatial_data}} function or an object of class "list" from the \code{\link{spatial_power}} or \code{\link{jitter_power}} functions.
 #' @param p_thresh A numeric value between 0 and 1 (default = 0.8) for the power threshold.
+#' @param cascon Logical. If TRUE, displays the statistical power to detect case clusters and control clusters. If FALSE (the default), displays the statistical power to detect case clusters only. 
 #' @param n_sim Integer. The number of simulated iterations to plot. The default is one (1).
 #' @param cols Character string of length five (5) specifying the colors for plotting: 1) sufficiently powered, midpoint, insufficiently powered, case locations, control locations. The default colors in hex are \code{c("#0000ff", "#00ff00", "#ff0000", "#a020f0", "#ffa500")} or \code{c("grey0", "grey80", "grey100", "red", "blue")}.
 #' @param chars Vector of integers or character string of length two (2) for symbols of case and control locations. Default is \code{c(1,1)}. 
@@ -32,6 +33,7 @@
 #' 
 spatial_plots <- function(input,
                           p_thresh = 0.8,
+                          cascon = FALSE,
                           n_sim = 1,
                           cols = c("#000000", "#cccccc", "#ffffff", "#ff0000", "#0000ff"),
                           chars = c(1,1),
@@ -40,6 +42,13 @@ spatial_plots <- function(input,
                           plot_text = FALSE,
                           plot_title = TRUE,
                           ...) {
+  
+  # Case Clusters Only or Case and Control Clusters
+  if(cascon == TRUE){
+    pvalprop <- data.frame("x" = input$rx, "y" = input$ry, "z" = input$pval_prop_cascon)
+  } else {
+    pvalprop <- data.frame("x" = input$rx, "y" = input$ry, "z" = input$pval_prop_cas)
+  }
   
   # Defaykt Titles for plots
   if(plot_title == TRUE){
@@ -79,7 +88,6 @@ spatial_plots <- function(input,
   
   # Plot 2: Power, Continuous
   ## Create proportion significant raster
-  pvalprop <- data.frame("x" = input$rx, "y" = input$ry, "z" = input$pval_prop)
   lrr_narm <- stats::na.omit(pvalprop) # remove NAs
   sp::coordinates(lrr_narm) <- ~ x + y # coordinates
   sp::gridded(lrr_narm) <- TRUE # gridded
