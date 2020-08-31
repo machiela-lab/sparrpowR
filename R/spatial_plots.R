@@ -9,7 +9,7 @@
 #' @param cols Character string of length four (4) specifying the colors for plotting: 1) sufficiently powered, 2) insufficiently powered, 3) case locations, 4) control locations. The default colors in hex are \code{c("#000000", "#cccccc", "#ff0000", "#0000ff")} or \code{c("grey0", "grey80", "red", "blue")}.
 #' @param chars Vector of integers or character string of length two (2) for symbols of case and control locations. Default is \code{c(1,1)}. 
 #' @param sizes Vector of integers of length two (2) for the size of the symbols for case and control locations. Default is \code{c(1,1)}. 
-#' @param scale Integer. A graphical expansion factor (default is 1) for text sizes within plots.
+#' @param scale Integer. A graphical expansion factor (default is 1) for text (and point) size within plots. Intended for scaling plot features with plot resolution.
 #' @param plot_pts Logical. If TRUE (the default), the points from the first simulation iteration will be added to second plot. Not if FALSE.
 #' @param plot_title Logical. If TRUE (the default), a title will be included in the plot(s). Not if FALSE.
 #' @param ... Arguments passed to \code{\link[spatstat.core]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.
@@ -50,7 +50,7 @@ spatial_plots <- function(input,
     pvalprop <- data.frame("x" = input$rx, "y" = input$ry, "z" = input$pval_prop_cas)
   }
   
-  # Defaykt Titles for plots
+  # Default Titles for plots
   if(plot_title == TRUE){
     plot3_title <- paste("Local power:\nProportion significant above", p_thresh, "threshold", sep = " ")
     plot_titles <- c("First iteration(s)\nof simulated data",
@@ -60,16 +60,18 @@ spatial_plots <- function(input,
     plot_titles <- c("", "", "")
   }
   
+  # Scale the title size
+  par(cex.main = 1*scale)
+  
   # If input from spatial_data() function
   if("ppplist" %in% class(input)){
     return(spatstat.core::plot.anylist(input[1:n_sim], 
                     pch = chars,
-                    cex = sizes,
+                    cex = sizes*scale,
                     cols = c(cols[3], cols[4]),
                     leg.side = "bottom",
                     leg.args = list(cex.axis = 0.9*scale, cex = 1*scale, pch = chars),
                     main = plot_titles[1],
-                    cex.main = 1*scale,
                     main.panel = "",
                     ...
     )
@@ -79,12 +81,11 @@ spatial_plots <- function(input,
   # Plot 1: Example input
   p1 <- spatstat.core::plot.ppp(input$sim, 
                            pch = chars, 
-                           cex = sizes,
+                           cex = sizes*scale,
                            cols = c(cols[3], cols[4]),
                            leg.side = "bottom",
                            leg.args = list(cex.axis = 0.9*scale, cex = 1*scale, pch = chars),
                            main = plot_titles[1],
-                           cex.main = 1*scale,
                            main.panel = "",
                            ...)
   
@@ -107,12 +108,11 @@ spatial_plots <- function(input,
   ## Continuous Output
   p2 <- spatstat.core::plot.ppp(input$sim, 
                            pch = chars, 
-                           cex = sizes,
+                           cex = sizes*scale,
                            cols = c(cols[3], cols[4]),
                            leg.side = "bottom",
                            leg.args = list(cex.axis = 0.9*scale, cex = 1*scale, pch = chars),
                            main = plot_titles[2],
-                           cex.main = 1*scale,
                            ...)
   fields::image.plot(pvalprop_raster, 
                      col = rampcols,
@@ -134,7 +134,7 @@ spatial_plots <- function(input,
   if(plot_pts == TRUE) {
     spatstat.core::plot.ppp(input$sim, 
                        pch = chars, 
-                       cex = sizes,
+                       cex = sizes*scale,
                        cols = c(cols[3], cols[4]),
                        add = TRUE,
                        leg.args = list(cex.axis = 0.9*scale,
@@ -159,12 +159,11 @@ spatial_plots <- function(input,
   ## Categorical Output
   p3 <- spatstat.core::plot.ppp(input$sim, 
                            pch = chars, 
-                           cex = sizes,
+                           cex = sizes*scale,
                            cols = c("transparent", "transparent"),
                            leg.side = "bottom",
                            leg.args = list(annotate = FALSE),
                            main = plot_titles[3],
-                           cex.main = 1*scale,
                            ...)
   fields::image.plot(pvalprop_reclass, 
                      add = TRUE,
