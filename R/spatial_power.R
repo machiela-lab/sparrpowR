@@ -20,7 +20,6 @@
 #' @param l_case Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for case clusters. Ignored if \code{samp_control!="IPP"}.
 #' @param l_control Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for control clusters. Ignored if \code{samp_control="uniform"}, \code{samp_control="systematic"}, \code{samp_control="MVN"}, or \code{samp_control="CSR"}.
 #' @param e_control Optional. A single non-negative number for the size of the expansion of the simulation window for generating parent points. Ignored if \code{samp_control!="clustered"}.
-#' @param cascon Logical. If TRUE, computes the statistical power to detect case clusters and control clusters. If FALSE (the default), computes the statistical power to detect case clusters only. 
 #' @param lower_tail Optional. Numeric value of lower p-value threshold (default=0.025).
 #' @param upper_tail Optional. Numeric value of upper p-value threshold (default=0.975). Ignored if cascon=FALSE.
 #' @param parallel Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.
@@ -108,7 +107,6 @@ spatial_power <- function(win = spatstat.core::unit.square(),
                           e_control = NULL,
                           lower_tail = 0.025,
                           upper_tail = 0.975, 
-                          cascon = FALSE,
                           verbose = TRUE,
                           parallel = FALSE,
                           n_core = 2,
@@ -250,12 +248,12 @@ spatial_power <- function(win = spatstat.core::unit.square(),
         return(X)
       }
       x <- spatstat.core::rNeymanScott(kappa = lamb,
-                                  expand = ex,
-                                  rcluster = control_clustering, 
-                                  n = nclust,
-                                  radius = rad,
-                                  win = wind,
-                                  ...)
+                                       expand = ex,
+                                       rcluster = control_clustering, 
+                                       n = nclust,
+                                       radius = rad,
+                                       win = wind,
+                                       ...)
     }
     spatstat.core::marks(x) <- types
     return(x)
@@ -415,18 +413,24 @@ spatial_power <- function(win = spatstat.core::unit.square(),
   
   ## Calculate proportion of tests were significant
   ### Significance level is user-specified
-  if(cascon == TRUE){
-    pval_sig <- rapply(sim_pval, function(x) ifelse(x < lower_tail | x > upper_tail , TRUE, FALSE), how = "replace")
-  } else {
-    pval_sig <- rapply(sim_pval, function(x) ifelse(x < lower_tail, TRUE, FALSE), how = "replace")
-  }
-  pval_count <- rowSums(do.call(cbind,pval_sig), na.rm = TRUE)
-  pval_prop_wNA <- sapply(pval_count, FUN = proportionSignificant)
+  #### Case and Control (lower and upper tail)
+  pval_sig_cascon <- rapply(sim_pval, function(x) ifelse(x < lower_tail | x > upper_tail , TRUE, FALSE), how = "replace")
+  pval_count_cascon <- rowSums(do.call(cbind,pval_sig_cascon), na.rm = TRUE)
+  pval_prop_wNA_cascon <- sapply(pval_count_cascon, FUN = proportionSignificant)
+  #### Case only (lower tail only)
+  pval_sig_cas <- rapply(sim_pval, function(x) ifelse(x < lower_tail, TRUE, FALSE), how = "replace")
+  pval_count_cas <- rowSums(do.call(cbind,pval_sig_cas), na.rm = TRUE)
+  pval_prop_wNA_cas <- sapply(pval_count_cas, FUN = proportionSignificant)
   
   ## Force NA values for graphing, match position of NAs of mean p-value
-  pval_prop_wNA <- cbind(pval_mean,pval_prop_wNA)
-  pval_prop_wNA[,2][is.na(pval_prop_wNA[,1])] <- NA
-  pval_prop <- pval_prop_wNA[,2]
+  #### Case and Control (lower and upper tail)
+  pval_prop_wNA_cascon <- cbind(pval_mean,pval_prop_wNA_cascon)
+  pval_prop_wNA_cascon[,2][is.na(pval_prop_wNA_cascon[,1])] <- NA
+  pval_prop_cascon <- pval_prop_wNA_cascon[,2]
+  #### Case only (lower tail only)
+  pval_prop_wNA_cas <- cbind(pval_mean,pval_prop_wNA_cas)
+  pval_prop_wNA_cas[,2][is.na(pval_prop_wNA_cas[,1])] <- NA
+  pval_prop_cas <- pval_prop_wNA_cas[,2]
   
   # Output
   out_sim <- list("sim" = out_par[[5]][[1]],
@@ -434,7 +438,8 @@ spatial_power <- function(win = spatstat.core::unit.square(),
                   "rr_mean" = rr_mean,
                   "pval_mean" = pval_mean,
                   "rr_sd" = rr_sd,
-                  "pval_prop" = pval_prop,
+                  "pval_prop_cascon" = pval_prop_cascon,
+                  "pval_prop_cas" = pval_prop_cas,
                   "rx" = out_par[[3]][[1]],
                   "ry" = out_par[[4]][[1]],
                   "n_cas" = unlist(out_par[[7]]),
