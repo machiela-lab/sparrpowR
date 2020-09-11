@@ -62,6 +62,8 @@ Available functions
 ## Usage
 ``` r
 library(sparrpowR)
+library(spatstat.core)
+library(stats)
 set.seed(1234)
 
 # ----------------- #
@@ -92,9 +94,9 @@ foo <- spatial_power(win = unit.circle,
 # ----------------------- #
 
 # Mean and standard deviation of simulated sample sizes and bandwidth
-stats::mean(foo$n_con); stats::sd(foo$n_con)    # controls
-stats::mean(foo$n_cas); stats::sd(foo$n_cas)    # cases
-stats::mean(foo$bandw); stats::sd(foo$bandw)    # bandwidth of case density (if fixed, same for control density) 
+mean(foo$n_con); stats::sd(foo$n_con)    # controls
+mean(foo$n_cas); stats::sd(foo$n_cas)    # cases
+mean(foo$bandw); stats::sd(foo$bandw)    # bandwidth of case density (if fixed, same for control density) 
 
 # Global Test Statistics
 ## Global maximum relative risk: Null hypothesis is mu = 1
