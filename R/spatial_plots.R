@@ -18,14 +18,13 @@
 #'
 #' @return This function produces up to three plots: 1) example input, 2) local power, and 3) local power above a threshold. If the input is from the \code{\link{spatial_data}} function, this function will only display the first plot. 
 #' 
-#' @importFrom stats na.omit
+#' @importFrom fields image.plot
 #' @importFrom graphics text
+#' @importFrom grDevices colorRampPalette
+#' @importFrom raster raster values reclassify
 #' @importFrom sp coordinates gridded
 #' @importFrom spatstat.core plot.ppp plot.anylist
-#' @importFrom raster raster values reclassify
-#' @importFrom grDevices colorRampPalette
-#' @importFrom fields image.plot
-#' 
+#' @importFrom stats na.omit
 #' @export 
 #'
 #' @examples

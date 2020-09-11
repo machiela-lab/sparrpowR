@@ -41,13 +41,13 @@
 #' \item{\code{bandw}}{Vector of length \code{sim_total} of the global t statistic.}
 #' }
 #' 
+#' @importFrom doParallel registerDoParallel
+#' @importFrom foreach %do% %dopar% foreach
+#' @importFrom parallel makeCluster stopCluster
+#' @importFrom sparr risk
 #' @importFrom spatstat.core marks runifpoint rpoispp ppp superimpose
 #' @importFrom stats sd
 #' @importFrom utils setTxtProgressBar txtProgressBar
-#' @importFrom foreach %do% %dopar% foreach
-#' @importFrom parallel makeCluster stopCluster
-#' @importFrom doParallel registerDoParallel
-#' @importFrom sparr risk
 #' @export
 #' 
 #' @seealso \code{\link[sparr]{risk}} for additional arguments for bandwidth selection, edge correction, and resolution.
@@ -79,17 +79,15 @@ jitter_power <- function(obs_data,
   comb <- function(x, ...) {
     lapply(seq_along(x),
            function(i) c(x[[i]], lapply(list(...), function(y) y[[i]])))
-  }
+    }
   
   ## Calculate proportion of runs as significant
-  proportionSignificant <- function(x) {
-    x / sim_total
-  }
+  proportionSignificant <- function(x) { x / sim_total }
   
   # Input
   if(class(obs_data) != "ppp"){
     stop("Argument 'obs_data' must be of class 'ppp'")
-  }
+    }
   
   # marked uniform ppp for controls
   rcluster_control <- function(n, l, win, s, types = "control", ...) {
@@ -98,21 +96,21 @@ jitter_power <- function(obs_data,
         x <- spatstat.core::runifpoint(n = n, win = win, ...)
         if (x$n == n) break
       }
-    }
+      }
     
     if (samp_control == "CSR") {
       x <- spatstat.core::rpoispp(lambda = l, win = win, ...)
-    }
+      }
     
     if (samp_control == "MVN") {
       x1 <- obs_data$x + rnorm(length(obs_data$x), 0, s) 
       y1 <- obs_data$y + rnorm(length(obs_data$y), 0, s) 
       x <- spatstat.core::ppp(x1, y1, window = win)
-    }
+      }
     
     spatstat.core::marks(x) <- types
     return(x)
-  }
+    }
   
   # extract case locations
   cas <- split(obs_data)[[1]]
@@ -121,40 +119,38 @@ jitter_power <- function(obs_data,
   # progress bar
   if (verbose == TRUE & parallel == FALSE){
     message("Generating Data, Estimating Relative Risk, Calculating Power")
-    pb <- txtProgressBar(min = 0, max = sim_total, style = 3)
+    pb <- utils::txtProgressBar(min = 0, max = sim_total, style = 3)
   }
   
   ## Set function used in foreach
   if (parallel == TRUE){
-    loadedPackages <- c("doParallel", "parallel")
-    invisible(lapply(loadedPackages, require, character.only = TRUE))
     cl <- parallel::makeCluster(n_core)
     doParallel::registerDoParallel(cl)
     `%fun%` <- foreach::`%dopar%`
-  } else {
-    `%fun%` <- foreach::`%do%`
-  }
+    } else { 
+      `%fun%` <- foreach::`%do%` }
   
   # Iteratively calculate the log relative risk and asymptotic p-value surfaces
   out_par <- foreach::foreach(k = 1:sim_total, 
                               .combine = comb, 
                               .multicombine = TRUE, 
-                              .packages = c("sparr", "spatstat.core"),
+                              .packages = c("sparr", "spatstat.core", "utils"),
                               .init = list(list(), list(), list(),
                                            list(), list(), list(), 
                                            list(), list(), list(),
-                                           list())
-  ) %fun% {
+                                           list())) %fun% {
     
     # Progress bar
     if (verbose == TRUE & parallel == FALSE){
-      setTxtProgressBar(pb, k)
+      utils::setTxtProgressBar(pb, k)
       if(k == sim_total) cat("\n")
     }
     
     # Create random cluster of controls
     con <- rcluster_control(n = split(obs_data)[[2]]$n,
-                            l = split(obs_data)[[2]]$n / (diff(obs_data$window$xrange)*diff(obs_data$window$yrange)),
+                            l = split(obs_data)[[2]]$n
+                                / (diff(obs_data$window$xrange) 
+                                * diff(obs_data$window$yrange)),
                             win = obs_data$window,
                             s = s_control,
                             ...)
@@ -171,8 +167,8 @@ jitter_power <- function(obs_data,
     ### Coordinates for each knot
     rx <- rep(obs_lrr$rr$xcol, length(obs_lrr$rr$yrow))
     for(i in 1:length(obs_lrr$rr$yrow)){
-      if (i == 1){ ry <- rep(obs_lrr$rr$yrow[i], length(obs_lrr$rr$xcol))}
-      if (i != 1){ ry <- c(ry, rep(obs_lrr$rr$yrow[i], length(obs_lrr$rr$xcol)))}
+      if (i == 1) { ry <- rep(obs_lrr$rr$yrow[i], length(obs_lrr$rr$xcol)) }
+      if (i != 1) { ry <- c(ry, rep(obs_lrr$rr$yrow[i], length(obs_lrr$rr$xcol))) }
     }
     
     ### Estimated value (log relative risk and p-value) for each knot
@@ -183,10 +179,12 @@ jitter_power <- function(obs_data,
     #### Global maximum relative risk: H0 = 1
     s_obs <- max(exp(obs_lrr$rr$v[!is.na(obs_lrr$rr$v)]))
     #### Approximation for integral: H0 = 0
-    t_obs <- sum((obs_lrr$rr$v[!is.na(obs_lrr$rr$v) & is.finite(obs_lrr$rr$v)]/(diff(obs_lrr$rr$xcol)[1]*diff(obs_lrr$rr$yrow)[1]))^2)
+    t_obs <- sum((obs_lrr$rr$v[!is.na(obs_lrr$rr$v) 
+                               & is.finite(obs_lrr$rr$v)] / (diff(obs_lrr$rr$xcol)[1] 
+                                                             * diff(obs_lrr$rr$yrow)[1]))^2)
     
     ### Estimated value (log relative risk and p-value) for each knot
-    if(k == 1) {
+    if (k == 1) {
       sim <- z
       out <- obs_lrr
     } else {
@@ -233,9 +231,12 @@ jitter_power <- function(obs_data,
   ## Calculate proportion of tests were significant
   ### Significance level is user-specified
   if(cascon == TRUE){
-    pval_sig <- rapply(sim_pval, function(x) ifelse(x < lower_tail | x > upper_tail , TRUE, FALSE), how = "replace")
+    pval_sig <- rapply(sim_pval, function(x) ifelse(x < lower_tail | x > upper_tail,
+                                                    TRUE, FALSE),
+                       how = "replace")
   } else {
-    pval_sig <- rapply(sim_pval, function(x) ifelse(x < lower_tail, TRUE, FALSE), how = "replace")
+    pval_sig <- rapply(sim_pval, function(x) ifelse(x < lower_tail, TRUE, FALSE),
+                       how = "replace")
   }
   pval_count <- rowSums(do.call(cbind,pval_sig), na.rm = TRUE)
   pval_prop_wNA <- sapply(pval_count, FUN = proportionSignificant)

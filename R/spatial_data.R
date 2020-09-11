@@ -6,20 +6,20 @@
 #' @param sim_total Integer, specifying the number of simulation iterations to perform.
 #' @param x_case Numeric value, or numeric vector, of x-coordinate(s) of case cluster(s).
 #' @param y_case Numeric value, or numeric vector, of y-coordinate(s) of case cluster(s).
-#' @param samp_case Character string specifying whether to randomize the case locations uniformly (\code{samp_control="uniform"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), or using the inhomogeneous Poisson process (\code{samp_control="IPP"}) around each case centroid.
-#' @param samp_control Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), systematically (\code{samp_control="systematic"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), using the inhomogeneous Poisson process (\code{samp_control="IPP"}), or a realisation of the Neyman-Scott cluster process (\code{samp_control="clustered"}).
+#' @param samp_case Character string specifying whether to randomize the case locations uniformly (\code{samp_control = "uniform"}), multivariate normal (\code{samp_control = "MVN"}), with complete spatial randomness (\code{samp_control = "CSR"}), or using the inhomogeneous Poisson process (\code{samp_control = "IPP"}) around each case centroid.
+#' @param samp_control Character string specifying whether to randomize the control locations uniformly (\code{samp_control = "uniform"}), systematically (\code{samp_control = "systematic"}), multivariate normal (\code{samp_control = "MVN"}), with complete spatial randomness (\code{samp_control = "CSR"}), using the inhomogeneous Poisson process (\code{samp_control = "IPP"}), or a realisation of the Neyman-Scott cluster process (\code{samp_control = "clustered"}).
 #' @param n_case Numeric value, or numeric vector, of the sample size for case locations in each cluster.
 #' @param n_control Numeric value, or numeric vector, of the sample size for control locations in each cluster.
-#' @param npc_control Optional. Numeric value of the number of clusters of control locations. Ignored if \code{samp_control!="clustered"}.
-#' @param x_control Numeric value, or numeric vector, of x-coordinate(s) of case cluster(s). Ignored if \code{samp_control!="MVN"}.
-#' @param y_control Numeric value, or numeric vector, of y-coordinate(s) of case cluster(s). Ignored if \code{samp_control!="MVN"}.
-#' @param r_case Optional. Numeric value, or numeric vector, of radius (radii) of case cluster(s) in the units of \code{win}. Ignored if \code{samp_case="MVN"}.
-#' @param r_control Optional. Numeric value, or numeric vector, of radius (radii) of control cluster(s) in the units of \code{win}. Ignored if \code{samp_control!="clustered"}.
-#' @param s_case Optional. Numeric value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for case locations in the units of \code{win}.  Ignored if \code{samp_control!="MVN"}.
-#' @param s_control Optional. Numeric value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for control locations in the units of \code{win}. Ignored if \code{samp_control!="MVN"}.
-#' @param l_case Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for case clusters. Ignored if \code{samp_control!="IPP"}.
-#' @param l_control Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for control clusters. Ignored if \code{samp_control="uniform"}, \code{samp_control="systematic"}, \code{samp_control="MVN"}, or \code{samp_control="CSR"}.
-#' @param e_control Optional. A single non-negative number for the size of the expansion of the simulation window for generating parent points. Ignored if \code{samp_control!="clustered"}.
+#' @param npc_control Optional. Numeric value of the number of clusters of control locations. Ignored if \code{samp_control != "clustered"}.
+#' @param x_control Numeric value, or numeric vector, of x-coordinate(s) of case cluster(s). Ignored if \code{samp_control != "MVN"}.
+#' @param y_control Numeric value, or numeric vector, of y-coordinate(s) of case cluster(s). Ignored if \code{samp_control != "MVN"}.
+#' @param r_case Optional. Numeric value, or numeric vector, of radius (radii) of case cluster(s) in the units of \code{win}. Ignored if \code{samp_case = "MVN"}.
+#' @param r_control Optional. Numeric value, or numeric vector, of radius (radii) of control cluster(s) in the units of \code{win}. Ignored if \code{samp_control != "clustered"}.
+#' @param s_case Optional. Numeric value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for case locations in the units of \code{win}.  Ignored if \code{samp_control != "MVN"}.
+#' @param s_control Optional. Numeric value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for control locations in the units of \code{win}. Ignored if \code{samp_control != "MVN"}.
+#' @param l_case Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for case clusters. Ignored if \code{samp_control != "IPP"}.
+#' @param l_control Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for control clusters. Ignored if \code{samp_control = "uniform"}, \code{samp_control = "systematic"}, \code{samp_control = "MVN"}, or \code{samp_control = "CSR"}.
+#' @param e_control Optional. A single non-negative number for the size of the expansion of the simulation window for generating parent points. Ignored if \code{samp_control != "clustered"}.
 #' @param ... Arguments passed to \code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.core]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.core]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}.
 #' 
 #' @details This function generates random data for a spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) using various random point pattern generators from the \code{\link{spatstat.core}} package to generate data.
@@ -63,8 +63,7 @@
 #'               n_control = c(100,500,300),
 #'               s_case = c(0.05,0.01,0.05),
 #'               s_control = 0.05,
-#'               verbose = FALSE
-#'               )
+#'               verbose = FALSE)
 #'  
 #' 
 spatial_data <- function(win = spatstat.core::unit.square(),
@@ -152,7 +151,7 @@ spatial_data <- function(win = spatstat.core::unit.square(),
     
     if (samp_case == "CSR"){
       win_case <- spatstat.core::disc(radius = rad, centre = c(0.5, 0.5), ...)
-      l <- n/(diff(win_case$xrange)*diff(win_case$yrange))
+      l <- n / (diff(win_case$xrange)*diff(win_case$yrange))
       x <- spatstat.core::rpoispp(lambda = l, win = win_case, ...)
       x <- spatstat.core::shift(x, c(x0 - 0.5, y0 - 0.5))
     }
@@ -189,7 +188,7 @@ spatial_data <- function(win = spatstat.core::unit.square(),
     }  
     
     if (samp_control == "CSR") {
-      l <- n/(diff(wind$xrange)*diff(wind$yrange))
+      l <- n / (diff(wind$xrange)*diff(wind$yrange))
       x <- spatstat.core::rpoispp(lambda = l, win = wind, ...)
     }
     
@@ -224,9 +223,12 @@ spatial_data <- function(win = spatstat.core::unit.square(),
   
   # Create a consistent random cluster of cases (uniform around user-specified centroid)
   for (i in 1:length(x_case)){
-    x1 <- rcluster_case(x0 = x_case[i], y0 = y_case[i],
-                        rad = r_case[i], n = n_case[i],
-                        scalar = s_case[i], lamb = l_case[[i]],
+    x1 <- rcluster_case(x0 = x_case[i],
+                        y0 = y_case[i],
+                        rad = r_case[i],
+                        n = n_case[i],
+                        scalar = s_case[i],
+                        lamb = l_case[[i]],
                         wind = win, ...)
     pppCase[[i]] <- x1
   }
@@ -235,22 +237,23 @@ spatial_data <- function(win = spatstat.core::unit.square(),
   
   # Simulate marked ppp for each iteration
   for (j in 1:sim_total) {
-    
     # Create random cluster of controls
     if(samp_control == "MVN") {
-      for (i in 1:length(x_control)){
-        y1 <- rcluster_control(x0 = x_control[i], y0 = y_control[i],
-                               radius = NULL, n = n_control[i],
-                               scalar = s_control[i], lamb =NULL,
+      for (i in 1:length(x_control)) {
+        y1 <- rcluster_control(x0 = x_control[i],
+                               y0 = y_control[i],
+                               radius = NULL,
+                               n = n_control[i],
+                               scalar = s_control[i],
+                               lamb =NULL,
                                wind = win, ...)
         pppControl[[i]] <- y1
       }
       class(pppControl) <- c("ppplist", "solist",  "anylist", "listof", "list")
       y <- spatstat.core::superimpose(pppControl)
-      
     } else { 
-      
-      y <- rcluster_control(x0 = NULL, y0 = NULL,
+      y <- rcluster_control(x0 = NULL,
+                            y0 = NULL,
                             n = n_control, 
                             nclust = npc_control,
                             rad = r_control,
@@ -272,4 +275,3 @@ spatial_data <- function(win = spatstat.core::unit.square(),
   
   return(pppList)
 }
-# -------------------- END OF CODE -------------------- #
