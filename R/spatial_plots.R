@@ -19,7 +19,7 @@
 #' @return This function produces up to three plots: 1) example input, 2) local power, and 3) local power above a threshold. If the input is from the \code{\link{spatial_data}} function, this function will only display the first plot. 
 #' 
 #' @importFrom fields image.plot
-#' @importFrom graphics text
+#' @importFrom graphics text par
 #' @importFrom grDevices colorRampPalette
 #' @importFrom raster raster values reclassify
 #' @importFrom sp coordinates gridded
@@ -46,6 +46,9 @@ spatial_plots <- function(input,
                           plot_axes = FALSE,
                           ...) {
   
+  # Graphical parameters
+  op <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(op))
   # Case Clusters Only or Case and Control Clusters
   if(cascon == TRUE) {
     pvalprop <- data.frame("x" = input$rx, "y" = input$ry, "z" = input$pval_prop_cascon)
@@ -67,7 +70,7 @@ spatial_plots <- function(input,
   }
   
   # Scale the title size
-  par(cex.main = 1 * scale)
+  graphics::par(cex.main = 1 * scale)
   
   # If input from spatial_data() function
   if("ppplist" %in% class(input)) {

@@ -7,7 +7,7 @@
 #' @param x_case Numeric value, or numeric vector, of x-coordinate(s) of case cluster(s).
 #' @param y_case Numeric value, or numeric vector, of y-coordinate(s) of case cluster(s).
 #' @param samp_case Character string specifying whether to randomize the case locations uniformly (\code{samp_control="uniform"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), or using the inhomogeneous Poisson process (\code{samp_control="IPP"}) around each case centroid.
-#' @param samp_control Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), systematically (\code{samp_control="systematic"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), using the inhomogeneous Poisson process (\code{samp_control="IPP"}), or a realisation of the Neyman-Scott cluster process (\code{samp_control="clustered"}).
+#' @param samp_control Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), systematically (\code{samp_control="systematic"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), using the inhomogeneous Poisson process (\code{samp_control="IPP"}), or a realization of the Neyman-Scott cluster process (\code{samp_control="clustered"}).
 #' @param n_case Numeric value, or numeric vector, of the sample size for case locations in each cluster.
 #' @param n_control Numeric value, or numeric vector, of the sample size for control locations in each cluster.
 #' @param npc_control Optional. Numeric value of the number of clusters of control locations. Ignored if \code{samp_control!="clustered"}.
@@ -21,7 +21,7 @@
 #' @param l_control Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for control clusters. Ignored if \code{samp_control="uniform"}, \code{samp_control="systematic"}, \code{samp_control="MVN"}, or \code{samp_control="CSR"}.
 #' @param e_control Optional. A single non-negative number for the size of the expansion of the simulation window for generating parent points. Ignored if \code{samp_control!="clustered"}.
 #' @param lower_tail Optional. Numeric value of lower p-value threshold (default=0.025).
-#' @param upper_tail Optional. Numeric value of upper p-value threshold (default=0.975). Ignored if cascon=FALSE.
+#' @param upper_tail Optional. Numeric value of upper p-value threshold (default=0.975).
 #' @param parallel Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.
 #' @param n_core Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).
 #' @param verbose Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.
@@ -49,7 +49,7 @@
 #' 
 #' If \code{samp_control = "IPP"} the control locations are randomly generated assuming an inhomogeneous Poisson process within the window \code{win} with a \code{lambda = l_control}, a function.
 #' 
-#' If \code{samp_control = "clustered"} the control locations are randomly generated with a realisation of the Neyman-Scott process within the window \code{win} with the intensity of the Poisson process cluster centres (\code{kappa = l_control}), the size of the expansion of the simulation window for generative parent points (\code{e_control}), and the radius (or radii) of the disc for each cluster (\code{r_control}).
+#' If \code{samp_control = "clustered"} the control locations are randomly generated with a realization of the Neyman-Scott process within the window \code{win} with the intensity of the Poisson process cluster centres (\code{kappa = l_control}), the size of the expansion of the simulation window for generative parent points (\code{e_control}), and the radius (or radii) of the disc for each cluster (\code{r_control}).
 #' 
 #' @return An object of class "list". This is a named list with the following components:
 #' 
@@ -59,7 +59,8 @@
 #' \item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the mean relative risk values at each gridded knot.}
 #' \item{\code{pval_mean}}{Vector of length \code{[resolution x resolution]} of the mean asymptotic p-value at each gridded knot.}
 #' \item{\code{rr_sd}}{Vector of length \code{[resolution x resolution]} of the standard deviation of relative risk values at each gridded knot.}
-#' \item{\code{pval_prop}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values that were significant at each gridded knot.}
+#' \item{\code{pval_prop_cascon}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values that were significant for both case and control locations at each gridded knot.}
+#' \item{\code{pval_prop_cas}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values that were significant for only case locations at each gridded knot.}
 #' \item{\code{rx}}{Vector of length \code{[resolution x resolution]} of the x-coordinates of each gridded knot.}
 #' \item{\code{ry}}{Vector of length \code{[resolution x resolution]} of the y-coordinates of each gridded knot.}
 #' \item{\code{n_cas}}{Vector of length \code{sim_total} of the number of case locations simulated in each iteration.}
@@ -285,9 +286,7 @@ spatial_power <- function(win = spatstat.core::unit.square(),
     cl <- parallel::makeCluster(n_core)
     doParallel::registerDoParallel(cl)
     `%fun%` <- foreach::`%dopar%`
-  } else {
-      `%fun%` <- foreach::`%do%`
-    }
+  } else { `%fun%` <- foreach::`%do%` }
   
   # Iteratively calculate the log relative risk and asymptotic p-value surfaces
   out_par <- foreach::foreach(k = 1:sim_total, 

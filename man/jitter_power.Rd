@@ -9,7 +9,6 @@ jitter_power(
   sim_total,
   samp_control = c("uniform", "CSR", "MVN"),
   s_control = 1,
-  cascon = FALSE,
   lower_tail = 0.025,
   upper_tail = 0.975,
   parallel = FALSE,
@@ -27,11 +26,9 @@ jitter_power(
 
 \item{s_control}{Optional. Numeric value for the standard deviation of the multivariate normal distribution in the units of the \code{obs_data}.  The default value (1) assumes a unit square window. Ignored if Ignored if \code{samp_control="uniform"} or \code{samp_control="CSR"}.}
 
-\item{cascon}{Logical. If FALSE (the default) computes the power to detect only relative case clustering. If TRUE, computes power to detect both case and control clustering.}
-
 \item{lower_tail}{Optional. Numeric value of lower p-value threshold (default=0.025).}
 
-\item{upper_tail}{Optional. Numeric value of upper p-value threshold (default=0.975). Ignored if cascon=FALSE.}
+\item{upper_tail}{Optional. Numeric value of upper p-value threshold (default=0.975).}
 
 \item{parallel}{Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.}
 
@@ -50,13 +47,15 @@ An object of class "list". This is a named list with the following components:
 \item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the mean relative risk values at each gridded knot.}
 \item{\code{pval_mean}}{Vector of length \code{[resolution x resolution]} of the mean asymptotic p-value at each gridded knot.}
 \item{\code{rr_sd}}{Vector of length \code{[resolution x resolution]} of the standard deviation of relative risk values at each gridded knot.}
-\item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values that were significant at each gridded knot.}
+\item{\code{pval_prop_cascon}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values that were significant for both case and control locations at each gridded knot.}
+\item{\code{pval_prop_cas}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values that were significant for only case locations at each gridded knot.}
 \item{\code{rx}}{Vector of length \code{[resolution x resolution]} of the x-coordinates of each gridded knot.}
 \item{\code{ry}}{Vector of length \code{[resolution x resolution]} of the y-coordinates of each gridded knot.}
-\item{\code{rx}}{Vector of length \code{sim_total} of the number of control locations simulated in each iteration.}
+\item{\code{n_cas}}{Vector of length \code{sim_total} of the number of case locations simulated in each iteration.}
+\item{\code{n_con}}{Vector of length \code{sim_total} of the number of control locations simulated in each iteration.}
 \item{\code{bandw}}{Vector of length \code{sim_total} of the bandwidth (of numerator) used in each iteration.}
-\item{\code{bandw}}{Vector of length \code{sim_total} of the global s statistic.}
-\item{\code{bandw}}{Vector of length \code{sim_total} of the global t statistic.}
+\item{\code{s_obs}}{Vector of length \code{sim_total} of the global s statistic.}
+\item{\code{t_obs}}{Vector of length \code{sim_total} of the global t statistic.}
 }
 }
 \description{

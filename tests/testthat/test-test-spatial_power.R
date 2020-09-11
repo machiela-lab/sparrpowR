@@ -23,7 +23,6 @@ test_that("spatial_power throws error with invalid arguments", {
                              npc_control = 100,
                              e_control = 0,
                              sim_total = 2,
-                             cascon = FALSE, 
                              verbose = FALSE)
   ) 
   
@@ -44,7 +43,6 @@ test_that("spatial_power throws error with invalid arguments", {
                              npc_control = 100,
                              e_control = 0,
                              sim_total = 2,
-                             cascon = FALSE, 
                              verbose = FALSE)
   ) 
   
@@ -65,7 +63,6 @@ test_that("spatial_power throws error with invalid arguments", {
                              npc_control = 100,
                              e_control = 0,
                              sim_total = 2,
-                             cascon = FALSE, 
                              verbose = FALSE)
   ) 
   
@@ -86,7 +83,6 @@ test_that("spatial_power throws error with invalid arguments", {
                              npc_control = 100,
                              e_control = 0,
                              sim_total = 2,
-                             cascon = FALSE, 
                              verbose = FALSE)
   ) 
   
@@ -107,7 +103,6 @@ test_that("spatial_power throws error with invalid arguments", {
                              npc_control = 100,
                              e_control = 0,
                              sim_total = 2,
-                             cascon = FALSE, 
                              verbose = FALSE)
   ) 
   
@@ -128,7 +123,6 @@ test_that("spatial_power throws error with invalid arguments", {
                              npc_control = 100,
                              e_control = 0,
                              sim_total = 2,
-                             cascon = FALSE, 
                              verbose = FALSE)
   ) 
   
@@ -149,7 +143,6 @@ test_that("spatial_power throws error with invalid arguments", {
                              npc_control = 100,
                              e_control = 0,
                              sim_total = NULL,
-                             cascon = FALSE, 
                              verbose = FALSE)
   )   
   
@@ -175,7 +168,6 @@ test_that("spatial_power works", {
                              npc_control = 100,
                              e_control = 0,
                              sim_total = 2,
-                             cascon = FALSE, 
                              verbose = FALSE)
   ) 
   

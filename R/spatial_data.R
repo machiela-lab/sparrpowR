@@ -7,7 +7,7 @@
 #' @param x_case Numeric value, or numeric vector, of x-coordinate(s) of case cluster(s).
 #' @param y_case Numeric value, or numeric vector, of y-coordinate(s) of case cluster(s).
 #' @param samp_case Character string specifying whether to randomize the case locations uniformly (\code{samp_control = "uniform"}), multivariate normal (\code{samp_control = "MVN"}), with complete spatial randomness (\code{samp_control = "CSR"}), or using the inhomogeneous Poisson process (\code{samp_control = "IPP"}) around each case centroid.
-#' @param samp_control Character string specifying whether to randomize the control locations uniformly (\code{samp_control = "uniform"}), systematically (\code{samp_control = "systematic"}), multivariate normal (\code{samp_control = "MVN"}), with complete spatial randomness (\code{samp_control = "CSR"}), using the inhomogeneous Poisson process (\code{samp_control = "IPP"}), or a realisation of the Neyman-Scott cluster process (\code{samp_control = "clustered"}).
+#' @param samp_control Character string specifying whether to randomize the control locations uniformly (\code{samp_control = "uniform"}), systematically (\code{samp_control = "systematic"}), multivariate normal (\code{samp_control = "MVN"}), with complete spatial randomness (\code{samp_control = "CSR"}), using the inhomogeneous Poisson process (\code{samp_control = "IPP"}), or a realization of the Neyman-Scott cluster process (\code{samp_control = "clustered"}).
 #' @param n_case Numeric value, or numeric vector, of the sample size for case locations in each cluster.
 #' @param n_control Numeric value, or numeric vector, of the sample size for control locations in each cluster.
 #' @param npc_control Optional. Numeric value of the number of clusters of control locations. Ignored if \code{samp_control != "clustered"}.
@@ -42,7 +42,7 @@
 #' 
 #' If \code{samp_control = "IPP"} the control locations are randomly generated assuming an inhomogeneous Poisson process within the window \code{win} with a \code{lambda = l_control}, a function.
 #' 
-#' If \code{samp_control = "clustered"} the control locations are randomly generated with a realisation of the Neyman-Scott process within the window \code{win} with the intensity of the Poisson process cluster centres (\code{kappa = l_control}), the size of the expansion of the simulation window for generative parent points (\code{e_control}), and the radius (or radii) of the disc for each cluster (\code{r_control}).
+#' If \code{samp_control = "clustered"} the control locations are randomly generated with a realization of the Neyman-Scott process within the window \code{win} with the intensity of the Poisson process cluster centres (\code{kappa = l_control}), the size of the expansion of the simulation window for generative parent points (\code{e_control}), and the radius (or radii) of the disc for each cluster (\code{r_control}).
 #' 
 #' @return An object of class "ppplist". This is a list of marked point patterns that have a single mark with two levels: case and control.
 #' 

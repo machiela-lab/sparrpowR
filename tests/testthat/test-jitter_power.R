@@ -14,8 +14,7 @@ test_that("jitter_power throws error with invalid arguments", {
                  upper_tail = 0.995,
                  lower_tail = 0.005, 
                  resolution = 10, 
-                 edge = "uniform", 
-                 cascon = FALSE)
+                 edge = "uniform")
   )
   
   expect_error(
@@ -26,8 +25,7 @@ test_that("jitter_power throws error with invalid arguments", {
                  upper_tail = 0.995,
                  lower_tail = 0.005, 
                  resolution = 10, 
-                 edge = "uniform", 
-                 cascon = FALSE)
+                 edge = "uniform")
   )
   
   expect_error(
@@ -38,8 +36,7 @@ test_that("jitter_power throws error with invalid arguments", {
                  upper_tail = 0.995,
                  lower_tail = 0.005, 
                  resolution = 10, 
-                 edge = "uniform", 
-                 cascon = FALSE)
+                 edge = "uniform")
   )
   
   expect_error(
@@ -50,8 +47,7 @@ test_that("jitter_power throws error with invalid arguments", {
                  upper_tail = 0.995,
                  lower_tail = 0.005, 
                  resolution = 10, 
-                 edge = "uniform", 
-                 cascon = FALSE)
+                 edge = "uniform")
   )
 }
 )
@@ -65,8 +61,7 @@ test_that("jitter_power works", {
                             upper_tail = 0.995,
                             lower_tail = 0.005, 
                             resolution = 10, 
-                            edge = "uniform", 
-                            cascon = FALSE)
+                            edge = "uniform")
   ) 
   
 }
