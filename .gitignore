@@ -44,5 +44,6 @@ rsconnect/
 *.rds
 
 # Sandboxes
-*/sandbox.R
 inst/doc
+build.R
+build

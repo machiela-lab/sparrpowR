@@ -11,7 +11,7 @@ Authors@R:
              family = "Brown",
              role = c("aut", "cph"),
              email = "derek.brown@nih.gov",
-             comment = c(ORCID = "0000-0001-8393-1713"))),
+             comment = c(ORCID = "0000-0001-8393-1713")),
       person(given = "Mitchell J.",
              family = "Machiela",
              role = "ctb",

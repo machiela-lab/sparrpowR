@@ -1,7 +1,7 @@
 ---
 title: "sparrpowR: Power analysis to detect spatial relative risk clusters"
-author: 'Ian D. Buller (Github: @idblr)'
-date: "`r Sys.Date()"
+author: 'Ian D. Buller (GitHub: @idblr)'
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{sparrpowR: Power analysis to detect spatial relative risk clusters}
@@ -9,21 +9,23 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 library(knitr)
-knitr::opts_chunk$set(echo = TRUE, fig.width = 7, fig.height = 7, fig.show = "hold")
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = TRUE, fig.width = 7, fig.height = 7, fig.show = "hold")
 options("rgdal_show_exportToProj4_warnings" = "none") # to mute warnings of possible GDAL/OSR exportToProj4() degradation
 ```
 
-Start with the necessary packages and seed for the vignette
-```{r echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE}
+Start with the necessary packages and seed for the vignette.
+
+```{r packages}
 loadedPackages <- c("broom", "geojsonio", "ggmap", "ggplot2", "grDevices", "maptools", "raster", "rgdal", "rgeos", "sp", "sparrpowR", "spatstat.core", "tibble")
-invisible(lapply(loadedPackages, require, character.only = TRUE))
+invisible(lapply(loadedPackages, library, character.only = TRUE))
 set.seed(1234) # for reproducibility
 ```
 
-Import data from Open Data DC [website](https://opendata.dc.gov/datasets/washington-dc-boundary)
-```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
+Import data from Open Data DC [website](https://opendata.dc.gov/datasets/washington-dc-boundary).
+
+```{r dc data}
 # Washington, D.C. boundary
 gis_path1 <- "https://opendata.arcgis.com/datasets/7241f6d500b44288ad983f0942b39663_10.geojson"
 dc <- geojsonio::geojson_read(gis_path1,  what = "sp")
@@ -34,23 +36,26 @@ census <- geojsonio::geojson_read(gis_path2,  what = "sp")
 ```
 
 We want to create a realistic boundary (i.e., polygon) of our study area. We are going to spatially clip our DC boundary by the census tracts in an attempt to remove major bodies of water where people do not reside.
-```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE, fig.align='center'}
+
+```{r dc owin}
 clipwin <- maptools::unionSpatialPolygons(census, IDs = rep(1, length(census)))
 dcc <- rgeos::gIntersection(dc, clipwin, byid = TRUE)
 # Plot
-plot(dc, main = "DC Boundary")
-plot(census,  main = "American Community Survey\n2018")
-plot(dcc, main = "Clipped Boundary")
+sp::plot(dc, main = "DC Boundary")
+sp::plot(census,  main = "American Community Survey\n2018")
+sp::plot(dcc, main = "Clipped Boundary")
 ```
 
-Our developed method, `sparrpowR`, relies on the `spatstat.core` package to simulate data, which assumes point locations are on a planar (i.e., flat) surface. Our boundary is made up of geographical coordinates on Earth (i.e., a sphere), so we need to flatten our boundary by spatially projecting it with an appropriate spatial reference system (CRS). For the District of Columbia, we are going to use the World Geodetic System 1984 (WGS84) Universal Transverse Mercator (UTM) Zone 18N [EPSG:32619](https://epsg.io/32618). We then convert the boundary into a `owin` object required by the `spatstat.core` package
-```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
+Our developed method, `sparrpowR`, relies on the `spatstat.core` package to simulate data, which assumes point locations are on a planar (i.e., flat) surface. Our boundary is made up of geographical coordinates on Earth (i.e., a sphere), so we need to flatten our boundary by spatially projecting it with an appropriate spatial reference system (CRS). For the District of Columbia, we are going to use the World Geodetic System 1984 (WGS84) Universal Transverse Mercator (UTM) Zone 18N [EPSG:32619](https://epsg.io/32618). We then convert the boundary into a `owin` object required by the `spatstat.core` package.
+
+```{r spatial transformation}
 dcp <- sp::spTransform(dcc, CRSobj = sp::CRS(projargs = "+init=EPSG:32618"))
 dco <- spatstat.core::as.owin(dcp)
 ```
 
 In this hypothetical example, we want to estimate the local power of detecting a spatial case cluster relative to control locations. Study participants that tested positive for a disease (i.e., cases) are hypothesized to be located in a circular area around the Navy Yard, an Environmental Protection Agency (EPA) Superfund Site [(see the success story)](https://cumulis.epa.gov/supercpad/cursites/csitinfo.cfm?id=0300031).
-```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
+
+```{r disease cluster}
 navy <- data.frame(lon = 326414.70444451, lat = 4304571.1539442)
 spf <- sp::SpatialPoints(coords = navy, proj4string = sp::CRS(projargs = "+init=EPSG:32618"))
 # Plot
@@ -63,16 +68,15 @@ We will assume that approximately 50 cases (e.g., `n_case = 50`) were clustered 
 
 If we were to conduct a study, where would we be sufficiently statistically powered to detect this spatial case cluster? To answer this question we will randomly sample approximately 950 participants (e.g., `n_conrol = 950` or 5% disease prevalence) around the Navy Yard (e.g., `samp_control = "MVN"`) sampling more participants near the center and fewer participants about 2 kilometers away (e.g., `s_control = 2000`). These participants would test negative for a disease (i.e., controls) were we to conduct a study. We can then resample control locations iteratively, as if we conducted the same study multiple times (e.g., `sim_total = 10`). We can conclude that we are sufficiently powered to detect a spatial case cluster in areas where a statistically significant (e.g., two-tailed alpha level of 0.05 or `lower_tail = 0.025`) spatial case cluster was located in at least 80% (e.g., `p_thresh = 0.8`) of these theoretical studies. 
 
-```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
+```{r spatial_power}
 start_time <- Sys.time() # record start time
 sim_power <- spatial_power(x_case = navy[[1]], y_case = navy[[2]], # center of cluster
                            x_control = navy[[1]], y_control = navy[[2]], # center of cluster
                            n_case = 50, n_control = 950, # sample size of case/control
                            samp_case = "MVN", samp_control = "MVN", # samplers
                            s_case = 1000, s_control = 2000, # approximate size of clusters
-                           cascon = FALSE, # power for case cluster(s) only
                            lower_tail = 0.025, upper_tail = 0.975, # two-tailed alpha
-                           sim_total = 1, # number of iterations
+                           sim_total = 100, # number of iterations
                            win = dco, # study area
                            resolution = 100, # number gridded knots on x-axis
                            edge = "diggle", # correct for edge effects
@@ -85,7 +89,7 @@ time_srr <- end_time - start_time # Calculate run time
 
 The process above took about `r round(time_srr, digits = 1)` minutes to run. Of the `r length(sim_power$n_con)` iterations, we simulated `r mean(sim_power$n_cas)` case locations and an average `r round(mean(sim_power$n_con))` (SD: `r round(sd(sim_power$n_con), digits = 2)`) control locations for an average prevalence of `r round(mean(sim_power$n_cas/sim_power$n_con)*100, digits = 2)`% (SD: `r round(sd(sim_power$n_cas/sim_power$n_con)*100, digits = 2)`%). The averaged bandwidth for the statistic was `r round(mean(sim_power$bandw)/1000, digits = 1)` kilometers (SD: `r sd(sim_power$bandw)/1000`).
 
-```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE, fig.align='center'}
+```{r spatial_plots}
 cols <- c("cornflowerblue", "green", "red", "lightgreen", "blue") # colors for plots
 chars <- c(4,5) # symbols for point-locations
 sizes <- c(0.5,0.5) # size of point-locations
@@ -101,7 +105,8 @@ spatial_plots(input = sim_power, # use output of above simulation
 ```
 
 Now, lets overlay our results on top of a basemap. Here, we will use an open-source map from [Stamen](http://maps.stamen.com/#terrain/12/37.7706/-122.3782), that is unprojected in WGS84. We extract the rectangular box (i.e., bounding box) surrounding our polygon boundary of the District of Columbia (WGS84) and enlarge it using the custom function `expandbb` to the size of basemap we want to import. 
-```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE, fig.align='center'}
+
+```{r expandbb function}
 expandbb <- function(bb, f) {
   x <- bb[3] - bb[1] # range of x values
   y <- bb[4] - bb[2] # range of y values
@@ -115,24 +120,24 @@ dcbb <- expandbb(bb = sp::bbox(dc), f = 0.01)
 base_map <- ggmap::get_map(location = dcbb, maptype = "toner", source = "stamen")
 ```
 
-Prepare the points from the first simulation for plotting in `ggplot2` suite.
-```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
+Prepare the points from the first simulation for plotting in `ggplot2` suite and prepare the original boundary for plotting in `ggplot2` suite.
+
+```{r ggplot preparation}
 sim_pts <- sim_power$sim  # extract points from first iteration
 sim_pts <- maptools::as.SpatialPointsDataFrame.ppp(sim_pts) # convert to spatial data frame
 raster::crs(sim_pts) <- sp::proj4string(dcp) # set initial projection
 sim_pts_wgs84 <-  sp::spTransform(sim_pts, CRSobj = sp::CRS(projargs = "+init=epsg:4326")) # project to basemap
 sim_pts_df <- tibble::tibble(data.frame(sim_pts_wgs84)) # convert to tidy data frame
-```
 
-Prepare the original boundary for plotting in `ggplot2` suite.
-```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
+# Original boundary
 dc_df <- broom::tidy(dcc) # conver to a tidy dataframe
 dcc$polyID <- sapply(slot(dcc, "polygons"), function(x) slot(x, "ID")) # preserve polygon id for merge
 dc_df <- merge(dc_df, dcc, by.x = "id", by.y="polyID") # merge data
 ```
 
 Prepare the raster from the simulation for plotting in `ggplot2` suite.
-```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
+
+```{r output preparation}
 pvalprop <- tibble::tibble(x = sim_power$rx, y = sim_power$ry,
                            z = sim_power$pval_prop) # extract proportion significant
 lrr_narm <- na.omit(pvalprop) # remove NAs
@@ -150,7 +155,8 @@ rampcols <- grDevices::colorRampPalette(colors = c(cols[5], cols[2]), space="Lab
 ```
 
 Plot local power as a continuous outcome with point-locations using the `ggplot2` suite.
-```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
+
+```{r ggmap continuous}
 ggmap::ggmap(base_map) + # basemap
   ggplot2::geom_polygon(data = dc_df, # original boundary
                ggplot2::aes(x = long, y = lat, group = group),
@@ -170,7 +176,8 @@ ggmap::ggmap(base_map) + # basemap
 ```
 
 Plot local power as a categorical outcome with point-locations using the `ggplot2` suite.
-```{r echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE}
+
+```{r ggmap categorical}
 pvalprop_reclass <- raster::reclassify(pvalprop_raster, c(-Inf, p_thresh-0.0000001, 1,
                                                           p_thresh-0.0000001, Inf, 2))
 rtp <- raster::rasterToPolygons(pvalprop_reclass) # convert to polygons

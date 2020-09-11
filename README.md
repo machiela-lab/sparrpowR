@@ -62,6 +62,8 @@ Available functions
 ## Usage
 ``` r
 library(sparrpowR)
+library(spatstat.core)
+library(stats)
 set.seed(1234)
 
 # ----------------- #
@@ -75,7 +77,7 @@ set.seed(1234)
 # Statistical power to detect both case and control relative clustering
 # 100 simulations (more recommended for power calculation)
 
-unit.circle <- spatstat::disc(radius = 0.5, centre = c(0.5,0.5))
+unit.circle <- spatstat.core::disc(radius = 0.5, centre = c(0.5,0.5))
 
 foo <- spatial_power(win = unit.circle,
                      sim_total = 100,
@@ -85,17 +87,16 @@ foo <- spatial_power(win = unit.circle,
                      samp_control = "CSR",
                      r_case = 0.1,
                      n_case = 50,
-                     n_control = 250,
-                     cascon = TRUE)
+                     n_control = 250)
                      
 # ----------------------- #
 # Outputs from iterations #
 # ----------------------- #
 
 # Mean and standard deviation of simulated sample sizes and bandwidth
-stats::mean(foo$n_con); stats::sd(foo$n_con)    # controls
-stats::mean(foo$n_cas); stats::sd(foo$n_cas)    # cases
-stats::mean(foo$bandw); stats::sd(foo$bandw)    # bandwidth of case density (if fixed, same for control density) 
+mean(foo$n_con); stats::sd(foo$n_con)    # controls
+mean(foo$n_cas); stats::sd(foo$n_cas)    # cases
+mean(foo$bandw); stats::sd(foo$bandw)    # bandwidth of case density (if fixed, same for control density) 
 
 # Global Test Statistics
 ## Global maximum relative risk: Null hypothesis is mu = 1
