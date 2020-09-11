@@ -12,6 +12,8 @@
 #' @param scale Integer. A graphical expansion factor (default is 1) for text (and point) size within plots. Intended for scaling plot features with plot resolution.
 #' @param plot_pts Logical. If TRUE (the default), the points from the first simulation iteration will be added to second plot. Not if FALSE.
 #' @param plot_title Logical. If TRUE (the default), a title will be included in the plot(s). Not if FALSE.
+#' @param plot_text Logical. If TRUE, the local statistical power will be printed at each grid cell. Not if FALSE (the default).
+#' @param plot_axes Logical. If TRUE, the axes with labels will be included in the plot(s). Not if FALSE (the default).
 #' @param ... Arguments passed to \code{\link[spatstat.core]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.
 #'
 #' @return This function produces up to three plots: 1) example input, 2) local power, and 3) local power above a threshold. If the input is from the \code{\link{spatial_data}} function, this function will only display the first plot. 
@@ -41,18 +43,23 @@ spatial_plots <- function(input,
                           scale = 1, 
                           plot_pts = TRUE,
                           plot_title = TRUE,
+                          plot_text = FALSE,
+                          plot_axes = FALSE,
                           ...) {
   
   # Case Clusters Only or Case and Control Clusters
-  if(cascon == TRUE){
+  if(cascon == TRUE) {
     pvalprop <- data.frame("x" = input$rx, "y" = input$ry, "z" = input$pval_prop_cascon)
   } else {
     pvalprop <- data.frame("x" = input$rx, "y" = input$ry, "z" = input$pval_prop_cas)
   }
   
   # Default Titles for plots
-  if(plot_title == TRUE){
-    plot3_title <- paste("Local power:\nProportion significant above", p_thresh, "threshold", sep = " ")
+  if(plot_title == TRUE) {
+    plot3_title <- paste("Local power:\nProportion significant above",
+                         p_thresh,
+                         "threshold",
+                         sep = " ")
     plot_titles <- c("First iteration(s)\nof simulated data",
                      "Local power:\nProportion of simulations significant",
                      plot3_title)
@@ -61,37 +68,39 @@ spatial_plots <- function(input,
   }
   
   # Scale the title size
-  par(cex.main = 1*scale)
+  par(cex.main = 1 * scale)
   
   # If input from spatial_data() function
-  if("ppplist" %in% class(input)){
+  if("ppplist" %in% class(input)) {
     return(spatstat.core::plot.anylist(input[1:n_sim], 
-                    pch = chars,
-                    cex = sizes*scale,
-                    cols = c(cols[3], cols[4]),
-                    leg.side = "bottom",
-                    leg.args = list(cex.axis = 0.9*scale, cex = 1*scale, pch = chars),
-                    main = plot_titles[1],
-                    #axes = TRUE,
-                    ann = TRUE,
-                    main.panel = "",
-                    ...
-    )
-    )
+                                       pch = chars,
+                                       cex = sizes * scale,
+                                       cols = c(cols[3], cols[4]),
+                                       leg.side = "bottom",
+                                       leg.args = list(cex.axis = 0.9 * scale,
+                                                       cex = 1 * scale,
+                                                       pch = chars),
+                                       main = plot_titles[1],
+                                       main.panel = "",
+                                       ...))
   }
   
   # Plot 1: Example input
   p1 <- spatstat.core::plot.ppp(input$sim, 
-                           pch = chars, 
-                           cex = sizes*scale,
-                           cols = c(cols[3], cols[4]),
-                           leg.side = "bottom",
-                           leg.args = list(cex.axis = 0.9*scale, cex = 1*scale, pch = chars),
-                           main = plot_titles[1],
-                           axes = TRUE,
-                           ann = TRUE,
-                           main.panel = "",
-                           ...)
+                                pch = chars, 
+                                cex = sizes * scale,
+                                cols = c(cols[3], cols[4]),
+                                leg.side = "bottom",
+                                leg.args = list(cex.axis = 0.9 * scale,
+                                                cex = 1 * scale,
+                                                pch = chars),
+                                main = plot_titles[1],
+                                main.panel = "",
+                                ...)
+  if (plot_axes == TRUE) {
+    graphics::axis(1)
+    graphics::axis(2)
+  }
   
   # Plot 2: Power, Continuous
   ## Create proportion significant raster
@@ -104,51 +113,50 @@ spatial_plots <- function(input,
   
   ## Colors for raster
   rampcols <- grDevices::colorRampPalette(colors = c(cols[1], cols[2]),
-                                          space="Lab"
-  )(length(raster::values(pvalprop_raster)))
+                                          space = "Lab")(length(raster::values(pvalprop_raster)))
   rampbreaks <- seq(0, 1, 
-                    length.out = length(raster::values(pvalprop_raster))+1
-  )
+                    length.out = length(raster::values(pvalprop_raster)) + 1)
   ## Continuous Output
   p2 <- spatstat.core::plot.ppp(input$sim, 
-                           pch = chars, 
-                           cex = sizes*scale,
-                           cols = c(cols[3], cols[4]),
-                           leg.side = "bottom",
-                           leg.args = list(cex.axis = 0.9*scale, cex = 1*scale, pch = chars),
-                           axes = TRUE,
-                           ann = TRUE,
-                           main = plot_titles[2],
-                           ...)
+                                pch = chars, 
+                                cex = sizes * scale,
+                                cols = c(cols[3], cols[4]),
+                                leg.side = "bottom",
+                                leg.args = list(cex.axis = 0.9 * scale,
+                                                cex = 1 * scale,
+                                                pch = chars),
+                                main = plot_titles[2],
+                                ...)
   fields::image.plot(pvalprop_raster, 
                      col = rampcols,
                      breaks = rampbreaks,
                      axes = FALSE,
-                     cex.lab = 1*scale,
+                     cex.lab = 1 * scale,
                      xlab = "",
                      ylab = "",
-                     cex = 1*scale,
-                     axis.args = list(cex.axis = 0.67*scale),
+                     cex = 1 * scale,
+                     axis.args = list(cex.axis = 0.67 * scale,
+                                      las = 0),
                      add = TRUE,
-                     horizontal = TRUE,
-                     # axes = TRUE,
-                     ann = TRUE,
+                     #horizontal = TRUE,
                      legend.args = list(text = "Power",
-                                        side = 1,
-                                        line = 2,
-                                        cex = 0.67*scale
-                     ),
+                                        side = 3,
+                                        cex = 0.67 * scale),
                      ...)
-  if(plot_pts == TRUE) {
+  if (plot_pts == TRUE) {
     spatstat.core::plot.ppp(input$sim, 
-                       pch = chars, 
-                       cex = sizes*scale,
-                       cols = c(cols[3], cols[4]),
-                       add = TRUE,
-                       leg.args = list(cex.axis = 0.9*scale,
-                                       cex = 1*scale,
-                                       pch = chars),
-                       ...)
+                            pch = chars, 
+                            cex = sizes * scale,
+                            cols = c(cols[3], cols[4]),
+                            add = TRUE,
+                            leg.args = list(cex.axis = 0.9 * scale,
+                                            cex = 1 * scale,
+                                            pch = chars),
+                            ...)
+  }
+  if (plot_axes == TRUE) {
+    graphics::axis(1)
+    graphics::axis(2)
   }
   
   rampbreaks <- NULL # conserve memory
@@ -159,41 +167,42 @@ spatial_plots <- function(input,
   #### Here: power = 80
   pvalprop_reclass <- raster::reclassify(pvalprop_raster,
                                          c(-Inf, p_thresh-0.0000001, 1,
-                                           p_thresh-0.0000001, Inf, 2
-                                         )
-  )
+                                           p_thresh-0.0000001, Inf, 2))
   pvalprop_raster <- NULL # conserve memory
   
   ## Categorical Output
   p3 <- spatstat.core::plot.ppp(input$sim, 
-                           pch = chars, 
-                           cex = sizes*scale,
-                           cols = c("transparent", "transparent"),
-                           leg.side = "bottom",
-                           leg.args = list(annotate = FALSE),
-                           # axes = TRUE,
-                           ann = TRUE,
-                           main = plot_titles[3],
-                           ...)
+                                pch = chars, 
+                                cex = sizes * scale,
+                                cols = c("transparent", "transparent"),
+                                leg.side = "bottom",
+                                leg.args = list(annotate = FALSE),
+                                main = plot_titles[3],
+                                ...)
   fields::image.plot(pvalprop_reclass, 
                      add = TRUE,
                      col = cols[1:2],
                      breaks = c(1, 1.5, 2),
                      axes = FALSE,
-                     cex.lab = 1*scale,
+                     cex.lab = 1 * scale,
                      xlab = "",
                      ylab = "",
-                     cex = 1*scale,
-                     horizontal = TRUE,
-                     axis.args = list(cex.axis = 0.67*scale,
+                     cex = 1 * scale,
+                     #horizontal = TRUE,
+                     axis.args = list(cex.axis = 0.67 * scale,
                                       labels = c("insufficient", "sufficient"),
-                                      at = c(1.25, 1.75)
-                     ),
+                                      las = 0,
+                                      at = c(1.25, 1.75)),
                      legend.args = list(text = "Power",
-                                        side = 1,
-                                        line = 2,
-                                        cex = 0.67*scale
-                     ),
+                                        side = 3,
+                                        cex = 0.67 * scale),
                      ...)
-  pvalprop_reclass <- NULL # conserve memory
+  ### Add text of local power to each knot
+  if(plot_text == TRUE) {
+    graphics::text(x = input$rx, y = input$ry, input$pval_prop, col = cols[3], cex = 0.5)
+  }
+  if (plot_axes == TRUE) {
+    graphics::axis(1)
+    graphics::axis(2)
+  }
 }
