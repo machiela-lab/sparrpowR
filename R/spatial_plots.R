@@ -13,6 +13,7 @@
 #' @param plot_pts Logical. If TRUE (the default), the points from the first simulation iteration will be added to second plot. Not if FALSE.
 #' @param plot_title Logical. If TRUE (the default), a title will be included in the plot(s). Not if FALSE.
 #' @param plot_text Logical. If TRUE, the local statistical power will be printed at each grid cell. Not if FALSE (the default).
+#' @param plot_axes Logical. If TRUE, the axes with labels will be included in the plot(s). Not if FALSE (the default).
 #' @param ... Arguments passed to \code{\link[spatstat.core]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.
 #'
 #' @return This function produces up to three plots: 1) example input, 2) local power, and 3) local power above a threshold. If the input is from the \code{\link{spatial_data}} function, this function will only display the first plot. 
@@ -43,6 +44,7 @@ spatial_plots <- function(input,
                           plot_pts = TRUE,
                           plot_title = TRUE,
                           plot_text = FALSE,
+                          plot_axes = FALSE,
                           ...) {
   
   # Case Clusters Only or Case and Control Clusters
@@ -90,6 +92,10 @@ spatial_plots <- function(input,
                                 main = plot_titles[1],
                                 main.panel = "",
                                 ...)
+  if (plot_axes == TRUE) {
+    axis(1)
+    axis(2)
+  }
   
   # Plot 2: Power, Continuous
   ## Create proportion significant raster
@@ -124,16 +130,16 @@ spatial_plots <- function(input,
                      xlab = "",
                      ylab = "",
                      cex = 1*scale,
-                     axis.args = list(cex.axis = 0.67*scale),
+                     axis.args = list(cex.axis = 0.67 * scale,
+                                      las = 0),
                      add = TRUE,
-                     horizontal = TRUE,
+                     #horizontal = TRUE,
                      legend.args = list(text = "Power",
-                                        side = 1,
-                                        line = 2,
-                                        cex = 0.67*scale
+                                        side = 3,
+                                        cex = 0.67 * scale
                      ),
                      ...)
-  if(plot_pts == TRUE) {
+  if (plot_pts == TRUE) {
     spatstat.core::plot.ppp(input$sim, 
                             pch = chars, 
                             cex = sizes*scale,
@@ -144,6 +150,10 @@ spatial_plots <- function(input,
                                             pch = chars),
                             ...)
   }
+  if (plot_axes == TRUE) {
+    axis(1)
+    axis(2)
+    }
   
   rampbreaks <- NULL # conserve memory
   rampcols <- NULL # convserve memory
@@ -176,20 +186,24 @@ spatial_plots <- function(input,
                      xlab = "",
                      ylab = "",
                      cex = 1*scale,
-                     horizontal = TRUE,
-                     axis.args = list(cex.axis = 0.67*scale,
+                     #horizontal = TRUE,
+                     axis.args = list(cex.axis = 0.67 * scale,
                                       labels = c("insufficient", "sufficient"),
+                                      las = 0,
                                       at = c(1.25, 1.75)
                      ),
                      legend.args = list(text = "Power",
-                                        side = 1,
-                                        line = 2,
-                                        cex = 0.67*scale
+                                        side = 3,
+                                        cex = 0.67 * scale
                      ),
                      ...)
   ### Add text of local power to each knot
   if(plot_text == TRUE){
     graphics::text(x = input$rx, y = input$ry, input$pval_prop, col = cols[3], cex = 0.5)
+  }
+  if (plot_axes == TRUE) {
+    axis(1)
+    axis(2)
   }
   pvalprop_reclass <- NULL # conserve memory
 }

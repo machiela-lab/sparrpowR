@@ -45,5 +45,3 @@ rsconnect/
 
 # Sandboxes
 inst/doc
-build.R
-build
