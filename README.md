@@ -85,8 +85,7 @@ foo <- spatial_power(win = unit.circle,
                      samp_control = "CSR",
                      r_case = 0.1,
                      n_case = 50,
-                     n_control = 250,
-                     cascon = TRUE)
+                     n_control = 250)
                      
 # ----------------------- #
 # Outputs from iterations #
