@@ -14,6 +14,7 @@
 #' @param plot_title Logical. If TRUE (the default), a title will be included in the plot(s). Not if FALSE.
 #' @param plot_text Logical. If TRUE, the local statistical power will be printed at each grid cell. Not if FALSE (the default).
 #' @param plot_axes Logical. If TRUE, the axes with labels will be included in the plot(s). Not if FALSE (the default).
+#' @param horizontal Logical. If TRUE (the default), the color key will be displayed horizontally, below the plots. If FALSE, the color key will be displayed vertically, to the right of the plots.
 #' @param ... Arguments passed to \code{\link[spatstat.core]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.
 #'
 #' @return This function produces up to three plots: 1) example input, 2) local power, and 3) local power above a threshold. If the input is from the \code{\link{spatial_data}} function, this function will only display the first plot. 
@@ -44,6 +45,7 @@ spatial_plots <- function(input,
                           plot_title = TRUE,
                           plot_text = FALSE,
                           plot_axes = FALSE,
+                          horizontal = TRUE,
                           ...) {
   
   # Graphical parameters
@@ -140,7 +142,7 @@ spatial_plots <- function(input,
                      axis.args = list(cex.axis = 0.67 * scale,
                                       las = 0),
                      add = TRUE,
-                     #horizontal = TRUE,
+                     horizontal = horizontal,
                      legend.args = list(text = "Power",
                                         side = 3,
                                         cex = 0.67 * scale),
@@ -190,7 +192,7 @@ spatial_plots <- function(input,
                      xlab = "",
                      ylab = "",
                      cex = 1 * scale,
-                     #horizontal = TRUE,
+                     horizontal = horizontal,
                      axis.args = list(cex.axis = 0.67 * scale,
                                       labels = c("insufficient", "sufficient"),
                                       las = 0,
