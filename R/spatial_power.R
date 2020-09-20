@@ -114,17 +114,6 @@ spatial_power <- function(win = spatstat.core::unit.square(),
                           n_core = 2,
                           ...) {
   
-  
-  # Custom Internal Functions
-  ## Combine function used in foreach
-  comb <- function(x, ...) {
-    lapply(seq_along(x),
-           function(i) c(x[[i]], lapply(list(...), function(y) y[[i]])))
-  }
-  
-  ## Calculate proportion of runs as significant
-  proportionSignificant <- function(x) { x / sim_total }
-  
   # Inputs
   if (length(x_case) != length(y_case)) {
     stop("There is at least one missing coordinate")
@@ -413,12 +402,12 @@ spatial_power <- function(win = spatstat.core::unit.square(),
                                                          FALSE),
                             how = "replace")
   pval_count_cascon <- rowSums(do.call(cbind,pval_sig_cascon), na.rm = TRUE)
-  pval_prop_wNA_cascon <- sapply(pval_count_cascon, FUN = proportionSignificant)
+  pval_prop_wNA_cascon <- sapply(pval_count_cascon, FUN = function(x, y = sim_total) (x / y))
   #### Case only (lower tail only)
   pval_sig_cas <- rapply(sim_pval, function(x) ifelse(x < lower_tail, TRUE, FALSE),
                          how = "replace")
   pval_count_cas <- rowSums(do.call(cbind,pval_sig_cas), na.rm = TRUE)
-  pval_prop_wNA_cas <- sapply(pval_count_cas, FUN = proportionSignificant)
+  pval_prop_wNA_cas <- sapply(pval_count_cas, FUN = function(x, y = sim_total) (x / y))
   
   ## Force NA values for graphing, match position of NAs of mean p-value
   #### Case and Control (lower and upper tail)

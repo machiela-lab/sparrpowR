@@ -104,5 +104,7 @@ spatial_plots(foo,
               chars = c(4,5),
               sizes = c(0.6,0.3),
               cols = c("blue", "green", "red", "purple", "orange"),
-              plot_axes = TRUE
+              plot_axes = TRUE,
+              cascon = TRUE,
+              horizontal = FALSE
               )

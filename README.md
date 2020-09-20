@@ -1,4 +1,4 @@
-sparrpowR: Power Calculation for the Spatial Relative Risk function <img src="man/figures/sparrpowR.png" width="120" align="right" />
+sparrpowR: Power Analysis to Detect Spatial Relative Clusters <img src="man/figures/sparrpowR.png" width="120" align="right" />
 ===================================================
 
 <h2 id="overview">
@@ -7,7 +7,7 @@ Overview
 
 </h2>
 
-The `sparrpowR` package is a suite of `R` functions to calculate the statistical power to detect clusters using the kernel-based spatial relative risk function that are estimated using the  [sparr](https://CRAN.R-project.org/package=sparr) package. Basic visualization is also supported. 
+The `sparrpowR` package is a suite of `R` functions to calculate the statistical power to detect clusters using the kernel-based spatial relative risk function that is estimated using the  [sparr](https://CRAN.R-project.org/package=sparr) package. Basic visualization is also supported. 
 
 <h2 id="install">
 

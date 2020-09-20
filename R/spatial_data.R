@@ -1,6 +1,6 @@
 #' Simulate random data for SRR function
 #'
-#' Generate random bivariate data for a spatial relative risk function.
+#' Generate random two-group data for a spatial relative risk function.
 #'
 #' @param win Window in which to simulate the random data. An object of class "owin" or something acceptable to \code{\link[spatstat.core]{as.owin}}.
 #' @param sim_total Integer, specifying the number of simulation iterations to perform.

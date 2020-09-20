@@ -69,7 +69,7 @@ spatial_data(
 An object of class "ppplist". This is a list of marked point patterns that have a single mark with two levels: case and control.
 }
 \description{
-Generate random bivariate data for a spatial relative risk function.
+Generate random two-group data for a spatial relative risk function.
 }
 \details{
 This function generates random data for a spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) using various random point pattern generators from the \code{\link{spatstat.core}} package to generate data.
