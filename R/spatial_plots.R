@@ -14,6 +14,7 @@
 #' @param plot_title Logical. If TRUE (the default), a title will be included in the plot(s). Not if FALSE.
 #' @param plot_text Logical. If TRUE, the local statistical power will be printed at each grid cell. Not if FALSE (the default).
 #' @param plot_axes Logical. If TRUE, the axes with labels will be included in the plot(s). Not if FALSE (the default).
+#' @param plot_square Logical. If TRUE, the plot will have margins with similar units. Not if FALSE (the default).
 #' @param horizontal Logical. If TRUE (the default), the color key will be displayed horizontally, below the plots. If FALSE, the color key will be displayed vertically, to the right of the plots.
 #' @param ... Arguments passed to \code{\link[spatstat.core]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.
 #'
@@ -45,6 +46,7 @@ spatial_plots <- function(input,
                           plot_title = TRUE,
                           plot_text = FALSE,
                           plot_axes = FALSE,
+                          plot_square = FALSE,
                           horizontal = TRUE,
                           ...) {
   
@@ -71,8 +73,10 @@ spatial_plots <- function(input,
     plot_titles <- c("", "", "")
   }
   
+  if (plot_square == TRUE) { square <- "s"} else { square <- "m" }
+  
   # Scale the title size
-  graphics::par(cex.main = 1 * scale)
+  graphics::par(cex.main = 1 * scale, pty = square)
   
   # If input from spatial_data() function
   if("ppplist" %in% class(input)) {
