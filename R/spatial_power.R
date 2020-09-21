@@ -75,7 +75,7 @@
 #' @importFrom foreach %do% %dopar% foreach
 #' @importFrom parallel makeCluster stopCluster
 #' @importFrom sparr risk
-#' @importFrom spatstat.core disc marks ppp rNeymanScott rpoispp rsyst runifdisc runifpoint shift superimpose unit.square
+#' @importFrom spatstat.core as.solist disc marks ppp rNeymanScott rpoispp rsyst runifdisc runifpoint shift superimpose unit.square
 #' @importFrom stats rnorm sd
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @export
@@ -261,7 +261,7 @@ spatial_power <- function(win = spatstat.core::unit.square(),
                           wind = win, ...))
     pppCase[[i]] <- x1
   }
-  class(pppCase) <- c("ppplist", "solist",  "anylist", "listof", "list")
+  pppCase <- spatstat.core::as.solist(pppCase)
   cas <- spatstat.core::superimpose(pppCase)
   
   # Progress bar
@@ -309,7 +309,7 @@ spatial_power <- function(win = spatstat.core::unit.square(),
                                  wind = win, ...))
         pppControl[[i]] <- y1
        }
-      class(pppControl) <- c("ppplist", "solist",  "anylist", "listof", "list")
+      pppControl <- spatstat.core::as.solist(pppControl)
       con <- spatstat.core::superimpose(pppControl)
     } else { 
       suppressWarnings(

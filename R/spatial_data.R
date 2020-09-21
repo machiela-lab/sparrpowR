@@ -47,7 +47,7 @@
 #' @return An object of class "ppplist". This is a list of marked point patterns that have a single mark with two levels: case and control.
 #' 
 #' @importFrom stats rnorm
-#' @importFrom spatstat.core disc marks ppp rNeymanScott rpoispp rsyst runifdisc runifpoint shift superimpose unit.square
+#' @importFrom spatstat.core as.solist disc marks ppp rNeymanScott rpoispp rsyst runifdisc runifpoint shift superimpose unit.square
 #' @export
 #'
 #' @seealso \code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.core]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.core]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} for additional arguments for random point pattern generation.
@@ -232,7 +232,7 @@ spatial_data <- function(win = spatstat.core::unit.square(),
                         wind = win, ...)
     pppCase[[i]] <- x1
   }
-  class(pppCase) <- c("ppplist", "solist",  "anylist", "listof", "list")
+  pppCase <- spatstat.core::as.solist(pppCase)
   x <- spatstat.core::superimpose(pppCase)
   
   # Simulate marked ppp for each iteration
@@ -249,7 +249,7 @@ spatial_data <- function(win = spatstat.core::unit.square(),
                                wind = win, ...)
         pppControl[[i]] <- y1
       }
-      class(pppControl) <- c("ppplist", "solist",  "anylist", "listof", "list")
+      pppControl <- spatstat.core::as.solist(pppControl)
       y <- spatstat.core::superimpose(pppControl)
     } else { 
       y <- rcluster_control(x0 = NULL,
@@ -271,7 +271,8 @@ spatial_data <- function(win = spatstat.core::unit.square(),
     # Compile ppp into list
     pppList[[j]] <- z
   }
-  class(pppList) <- c("ppplist", "solist",  "anylist", "listof", "list")
+  
+  pppList <- spatstat.core::as.solist(pppList)
   
   return(pppList)
 }

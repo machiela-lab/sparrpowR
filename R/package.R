@@ -48,6 +48,6 @@ NULL
 #' @importFrom sp coordinates gridded
 #' @importFrom sparr risk
 #' @importFrom stats na.omit rnorm sd
-#' @importFrom spatstat.core disc marks plot.anylist plot.ppp ppp rNeymanScott rpoispp rsyst runifdisc runifpoint shift superimpose unit.square
+#' @importFrom spatstat.core as.solist disc marks plot.anylist plot.ppp ppp rNeymanScott rpoispp rsyst runifdisc runifpoint shift superimpose unit.square
 #' @importFrom utils setTxtProgressBar txtProgressBar
 NULL
