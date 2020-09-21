@@ -6,9 +6,8 @@
 #' @param sim_total Integer, specifying the number of simulation iterations to perform.
 #' @param samp_control Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), with complete spatial randomness (\code{samp_control="CSR"}), or multivariate normal (\code{samp_control="MVN"}).
 #' @param s_control Optional. Numeric value for the standard deviation of the multivariate normal distribution in the units of the \code{obs_data}.  The default value (1) assumes a unit square window. Ignored if Ignored if \code{samp_control="uniform"} or \code{samp_control="CSR"}.
-#' @param cascon Logical. If FALSE (the default) computes the power to detect only relative case clustering. If TRUE, computes power to detect both case and control clustering. 
 #' @param lower_tail Optional. Numeric value of lower p-value threshold (default=0.025).
-#' @param upper_tail Optional. Numeric value of upper p-value threshold (default=0.975). Ignored if cascon=FALSE.
+#' @param upper_tail Optional. Numeric value of upper p-value threshold (default=0.975).
 #' @param parallel Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.
 #' @param n_core Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).
 #' @param verbose Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.
@@ -32,22 +31,24 @@
 #' \item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the mean relative risk values at each gridded knot.}
 #' \item{\code{pval_mean}}{Vector of length \code{[resolution x resolution]} of the mean asymptotic p-value at each gridded knot.}
 #' \item{\code{rr_sd}}{Vector of length \code{[resolution x resolution]} of the standard deviation of relative risk values at each gridded knot.}
-#' \item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values that were significant at each gridded knot.}
+#' \item{\code{pval_prop_cascon}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values that were significant for both case and control locations at each gridded knot.}
+#' \item{\code{pval_prop_cas}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values that were significant for only case locations at each gridded knot.}
 #' \item{\code{rx}}{Vector of length \code{[resolution x resolution]} of the x-coordinates of each gridded knot.}
 #' \item{\code{ry}}{Vector of length \code{[resolution x resolution]} of the y-coordinates of each gridded knot.}
-#' \item{\code{rx}}{Vector of length \code{sim_total} of the number of control locations simulated in each iteration.}
+#' \item{\code{n_cas}}{Vector of length \code{sim_total} of the number of case locations simulated in each iteration.}
+#' \item{\code{n_con}}{Vector of length \code{sim_total} of the number of control locations simulated in each iteration.}
 #' \item{\code{bandw}}{Vector of length \code{sim_total} of the bandwidth (of numerator) used in each iteration.}
-#' \item{\code{bandw}}{Vector of length \code{sim_total} of the global s statistic.}
-#' \item{\code{bandw}}{Vector of length \code{sim_total} of the global t statistic.}
+#' \item{\code{s_obs}}{Vector of length \code{sim_total} of the global s statistic.}
+#' \item{\code{t_obs}}{Vector of length \code{sim_total} of the global t statistic.}
 #' }
 #' 
+#' @importFrom doParallel registerDoParallel
+#' @importFrom foreach %do% %dopar% foreach
+#' @importFrom parallel makeCluster stopCluster
+#' @importFrom sparr risk
 #' @importFrom spatstat.core marks runifpoint rpoispp ppp superimpose
 #' @importFrom stats sd
 #' @importFrom utils setTxtProgressBar txtProgressBar
-#' @importFrom foreach %do% %dopar% foreach
-#' @importFrom parallel makeCluster stopCluster
-#' @importFrom doParallel registerDoParallel
-#' @importFrom sparr risk
 #' @export
 #' 
 #' @seealso \code{\link[sparr]{risk}} for additional arguments for bandwidth selection, edge correction, and resolution.
@@ -66,7 +67,6 @@ jitter_power <- function(obs_data,
                          sim_total,
                          samp_control = c("uniform", "CSR", "MVN"),
                          s_control = 1,
-                         cascon = FALSE,
                          lower_tail = 0.025, 
                          upper_tail = 0.975,
                          parallel = FALSE,
@@ -74,20 +74,8 @@ jitter_power <- function(obs_data,
                          verbose = TRUE,
                          ...) {
   
-  # Custom Internal Functions
-  ## Combine function used in foreach
-  comb <- function(x, ...) {
-    lapply(seq_along(x),
-           function(i) c(x[[i]], lapply(list(...), function(y) y[[i]])))
-  }
-  
-  ## Calculate proportion of runs as significant
-  proportionSignificant <- function(x) {
-    x / sim_total
-  }
-  
   # Input
-  if(class(obs_data) != "ppp"){
+  if (class(obs_data) != "ppp"){
     stop("Argument 'obs_data' must be of class 'ppp'")
   }
   
@@ -121,98 +109,97 @@ jitter_power <- function(obs_data,
   # progress bar
   if (verbose == TRUE & parallel == FALSE){
     message("Generating Data, Estimating Relative Risk, Calculating Power")
-    pb <- txtProgressBar(min = 0, max = sim_total, style = 3)
+    pb <- utils::txtProgressBar(min = 0, max = sim_total, style = 3)
   }
   
   ## Set function used in foreach
   if (parallel == TRUE){
-    loadedPackages <- c("doParallel", "parallel")
-    invisible(lapply(loadedPackages, require, character.only = TRUE))
     cl <- parallel::makeCluster(n_core)
     doParallel::registerDoParallel(cl)
     `%fun%` <- foreach::`%dopar%`
-  } else {
-    `%fun%` <- foreach::`%do%`
-  }
+  } else { `%fun%` <- foreach::`%do%` }
   
   # Iteratively calculate the log relative risk and asymptotic p-value surfaces
   out_par <- foreach::foreach(k = 1:sim_total, 
                               .combine = comb, 
                               .multicombine = TRUE, 
-                              .packages = c("sparr", "spatstat.core"),
+                              .packages = c("sparr", "spatstat.core", "utils"),
                               .init = list(list(), list(), list(),
                                            list(), list(), list(), 
                                            list(), list(), list(),
-                                           list())
-  ) %fun% {
-    
-    # Progress bar
-    if (verbose == TRUE & parallel == FALSE){
-      setTxtProgressBar(pb, k)
-      if(k == sim_total) cat("\n")
-    }
-    
-    # Create random cluster of controls
-    con <- rcluster_control(n = split(obs_data)[[2]]$n,
-                            l = split(obs_data)[[2]]$n / (diff(obs_data$window$xrange)*diff(obs_data$window$yrange)),
-                            win = obs_data$window,
-                            s = s_control,
-                            ...)
-    
-    # Combine random clusters of cases and controls into one marked ppp
-    z <- spatstat.core::superimpose(con, cas)
-    spatstat.core::marks(z) <- as.factor(spatstat.core::marks(z))
-    
-    # Calculate observed kernel density ratio
-    obs_lrr <- sparr::risk(z, tolerate = TRUE, verbose = FALSE, ...)
-    
-    # Output processing for visualization and summary across iterations
-    ## Convert output matrix to two output vectors
-    ### Coordinates for each knot
-    rx <- rep(obs_lrr$rr$xcol, length(obs_lrr$rr$yrow))
-    for(i in 1:length(obs_lrr$rr$yrow)){
-      if (i == 1){ ry <- rep(obs_lrr$rr$yrow[i], length(obs_lrr$rr$xcol))}
-      if (i != 1){ ry <- c(ry, rep(obs_lrr$rr$yrow[i], length(obs_lrr$rr$xcol)))}
-    }
-    
-    ### Estimated value (log relative risk and p-value) for each knot
-    sim_risk <- as.vector(t(obs_lrr$rr$v))
-    sim_pval <- as.vector(t(obs_lrr$P$v))
-    
-    ### Estimated global test statistics
-    #### Global maximum relative risk: H0 = 1
-    s_obs <- max(exp(obs_lrr$rr$v[!is.na(obs_lrr$rr$v)]))
-    #### Approximation for integral: H0 = 0
-    t_obs <- sum((obs_lrr$rr$v[!is.na(obs_lrr$rr$v) & is.finite(obs_lrr$rr$v)]/(diff(obs_lrr$rr$xcol)[1]*diff(obs_lrr$rr$yrow)[1]))^2)
-    
-    ### Estimated value (log relative risk and p-value) for each knot
-    if(k == 1) {
-      sim <- z
-      out <- obs_lrr
-    } else {
-      sim <- NULL
-      out <- NULL
-      rx <- NULL
-      ry <- NULL
-    }
-    
-    # Output for each n-fold
-    par_results <- list("sim_risk" = sim_risk,
-                        "sim_pval" = sim_pval,
-                        "rx" = rx,
-                        "ry" = ry,
-                        "sim" = sim,
-                        "out" = out,
-                        "n_con" = con$n,
-                        "bandw" = obs_lrr$f$h0,
-                        "s_obs" = s_obs,
-                        "t_obs" = t_obs
-    )
-    return(par_results)
-  }
+                                           list(), list())) %fun% {
+                                             
+                                             # Progress bar
+                                             if (verbose == TRUE & parallel == FALSE){
+                                               utils::setTxtProgressBar(pb, k)
+                                               if (k == sim_total) cat("\n")
+                                             }
+                                             
+                                             # Create random cluster of controls
+                                             con <- rcluster_control(n = split(obs_data)[[2]]$n,
+                                                                     l = split(obs_data)[[2]]$n
+                                                                     / (diff(obs_data$window$xrange) 
+                                                                        * diff(obs_data$window$yrange)),
+                                                                     win = obs_data$window,
+                                                                     s = s_control,
+                                                                     ...)
+                                             
+                                             # Combine random clusters of cases and controls into one marked ppp
+                                             z <- spatstat.core::superimpose(con, cas)
+                                             spatstat.core::marks(z) <- as.factor(spatstat.core::marks(z))
+                                             
+                                             # Calculate observed kernel density ratio
+                                             obs_lrr <- sparr::risk(z, tolerate = TRUE, verbose = FALSE, ...)
+                                             
+                                             # Output processing for visualization and summary across iterations
+                                             ## Convert output matrix to two output vectors
+                                             ### Coordinates for each knot
+                                             rx <- rep(obs_lrr$rr$xcol, length(obs_lrr$rr$yrow))
+                                             for(i in 1:length(obs_lrr$rr$yrow)){
+                                               if (i == 1) { ry <- rep(obs_lrr$rr$yrow[i], length(obs_lrr$rr$xcol)) }
+                                               if (i != 1) { ry <- c(ry, rep(obs_lrr$rr$yrow[i], length(obs_lrr$rr$xcol))) }
+                                             }
+                                             
+                                             ### Estimated value (log relative risk and p-value) for each knot
+                                             sim_risk <- as.vector(t(obs_lrr$rr$v))
+                                             sim_pval <- as.vector(t(obs_lrr$P$v))
+                                             
+                                             ### Estimated global test statistics
+                                             #### Global maximum relative risk: H0 = 1
+                                             s_obs <- max(exp(obs_lrr$rr$v[!is.na(obs_lrr$rr$v)]))
+                                             #### Approximation for integral: H0 = 0
+                                             t_obs <- sum((obs_lrr$rr$v[!is.na(obs_lrr$rr$v) 
+                                                                        & is.finite(obs_lrr$rr$v)] / (diff(obs_lrr$rr$xcol)[1] 
+                                                                                                      * diff(obs_lrr$rr$yrow)[1]))^2)
+                                             
+                                             ### Estimated value (log relative risk and p-value) for each knot
+                                             if (k == 1) {
+                                               sim <- z
+                                               out <- obs_lrr
+                                             } else {
+                                               sim <- NULL
+                                               out <- NULL
+                                               rx <- NULL
+                                               ry <- NULL
+                                             }
+                                             
+                                             # Output for each n-fold
+                                             par_results <- list("sim_risk" = sim_risk,
+                                                                 "sim_pval" = sim_pval,
+                                                                 "rx" = rx,
+                                                                 "ry" = ry,
+                                                                 "sim" = sim,
+                                                                 "out" = out,
+                                                                 "n_cas" = cas$n,
+                                                                 "n_con" = con$n,
+                                                                 "bandw" = obs_lrr$f$h0,
+                                                                 "s_obs" = s_obs,
+                                                                 "t_obs" = t_obs)
+                                             return(par_results)
+                                           }
   
   # Stop clusters, if parallel
-  if(parallel == TRUE){
+  if (parallel == TRUE){
     parallel::stopCluster(cl)
   }
   
@@ -232,18 +219,28 @@ jitter_power <- function(obs_data,
   
   ## Calculate proportion of tests were significant
   ### Significance level is user-specified
-  if(cascon == TRUE){
-    pval_sig <- rapply(sim_pval, function(x) ifelse(x < lower_tail | x > upper_tail , TRUE, FALSE), how = "replace")
-  } else {
-    pval_sig <- rapply(sim_pval, function(x) ifelse(x < lower_tail, TRUE, FALSE), how = "replace")
-  }
-  pval_count <- rowSums(do.call(cbind,pval_sig), na.rm = TRUE)
-  pval_prop_wNA <- sapply(pval_count, FUN = proportionSignificant)
+  #### Case and Control (lower and upper tail)
+  pval_sig_cascon <- rapply(sim_pval, function(x) ifelse(x < lower_tail | x > upper_tail,
+                                                         TRUE,
+                                                         FALSE),
+                            how = "replace")
+  pval_count_cascon <- rowSums(do.call(cbind,pval_sig_cascon), na.rm = TRUE)
+  pval_prop_wNA_cascon <- sapply(pval_count_cascon, FUN = function(x, y = sim_total) (x / y))
+  #### Case only (lower tail only)
+  pval_sig_cas <- rapply(sim_pval, function(x) ifelse(x < lower_tail, TRUE, FALSE),
+                         how = "replace")
+  pval_count_cas <- rowSums(do.call(cbind,pval_sig_cas), na.rm = TRUE)
+  pval_prop_wNA_cas <- sapply(pval_count_cas, FUN = function(x, y = sim_total) (x / y))
   
   ## Force NA values for graphing, match position of NAs of mean p-value
-  pval_prop_wNA <- cbind(pval_mean,pval_prop_wNA)
-  pval_prop_wNA[,2][is.na(pval_prop_wNA[,1])] <- NA
-  pval_prop <- pval_prop_wNA[,2]
+  #### Case and Control (lower and upper tail)
+  pval_prop_wNA_cascon <- cbind(pval_mean,pval_prop_wNA_cascon)
+  pval_prop_wNA_cascon[,2][is.na(pval_prop_wNA_cascon[,1])] <- NA
+  pval_prop_cascon <- pval_prop_wNA_cascon[,2]
+  #### Case only (lower tail only)
+  pval_prop_wNA_cas <- cbind(pval_mean,pval_prop_wNA_cas)
+  pval_prop_wNA_cas[,2][is.na(pval_prop_wNA_cas[,1])] <- NA
+  pval_prop_cas <- pval_prop_wNA_cas[,2]
   
   # Output
   out_sim <- list("sim" = out_par[[5]][[1]],
@@ -251,12 +248,13 @@ jitter_power <- function(obs_data,
                   "rr_mean" = rr_mean,
                   "pval_mean" = pval_mean,
                   "rr_sd" = rr_sd,
-                  "pval_prop" = pval_prop,
+                  "pval_prop_cascon" = pval_prop_cascon,
+                  "pval_prop_cas" = pval_prop_cas,
                   "rx" = out_par[[3]][[1]],
                   "ry" = out_par[[4]][[1]],
-                  "n_con" = unlist(out_par[[7]]),
-                  "bandw" = unlist(out_par[[8]]),
-                  "s_obs" = unlist(out_par[[9]]),
-                  "t_obs" = unlist(out_par[[10]])
-  )
+                  "n_cas" = unlist(out_par[[7]]),
+                  "n_con" = unlist(out_par[[8]]),
+                  "bandw" = unlist(out_par[[9]]),
+                  "s_obs" = unlist(out_par[[10]]),
+                  "t_obs" = unlist(out_par[[11]]))
 }
