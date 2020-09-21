@@ -120,12 +120,10 @@ stats::t.test(x = foo$t_obs, mu = 1, alternative = "two.sided")
 # Run spatial_plots #
 # ----------------- #
 
-spatial_plots(foo,
-              p_thresh = 0.9,
-              chars = c(4,5),
-              sizes = c(0.6,0.3),
-              cols = c("blue", "green", "red", "purple", "orange"))
+spatial_plots(foo)
 ```
-![](man/figures/power_continuous.png)
+![](man/figures/spatial_plots1.png)
 
-![](man/figures/power_categorical.png)
+![](man/figures/spatial_plots2.png)
+
+![](man/figures/spatial_plots3.png)
