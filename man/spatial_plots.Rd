@@ -17,6 +17,7 @@ spatial_plots(
   plot_title = TRUE,
   plot_text = FALSE,
   plot_axes = FALSE,
+  plot_square = FALSE,
   horizontal = TRUE,
   ...
 )
@@ -45,6 +46,8 @@ spatial_plots(
 \item{plot_text}{Logical. If TRUE, the local statistical power will be printed at each grid cell. Not if FALSE (the default).}
 
 \item{plot_axes}{Logical. If TRUE, the axes with labels will be included in the plot(s). Not if FALSE (the default).}
+
+\item{plot_square}{Logical. If TRUE, the plot will have margins with similar units. Not if FALSE (the default).}
 
 \item{horizontal}{Logical. If TRUE (the default), the color key will be displayed horizontally, below the plots. If FALSE, the color key will be displayed vertically, to the right of the plots.}
 

@@ -56,6 +56,20 @@ Available functions
 </tbody>
 <table>
 
+<h2 id="authors">
+
+Authors
+
+</h2>
+
+* **Ian D. Buller** - *Occupational and Environmental Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland.* - [GitHub](https://github.com/idblr)
+
+* **Derek W. Brown** - *Integrative Tumor Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland.* - [GitHub](https://github.com/derekbrown12)
+
+See also the list of [contributors](https://github.com/machiela-lab/sparrpowR/graphs/contributors) who participated in this package, including:
+
+* **Tim A. Myers** - *Laboratory of Genetic Susceptibility, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland.* - [GitHub](https://github.com/timyers)
+
 ## Usage
 ``` r
 library(sparrpowR)
