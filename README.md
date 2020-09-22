@@ -62,20 +62,25 @@ Authors
 
 </h2>
 
-* **Ian D. Buller** - *Occupational and Environmental Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland.* - [GitHub](https://github.com/idblr)
+* **Ian D. Buller** - *Occupational and Environmental Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland* - [GitHub](https://github.com/idblr)
 
-* **Derek W. Brown** - *Integrative Tumor Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland.* - [GitHub](https://github.com/derekbrown12)
+* **Derek W. Brown** - *Integrative Tumor Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland* - [GitHub](https://github.com/derekbrown12)
 
 See also the list of [contributors](https://github.com/machiela-lab/sparrpowR/graphs/contributors) who participated in this package, including:
 
-* **Tim A. Myers** - *Laboratory of Genetic Susceptibility, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland.* - [GitHub](https://github.com/timyers)
+* **Tim A. Myers** - *Laboratory of Genetic Susceptibility, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland* - [GitHub](https://github.com/timyers)
 
 ## Usage
 ``` r
+set.seed(1234) # for reproducibility
+
+# ------------------ #
+# Necessary packages #
+# ------------------ #
+
 library(sparrpowR)
 library(spatstat.core)
 library(stats)
-set.seed(1234)
 
 # ----------------- #
 # Run spatial_power #
