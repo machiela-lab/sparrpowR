@@ -139,7 +139,7 @@ Prepare the raster from the simulation for plotting in `ggplot2` suite.
 
 ```{r output preparation}
 pvalprop <- tibble::tibble(x = sim_power$rx, y = sim_power$ry,
-                           z = sim_power$pval_prop) # extract proportion significant
+                           z = sim_power$pval_prop_cas) # extract proportion significant
 lrr_narm <- na.omit(pvalprop) # remove NAs
 sp::coordinates(lrr_narm) <- ~ x + y # coordinates
 gridded(lrr_narm) <- TRUE # gridded

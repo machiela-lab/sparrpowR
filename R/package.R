@@ -1,4 +1,4 @@
-#' The sparrpowR Package: Power calculation for the Spatial Relative Risk function
+#' The sparrpowR Package: Power analysis to detect spatial relative risk clusters
 #'
 #' Computes the statistical power for the spatial relative risk function.
 #'
