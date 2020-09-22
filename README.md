@@ -1,4 +1,4 @@
-sparrpowR: Power analysis to detect spatial relative risk clusters <img src="man/figures/sparrpowR.png" width="120" align="right" />
+sparrpowR: Power analysis to detect spatial relative clusters <img src="man/figures/sparrpowR.png" width="120" align="right" />
 ===================================================
 
 <h2 id="overview">
