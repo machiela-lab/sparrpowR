@@ -1,4 +1,4 @@
-#' The sparrpowR Package: Power Calculation for the Spatial Relative Risk function
+#' The sparrpowR Package: Power calculation for the Spatial Relative Risk function
 #'
 #' Computes the statistical power for the spatial relative risk function.
 #'

@@ -1,4 +1,4 @@
-sparrpowR: Power Calculation for the Spatial Relative Risk function <img src="man/figures/sparrpowR.png" width="120" align="right" />
+sparrpowR: Power calculation for the Spatial Relative Risk function <img src="man/figures/sparrpowR.png" width="120" align="right" />
 ===================================================
 
 <h2 id="overview">
