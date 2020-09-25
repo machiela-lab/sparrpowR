@@ -15,7 +15,7 @@ set.seed(1234)
 unit.circle <- spatstat::disc(radius = 0.5, centre = c(0.5,0.5))
 
 foo <- spatial_power(win = unit.circle,
-                     sim_total = 100,
+                     sim_total = 10,
                      x_case = 0.5,
                      y_case = 0.5,
                      samp_case = "uniform",
@@ -29,4 +29,5 @@ spatial_plots(foo,
               p_thresh = 0.9,
               chars = c(4,5),
               sizes = c(0.6,0.3),
+              scale = 1,
               cols = c("blue", "green", "red", "purple", "orange"))
