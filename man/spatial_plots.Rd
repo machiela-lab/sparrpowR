@@ -61,7 +61,21 @@ Create multiple plots of output from \code{\link{spatial_data}}, \code{\link{spa
 }
 \examples{
 \donttest{
-spatial_plots(input = sim_power)
+ # run spatial_power(), jitter_power(), or spatial_data()
+ sim_power <- spatial_power(x_case = c(0.25, 0.5, 0.75),
+                            y_case = c(0.75, 0.25, 0.75),
+                            samp_case = "MVN", 
+                            samp_control = "MVN",
+                            x_control = c(0.25, 0.5, 0.75),
+                            y_control = c(0.75, 0.25, 0.75),
+                            n_case = 100,
+                            n_control = c(100,500,300),
+                            s_case = c(0.05,0.01,0.05),
+                            s_control = 0.05,
+                            verbose = FALSE)
+               
+ # run spatial_plots()
+ spatial_plots(input = sim_power)
 }
 
 }

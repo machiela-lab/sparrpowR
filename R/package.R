@@ -1,14 +1,12 @@
-#' The sparrpowR Package: Power analysis to detect spatial relative risk clusters
+#' The sparrpowR Package: Power Analysis to Detect Spatial Relative Risk Clusters
 #'
 #' Computes the statistical power for the spatial relative risk function.
 #'
-#' @details
+#' @details For a two-group comparison (e.g., cases v. controls) the 'sparrpowR' package calculates the statistical power to detect clusters using the kernel-based spatial relative risk function that is estimated using the 'sparr' package. Details about the 'sparr' package methods can be found in the tutorial: Davies et al. (2018) \url{https//doi.org/10.1002/sim.7577}.  Details about kernel density estimation can be found in J. F. Bithell (1990) \url{https//doi.org/10.1002/sim.4780090616}.  More information about relative risk functions using kernel density estimation can be found in J. F. Bithell (1991) \url{https//doi.org/10.1002/sim.4780101112}.
 #' 
-#' For a two-group comparison (e.g., cases v. controls) the sparrpowR package calculates the statistical power to detect clusters using the kernel-based spatial relative risk function that is estimated using the {sparr} package. Details about the {sparr} package methods can be found in the tutorial: Davies et al. (2018) <doi:10.1002/sim.7577>.  Details about kernel density estimation can be found in J. F. Bithell (1990) <doi:10.1002/sim.4780090616>.  More information about relative risk functions using kernel density estimation can be found in J. F. Bithell (1991) <doi:10.1002/sim.4780101112>.
+#' This package provides a function to compute the statistical power for the spatial relative risk function with various theoretical spatial sampling strategies. The 'sparrpowR' package also provides a function to compute the statistical power for the spatial relative risk function for scenarios where one group (e.g., cases) have been observed and a theoretical sampling strategy for the second group (e.g., controls) is desired. The 'sparrpowR' package also provides visualization of data and statistical power.
 #' 
-#' This package provides a function to compute the statistical power for the spatial relative risk function with various theoretical spatial sampling strategies. The {sparrpowR} package also provides a function to compute the statistical power for the spatial relative risk function for scenarios where one group (e.g., cases) have been observed and a theoretical sampling strategy for the second group (e.g., controls) is desired. The {sparrpowR} package also provides visualization of data and statistical power.
-#' 
-#' Key content of the {sparrpowR} package include:\cr
+#' Key content of the 'sparrpowR' package include:\cr
 #' 
 #' \bold{Theoretical Spatial Sampling}
 #' 
@@ -28,7 +26,7 @@
 #' @aliases sparrpowR-package sparrpowR
 #' @docType package
 #' 
-#' @section Dependencies: The {sparrpowR} package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.core}}, and \code{\link{raster}} for computing the statistical power and visualizing the output. Computation can be performed in parallel using \code{\link[doParallel]{doParallel}}, \code{\link[parallel]{parallel}}, and \code{\link[foreach]{foreach}}. Basic visualizations rely on the \code{\link{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
+#' @section Dependencies: The 'sparrpowR' package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.core}}, and \code{\link{raster}} for computing the statistical power and visualizing the output. Computation can be performed in parallel using \code{\link[doParallel]{doParallel}}, \code{\link[parallel]{parallel}}, and \code{\link[foreach]{foreach}}. Basic visualizations rely on the \code{\link{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
 #' 
 #' @author Ian D. Buller\cr \emph{Occupational and Environmental Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland, USA.} \cr\cr
 #' Derek W. Brown\cr \emph{Integrative Tumor Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland, USA.}

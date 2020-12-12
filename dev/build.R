@@ -1,3 +1,5 @@
+# authorship: https://journal.r-project.org/archive/2012-1/RJournal_2012-1_Hornik~et~al.pdf
+
 install.packages(c("devtools", "roxygen2", "testthat", "knitr"))
 library(devtools)
 devtools::has_devel()
@@ -15,7 +17,7 @@ devtools::load_all()
     devtools.desc.author = person(given = "Ian D.",
                                   family = "Buller",
                                   role = c("aut", "cre", "cph"),
-                                  email = "ian.buller@alumni.emory.edu"),
+                                  email = "ian.buller@nih.gov"),
     devtools.desc.license = "Apache License (>= 2.0)",
     devtools.desc.suggest = NULL,
     devtools.desc = list()
@@ -30,26 +32,37 @@ getOption("sparrpowR")
 
 # Convert roxygen components to .Rd files
 devtools::document()
-?lrren
 
 # Create Vignette
-install()
-build()
+devtools::install()
+devtools::build()
 
 # Testing
-use_testthat()
-use_test()
-test()
+devtools::use_testthat()
+devtools::use_test()
+devtools::test()
 
 # NAMESPACE
 document()
 install()
 
 # Check
-check()
+devtools::check()
 
-# Ignore .R files from /build directory
-usethis::use_build_ignore(c("build"))
+# Ignore .R files from /dev directory
+usethis::use_build_ignore(c("dev"))
+
+# Check on windows
+devtools::check_win_devel()
+devtools::check_win_oldrelease()
+devtools::check_win_release()
+
+# rhub
+devtools::check_rhub()
+rhub::check_for_cran()
+
+# Release to CRAN
+#devtools::release()
 
 # Example in README
 library(sparrpowR)
@@ -106,5 +119,4 @@ spatial_plots(foo,
               cols = c("blue", "green", "red", "purple", "orange"),
               plot_axes = TRUE,
               cascon = TRUE,
-              horizontal = FALSE
-              )
+              horizontal = FALSE)

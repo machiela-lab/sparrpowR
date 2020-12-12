@@ -56,12 +56,11 @@
 #' @examples
 #' # Using the \code{\link[spatstat.data]{chorley}} dataset
 #' data(chorley)
-#' f1 <- jitter_power(obs_data = unique(chorley),
-#'                    sim_total = 2,
-#'                    samp_control = "MVN",
-#'                    s_control = 0.01,
-#'                    verbose = FALSE
-#'                    )
+#'  f1 <- jitter_power(obs_data = unique(chorley),
+#'                     sim_total = 2,
+#'                     samp_control = "MVN",
+#'                     s_control = 0.01,
+#'                     verbose = FALSE)
 #' 
 jitter_power <- function(obs_data,
                          sim_total,

@@ -31,7 +31,21 @@
 #'
 #' @examples
 #' \donttest{
-#' spatial_plots(input = sim_power)
+#'  # run spatial_power(), jitter_power(), or spatial_data()
+#'  sim_power <- spatial_power(x_case = c(0.25, 0.5, 0.75),
+#'                             y_case = c(0.75, 0.25, 0.75),
+#'                             samp_case = "MVN", 
+#'                             samp_control = "MVN",
+#'                             x_control = c(0.25, 0.5, 0.75),
+#'                             y_control = c(0.75, 0.25, 0.75),
+#'                             n_case = 100,
+#'                             n_control = c(100,500,300),
+#'                             s_case = c(0.05,0.01,0.05),
+#'                             s_control = 0.05,
+#'                             verbose = FALSE)
+#'                
+#'  # run spatial_plots()
+#'  spatial_plots(input = sim_power)
 #' }
 #' 
 spatial_plots <- function(input,
@@ -85,8 +99,8 @@ spatial_plots <- function(input,
                                        cex = sizes * scale,
                                        cols = c(cols[3], cols[4]),
                                        leg.side = "bottom",
-                                       leg.args = list(cex.axis = 0.5 * scale,
-                                                       cex = 1.5 * scale,
+                                       leg.args = list(cex.axis = 0.75 * scale,
+                                                       cex = 2 * scale,
                                                        pch = chars),
                                        main = plot_titles[1],
                                        main.panel = "",
@@ -99,8 +113,8 @@ spatial_plots <- function(input,
                                 cex = sizes * scale,
                                 cols = c(cols[3], cols[4]),
                                 leg.side = "bottom",
-                                leg.args = list(cex.axis = 0.5 * scale,
-                                                cex = 1.5 * scale,
+                                leg.args = list(cex.axis = 0.75 * scale,
+                                                cex = 2 * scale,
                                                 pch = chars),
                                 main = plot_titles[1],
                                 main.panel = "",
@@ -125,16 +139,27 @@ spatial_plots <- function(input,
   rampbreaks <- seq(0, 1, 
                     length.out = length(raster::values(pvalprop_raster)) + 1)
   ## Continuous Output
-  p2 <- spatstat.core::plot.ppp(input$sim, 
-                                pch = chars, 
-                                cex = sizes * scale,
-                                cols = c(cols[3], cols[4]),
-                                leg.side = "bottom",
-                                leg.args = list(cex.axis = 0.5 * scale,
-                                                cex = 1.5 * scale,
-                                                pch = chars),
-                                main = plot_titles[2],
-                                ...)
+  if (plot_pts == TRUE) {
+    p2 <- spatstat.core::plot.ppp(input$sim, 
+                                  pch = chars, 
+                                  cex = 0,
+                                  cols = c(cols[3], cols[4]),
+                                  leg.side = "bottom",
+                                  leg.args = list(cex.axis = 0.75 * scale,
+                                                  cex = 2 * scale,
+                                                  pch = chars),
+                                  main = plot_titles[2],
+                                  ...)
+  } else {
+    p2 <- spatstat.core::plot.ppp(input$sim, 
+                                  pch = chars, 
+                                  cex = sizes * scale,
+                                  cols = c("transparent", "transparent"),
+                                  leg.side = "bottom",
+                                  leg.args = list(annotate = FALSE),
+                                  main = plot_titles[2],
+                                  ...)
+  }
   fields::image.plot(pvalprop_raster, 
                      col = rampcols,
                      breaks = rampbreaks,
@@ -157,8 +182,8 @@ spatial_plots <- function(input,
                             cex = sizes * scale,
                             cols = c(cols[3], cols[4]),
                             add = TRUE,
-                            leg.args = list(cex.axis = 0.5 * scale,
-                                            cex = 1.5 * scale,
+                            leg.args = list(cex.axis = 0.75 * scale,
+                                            cex = 2 * scale,
                                             pch = chars),
                             ...)
   }

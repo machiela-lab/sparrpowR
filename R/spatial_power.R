@@ -91,8 +91,7 @@
 #'                n_control = c(100,500,300),
 #'                s_case = c(0.05,0.01,0.05),
 #'                s_control = 0.05,
-#'                verbose = FALSE
-#'                )
+#'                verbose = FALSE)
 #' 
 spatial_power <- function(win = spatstat.core::unit.square(),
                           sim_total = 2,

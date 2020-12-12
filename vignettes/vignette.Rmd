@@ -1,17 +1,17 @@
 ---
-title: "sparrpowR: Power analysis to detect spatial relative risk clusters"
+title: "sparrpowR: Power Analysis to Detect Spatial Relative Risk Clusters"
 author: 'Ian D. Buller (GitHub: @idblr)'
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{sparrpowR: Power analysis to detect spatial relative risk clusters}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{sparrpowR: Power Analysis to Detect Spatial Relative Risk Clusters}
+  %\VignetteEngine{R.rsp::asis}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include = FALSE}
 library(knitr)
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = TRUE, fig.width = 7, fig.height = 7, fig.show = "hold")
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = FALSE, fig.width = 7, fig.height = 7, fig.show = "hold")
 options("rgdal_show_exportToProj4_warnings" = "none") # to mute warnings of possible GDAL/OSR exportToProj4() degradation
 ```
 
@@ -25,7 +25,7 @@ set.seed(1234) # for reproducibility
 
 Import data from Open Data DC [website](https://opendata.dc.gov/datasets/washington-dc-boundary).
 
-```{r dc data}
+```{r dc_data}
 # Washington, D.C. boundary
 gis_path1 <- "https://opendata.arcgis.com/datasets/7241f6d500b44288ad983f0942b39663_10.geojson"
 dc <- geojsonio::geojson_read(gis_path1,  what = "sp")
@@ -37,7 +37,7 @@ census <- geojsonio::geojson_read(gis_path2,  what = "sp")
 
 We want to create a realistic boundary (i.e., polygon) of our study area. We are going to spatially clip our DC boundary by the census tracts in an attempt to remove major bodies of water where people do not reside.
 
-```{r dc owin}
+```{r dc_owin}
 clipwin <- maptools::unionSpatialPolygons(census, IDs = rep(1, length(census)))
 dcc <- rgeos::gIntersection(dc, clipwin, byid = TRUE)
 # Plot
@@ -46,16 +46,16 @@ sp::plot(census,  main = "American Community Survey\n2018")
 sp::plot(dcc, main = "Clipped Boundary")
 ```
 
-Our developed method, `sparrpowR`, relies on the `spatstat.core` package to simulate data, which assumes point locations are on a planar (i.e., flat) surface. Our boundary is made up of geographical coordinates on Earth (i.e., a sphere), so we need to flatten our boundary by spatially projecting it with an appropriate spatial reference system (CRS). For the District of Columbia, we are going to use the World Geodetic System 1984 (WGS84) Universal Transverse Mercator (UTM) Zone 18N [EPSG:32619](https://epsg.io/32618). We then convert the boundary into a `owin` object required by the `spatstat.core` package.
+Our developed method, [sparrpowR](https://CRAN.R-project.org/package=sparrpowR), relies on the [spatstat.core](https://CRAN.R-project.org/package=spatstat.core) package to simulate data, which assumes point locations are on a planar (i.e., flat) surface. Our boundary is made up of geographical coordinates on Earth (i.e., a sphere), so we need to flatten our boundary by spatially projecting it with an appropriate spatial reference system (CRS). For the District of Columbia, we are going to use the World Geodetic System 1984 (WGS84) Universal Transverse Mercator (UTM) Zone 18N [EPSG:32619](https://epsg.io/32618). We then convert the boundary into a `owin` object required by the [spatstat.core](https://CRAN.R-project.org/package=spatstat.core) package.
 
-```{r spatial transformation}
+```{r spatial_transformation}
 dcp <- sp::spTransform(dcc, CRSobj = sp::CRS(projargs = "+init=EPSG:32618"))
 dco <- spatstat.core::as.owin(dcp)
 ```
 
 In this hypothetical example, we want to estimate the local power of detecting a spatial case cluster relative to control locations. Study participants that tested positive for a disease (i.e., cases) are hypothesized to be located in a circular area around the Navy Yard, an Environmental Protection Agency (EPA) Superfund Site [(see the success story)](https://cumulis.epa.gov/supercpad/cursites/csitinfo.cfm?id=0300031).
 
-```{r disease cluster}
+```{r disease_cluster}
 navy <- data.frame(lon = 326414.70444451, lat = 4304571.1539442)
 spf <- sp::SpatialPoints(coords = navy, proj4string = sp::CRS(projargs = "+init=EPSG:32618"))
 # Plot
@@ -106,7 +106,7 @@ spatial_plots(input = sim_power, # use output of above simulation
 
 Now, lets overlay our results on top of a basemap. Here, we will use an open-source map from [Stamen](http://maps.stamen.com/#terrain/12/37.7706/-122.3782), that is unprojected in WGS84. We extract the rectangular box (i.e., bounding box) surrounding our polygon boundary of the District of Columbia (WGS84) and enlarge it using the custom function `expandbb` to the size of basemap we want to import. 
 
-```{r expandbb function}
+```{r expandbb_function}
 expandbb <- function(bb, f) {
   x <- bb[3] - bb[1] # range of x values
   y <- bb[4] - bb[2] # range of y values
@@ -115,14 +115,15 @@ expandbb <- function(bb, f) {
   nb[3] <- bb[3] + (f * x) # xmax - right
   nb[2] <- bb[2] - (f * y) # ymin - bottom
   nb[4] <- bb[4] + (f * y) # ymax - top
-  return(nb)}
+  return(nb)
+}
 dcbb <- expandbb(bb = sp::bbox(dc), f = 0.01)
 base_map <- ggmap::get_map(location = dcbb, maptype = "toner", source = "stamen")
 ```
 
-Prepare the points from the first simulation for plotting in `ggplot2` suite and prepare the original boundary for plotting in `ggplot2` suite.
+Prepare the points from the first simulation for plotting in [ggplot2](https://CRAN.R-project.org/package=ggplot2) suite and prepare the original boundary for plotting in [ggplot2](https://CRAN.R-project.org/package=ggplot2) suite.
 
-```{r ggplot preparation}
+```{r ggplot_preparation}
 sim_pts <- sim_power$sim  # extract points from first iteration
 sim_pts <- maptools::as.SpatialPointsDataFrame.ppp(sim_pts) # convert to spatial data frame
 raster::crs(sim_pts) <- sp::proj4string(dcp) # set initial projection
@@ -135,9 +136,9 @@ dcc$polyID <- sapply(slot(dcc, "polygons"), function(x) slot(x, "ID")) # preserv
 dc_df <- merge(dc_df, dcc, by.x = "id", by.y="polyID") # merge data
 ```
 
-Prepare the raster from the simulation for plotting in `ggplot2` suite.
+Prepare the raster from the simulation for plotting in [ggplot2](https://CRAN.R-project.org/package=ggplot2) suite.
 
-```{r output preparation}
+```{r output_preparation}
 pvalprop <- tibble::tibble(x = sim_power$rx, y = sim_power$ry,
                            z = sim_power$pval_prop_cas) # extract proportion significant
 lrr_narm <- na.omit(pvalprop) # remove NAs
@@ -154,32 +155,32 @@ rtpFortMer <- merge(rtpFort, rtp@data, by.x = 'id', by.y = 'id')  # join data
 rampcols <- grDevices::colorRampPalette(colors = c(cols[5], cols[2]), space="Lab")(length(raster::values(pvalprop_raster))) # set colorramp
 ```
 
-Plot local power as a continuous outcome with point-locations using the `ggplot2` suite.
+Plot local power as a continuous outcome with point-locations using the [ggplot2](https://CRAN.R-project.org/package=ggplot2) suite.
 
-```{r ggmap continuous}
+```{r ggmap_continuous}
 ggmap::ggmap(base_map) + # basemap
   ggplot2::geom_polygon(data = dc_df, # original boundary
-               ggplot2::aes(x = long, y = lat, group = group),
-               fill = "transparent",
-               colour = "black") +
+                        ggplot2::aes(x = long, y = lat, group = group),
+                        fill = "transparent",
+                        colour = "black") +
   ggplot2::geom_polygon(data = rtpFortMer, # output raster as polygons
-               ggplot2::aes(x = long, y = lat, group = group, fill = z), 
-               size = 0, 
-               alpha = 0.5) +
+                        ggplot2::aes(x = long, y = lat, group = group, fill = z), 
+                        size = 0, 
+                        alpha = 0.5) +
   ggplot2::scale_fill_gradientn(colours = rampcols) + # colors for polygons
   ggplot2::geom_point(data = sim_pts_df, # simulated point-locations
-             ggplot2::aes(x = mx, y = my, color = marks, shape = marks),
-             alpha = 0.8) + 
+                      ggplot2::aes(x = mx, y = my, color = marks, shape = marks),
+                      alpha = 0.8) + 
   ggplot2::scale_color_manual(values = cols[4:5]) + # fill of point-locations
   ggplot2::scale_shape_manual(values = chars) + # shope of point-locations
   ggplot2::labs(x = "", y = "", fill = "Power", color = "", shape = "") # legend labels
 ```
 
-Plot local power as a categorical outcome with point-locations using the `ggplot2` suite.
+Plot local power as a categorical outcome with point-locations using the [ggplot2](https://CRAN.R-project.org/package=ggplot2) suite.
 
-```{r ggmap categorical}
-pvalprop_reclass <- raster::reclassify(pvalprop_raster, c(-Inf, p_thresh-0.0000001, 1,
-                                                          p_thresh-0.0000001, Inf, 2))
+```{r ggmap_categorical}
+pvalprop_reclass <- raster::reclassify(pvalprop_raster, c(-Inf, p_thresh - 0.0000001, 1,
+                                                          p_thresh - 0.0000001, Inf, 2))
 rtp <- raster::rasterToPolygons(pvalprop_reclass) # convert to polygons
 rtp@data$id <- 1:nrow(rtp@data)   # add id column for join
 rtpFort <- broom::tidy(rtp, data = rtp@data) # convert to tibble
@@ -187,13 +188,13 @@ rtpFortMer <- merge(rtpFort, rtp@data, by.x = 'id', by.y = 'id')  # join data
 
 ggmap::ggmap(base_map) + # basemap 
   ggplot2::geom_polygon(data = dc_df, # original boundary
-               ggplot2::aes(x = long, y = lat, group = group),
-               fill = "transparent",
-               colour = "black") +
+                        ggplot2::aes(x = long, y = lat, group = group),
+                        fill = "transparent",
+                        colour = "black") +
   ggplot2::geom_polygon(data = rtpFortMer, # output raster as polygons
-               ggplot2::aes(x = long, y = lat, group = group, fill = as.factor(z)), 
-               size = 0, 
-               alpha = 0.5) +
+                        ggplot2::aes(x = long, y = lat, group = group, fill = as.factor(z)), 
+                        size = 0, 
+                        alpha = 0.5) +
   ggplot2::scale_fill_manual(values = cols[c(5,2)],
                              labels = c("insufficient", "sufficient")) + # colors for polygons
   ggplot2::labs(x = "", y = "", fill = "Power") # legend labels
