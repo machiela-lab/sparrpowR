@@ -68,7 +68,6 @@ fd_wgs84 <- sf::st_transform(tract_proj, crs = 4326) # tracts (with new features
 ## Basemap of Fort Dodge, Iowa
 fd_base <- ggmap::get_map(location = fd_bb_l, maptype = "toner", source = "stamen") # download stamen base map for the bounding box
 
-# Figure 1A
 ## Basemap of Fort Dodge, Iowa
 gg1a <- ggmap::ggmap(fd_base) + # basemap
         ggplot2::geom_point(data = CAFO, # CAFO location
@@ -76,23 +75,23 @@ gg1a <- ggmap::ggmap(fd_base) + # basemap
                             shape = 13,
                             size = 5,
                             stroke = 1) +
-        ggplot2::geom_sf(data = km5p, # original boundary
+        ggplot2::geom_sf(data = km5, # original boundary
                          fill = "transparent",
                          colour = "#6495ED",
                          lwd = 1) +
-        ggplot2::geom_sf(data = km10p, # original boundary
+        ggplot2::geom_sf(data = km10, # original boundary
                          fill = "transparent",
                          colour = "#0000FF",
                          lwd = 1) +
         ggplot2::labs(x = "Longitude", y = "Latitude", color = "", shape = "", cex.lab = 1)  # legend labels
 
-ggplot2::ggsave(filename = "Figure1A.png",
+ggplot2::ggsave(filename = "Basemap.png",
                 plot = gg1a,
                 width = 5,
                 height = 5,
                 dpi = 1000)
 
-# Figure 1B
+# Figure 1A
 ## 2010 population of Ft. Dodge, Iowa by U.S. Census tract
 gg1b <- ggplot2::ggplot() +
         ggplot2::geom_sf(data = fd_wgs84, ggplot2::aes(fill = dens), size = 0.1, color = "black") +
@@ -101,11 +100,11 @@ gg1b <- ggplot2::ggplot() +
                             shape = 13,
                             size = 5,
                             stroke = 1) +
-        ggplot2::geom_sf(data = km5p, # original boundary
+        ggplot2::geom_sf(data = km5, # original boundary
                          fill = "transparent",
                          colour = "#6495ED",
                          lwd = 1) +
-        ggplot2::geom_sf(data = km10p, # original boundary
+        ggplot2::geom_sf(data = km10, # original boundary
                          fill = "transparent",
                          colour = "#0000FF",
                          lwd = 1) +
@@ -118,13 +117,13 @@ gg1b <- ggplot2::ggplot() +
         ggplot2::theme(legend.position = "bottom",
                        legend.title = ggplot2::element_text(size = ggplot2::rel(0.75)))
 
-ggplot2::ggsave(filename = "Figure1B.png",
+ggplot2::ggsave(filename = "Figure1A.png",
                 plot = gg1b,
                 width = 5,
                 height = 5,
                 dpi = 1000)
 
-# Figure 2 - IWHS parameters
+# Figure 1B and 2 - IWHS parameters
 set.seed(14) # set RNG
 ## Statistical power
 sim_power2 <- sparrpowR::spatial_power(x_case = sf::st_coordinates(utm15)[1], # x-coordinate of case cluster
@@ -183,11 +182,11 @@ gg2p <- ggmap::ggmap(fd_base) + # basemap
                             shape = 13,
                             size = 5,
                             stroke = 1) +
-        ggplot2::geom_sf(data = km5p, # original boundary
+        ggplot2::geom_sf(data = km5, # original boundary
                          fill = "transparent",
                          colour = "#6495ED",
                          lwd = 1) +
-        ggplot2::geom_sf(data = km10p, # original boundary
+        ggplot2::geom_sf(data = km10, # original boundary
                          fill = "transparent",
                          colour = "#0000FF",
                          lwd = 1) +
@@ -262,11 +261,11 @@ gg3p <- ggmap::ggmap(fd_base) + # basemap
                             shape = 13,
                             size = 5,
                             stroke = 1) +
-        ggplot2::geom_sf(data = km5p, # original boundary
+        ggplot2::geom_sf(data = km5, # original boundary
                          fill = "transparent",
                          colour = "#6495ED",
                          lwd = 1) +
-        ggplot2::geom_sf(data = km10p, # original boundary
+        ggplot2::geom_sf(data = km10, # original boundary
                          fill = "transparent",
                          colour = "#0000FF",
                          lwd = 1) +
@@ -328,11 +327,11 @@ ggSA <- ggmap::ggmap(fd_base) + # basemap
                             shape = 13,
                             size = 5,
                             stroke = 1) +
-        ggplot2::geom_sf(data = km5p, # original boundary
+        ggplot2::geom_sf(data = km5, # original boundary
                          fill = "transparent",
                          colour = "#6495ED",
                          lwd = 1) +
-        ggplot2::geom_sf(data = km10p, # original boundary
+        ggplot2::geom_sf(data = km10, # original boundary
                          fill = "transparent",
                          colour = "#0000FF",
                          lwd = 1) +
@@ -394,11 +393,11 @@ ggSB <- ggmap::ggmap(fd_base) + # basemap
                             shape = 13,
                             size = 5,
                             stroke = 1) +
-        ggplot2::geom_sf(data = km5p, # original boundary
+        ggplot2::geom_sf(data = km5, # original boundary
                          fill = "transparent",
                          colour = "#6495ED",
                          lwd = 1) +
-        ggplot2::geom_sf(data = km10p, # original boundary
+        ggplot2::geom_sf(data = km10, # original boundary
                          fill = "transparent",
                          colour = "#0000FF",
                          lwd = 1) +
@@ -460,11 +459,11 @@ ggSC <- ggmap::ggmap(fd_base) + # basemap
                             shape = 13,
                             size = 5,
                             stroke = 1) +
-        ggplot2::geom_sf(data = km5p, # original boundary
+        ggplot2::geom_sf(data = km5, # original boundary
                          fill = "transparent",
                          colour = "#6495ED",
                          lwd = 1) +
-        ggplot2::geom_sf(data = km10p, # original boundary
+        ggplot2::geom_sf(data = km10, # original boundary
                          fill = "transparent",
                          colour = "#0000FF",
                          lwd = 1) +
@@ -526,11 +525,11 @@ ggSD <- ggmap::ggmap(fd_base) + # basemap
                             shape = 13,
                             size = 5,
                             stroke = 1) +
-        ggplot2::geom_sf(data = km5p, # original boundary
+        ggplot2::geom_sf(data = km5, # original boundary
                          fill = "transparent",
                          colour = "#6495ED",
                          lwd = 1) +
-        ggplot2::geom_sf(data = km10p, # original boundary
+        ggplot2::geom_sf(data = km10, # original boundary
                          fill = "transparent",
                          colour = "#0000FF",
                          lwd = 1) +
@@ -592,11 +591,11 @@ ggSE <- ggmap::ggmap(fd_base) + # basemap
                             shape = 13,
                             size = 5,
                             stroke = 1) +
-        ggplot2::geom_sf(data = km5p, # original boundary
+        ggplot2::geom_sf(data = km5, # original boundary
                          fill = "transparent",
                          colour = "#6495ED",
                          lwd = 1) +
-        ggplot2::geom_sf(data = km10p, # original boundary
+        ggplot2::geom_sf(data = km10, # original boundary
                          fill = "transparent",
                          colour = "#0000FF",
                          lwd = 1) +
@@ -659,11 +658,11 @@ ggSF <- ggmap::ggmap(fd_base) + # basemap
                             shape = 13,
                             size = 5,
                             stroke = 1) +
-        ggplot2::geom_sf(data = km5p, # original boundary
+        ggplot2::geom_sf(data = km5, # original boundary
                          fill = "transparent",
                          colour = "#6495ED",
                          lwd = 1) +
-        ggplot2::geom_sf(data = km10p, # original boundary
+        ggplot2::geom_sf(data = km10, # original boundary
                          fill = "transparent",
                          colour = "#0000FF",
                          lwd = 1) +
