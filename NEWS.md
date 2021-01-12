@@ -35,6 +35,9 @@
   * Increased the `sim_total` value for a more realistic example
   * Specify all packages for functions
   * Updated code to reflect updates to functions in `sparrpowR`
+* Changes to README.md
+  * Added CRAN badges
+  * Added plotting for case and control clustering
 * Added utils.R file
   * Moved an internal helper functions to a utils.R file
   * Removed this internal helper functions from `jitter_power()`, `spatial_power()`, and `spatial_plots()`

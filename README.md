@@ -1,6 +1,16 @@
 sparrpowR: Power analysis to detect spatial relative clusters <img src="man/figures/sparrpowR.png" width="120" align="right" />
 ===================================================
 
+<!-- badges: start -->
+
+[![CRAN
+version](https://www.r-pkg.org/badges/version-ago/sparrpowR)](https://cran.r-project.org/package=sparrpowR)
+[![CRAN RStudio mirror
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/sparrpowR?color=blue)](https://r-pkg.org/pkg/sparrpowR)
+![license](https://img.shields.io/badge/license-apache-yellow)
+
+<!-- badges: end -->
+
 <h2 id="overview">
 
 Overview
@@ -125,6 +135,7 @@ stats::t.test(x = foo$t_obs, mu = 1, alternative = "two.sided")
 # Run spatial_plots #
 # ----------------- #
 
+# Statistical power for case-only clustering
 spatial_plots(foo)
 ```
 ![](man/figures/spatial_plots1.png)
@@ -132,3 +143,10 @@ spatial_plots(foo)
 ![](man/figures/spatial_plots2.png)
 
 ![](man/figures/spatial_plots3.png)
+```
+# Statistical power for case clustering and control clustering
+spatial_plots(foo, cascon = TRUE)
+```
+![](man/figures/spatial_plots4.png)
+
+![](man/figures/spatial_plots5.png)
