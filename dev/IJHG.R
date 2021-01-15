@@ -75,11 +75,11 @@ gg1a <- ggmap::ggmap(fd_base) + # basemap
                             shape = 13,
                             size = 5,
                             stroke = 1) +
-        ggplot2::geom_sf(data = km5, # original boundary
+        ggplot2::geom_sf(data = km5_wgs84, # original boundary
                          fill = "transparent",
                          colour = "#6495ED",
                          lwd = 1) +
-        ggplot2::geom_sf(data = km10, # original boundary
+        ggplot2::geom_sf(data = km10_wgs84, # original boundary
                          fill = "transparent",
                          colour = "#0000FF",
                          lwd = 1) +
