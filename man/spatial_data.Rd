@@ -5,7 +5,7 @@
 \title{Simulate random data for SRR function}
 \usage{
 spatial_data(
-  win = spatstat.core::unit.square(),
+  win = spatstat.geom::unit.square(),
   sim_total = 2,
   x_case,
   y_case,
@@ -27,7 +27,7 @@ spatial_data(
 )
 }
 \arguments{
-\item{win}{Window in which to simulate the random data. An object of class "owin" or something acceptable to \code{\link[spatstat.core]{as.owin}}.}
+\item{win}{Window in which to simulate the random data. An object of class "owin" or something acceptable to \code{\link[spatstat.geom]{as.owin}}.}
 
 \item{sim_total}{Integer, specifying the number of simulation iterations to perform.}
 
@@ -63,7 +63,7 @@ spatial_data(
 
 \item{e_control}{Optional. A single non-negative number for the size of the expansion of the simulation window for generating parent points. Ignored if \code{samp_control != "clustered"}.}
 
-\item{...}{Arguments passed to \code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.core]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.core]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}.}
+\item{...}{Arguments passed to \code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.geom]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.geom]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}.}
 }
 \value{
 An object of class "ppplist". This is a list of marked point patterns that have a single mark with two levels: case and control.
@@ -110,5 +110,5 @@ If \code{samp_control = "clustered"} the control locations are randomly generate
 
 }
 \seealso{
-\code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.core]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.core]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} for additional arguments for random point pattern generation.
+\code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.geom]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.geom]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} for additional arguments for random point pattern generation.
 }

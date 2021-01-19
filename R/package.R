@@ -2,7 +2,7 @@
 #'
 #' Computes the statistical power for the spatial relative risk function.
 #'
-#' @details For a two-group comparison (e.g., cases v. controls) the 'sparrpowR' package calculates the statistical power to detect clusters using the kernel-based spatial relative risk function that is estimated using the 'sparr' package. Details about the 'sparr' package methods can be found in the tutorial: Davies et al. (2018) \url{https//doi.org/10.1002/sim.7577}.  Details about kernel density estimation can be found in J. F. Bithell (1990) \url{https//doi.org/10.1002/sim.4780090616}.  More information about relative risk functions using kernel density estimation can be found in J. F. Bithell (1991) \url{https//doi.org/10.1002/sim.4780101112}.
+#' @details For a two-group comparison (e.g., cases v. controls) the 'sparrpowR' package calculates the statistical power to detect clusters using the kernel-based spatial relative risk function that is estimated using the 'sparr' package. Details about the 'sparr' package methods can be found in the tutorial: Davies et al. (2018) \doi{10.1002/sim.7577}.  Details about kernel density estimation can be found in J. F. Bithell (1990) \doi{10.1002/sim.4780090616}.  More information about relative risk functions using kernel density estimation can be found in J. F. Bithell (1991) \doi{10.1002/sim.4780101112}.
 #' 
 #' This package provides a function to compute the statistical power for the spatial relative risk function with various theoretical spatial sampling strategies. The 'sparrpowR' package also provides a function to compute the statistical power for the spatial relative risk function for scenarios where one group (e.g., cases) have been observed and a theoretical sampling strategy for the second group (e.g., controls) is desired. The 'sparrpowR' package also provides visualization of data and statistical power.
 #' 
@@ -46,6 +46,7 @@ NULL
 #' @importFrom sp coordinates gridded
 #' @importFrom sparr risk
 #' @importFrom stats na.omit rnorm sd
-#' @importFrom spatstat.core as.solist disc marks plot.anylist plot.ppp ppp rNeymanScott rpoispp rsyst runifdisc runifpoint shift superimpose unit.square
+#' @importFrom spatstat.core rNeymanScott rpoispp runifdisc runifpoint
+#' @importFrom spatstat.geom as.solist disc marks plot.anylist plot.ppp ppp rsyst shift superimpose unit.square 
 #' @importFrom utils setTxtProgressBar txtProgressBar
 NULL

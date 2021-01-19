@@ -2,7 +2,7 @@
 
 # sparrpowR 0.1.4.9000
 
-* Updated `spatstat` dependency to `spatstat.core`
+* Updated `spatstat` dependency to `spatstat.core` and `spatstat.geom`
 * Changes to DESCRIPTION
   * Added ORCID for all authors and contributors
   * Fixed typos in Description

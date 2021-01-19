@@ -18,7 +18,7 @@ options("rgdal_show_exportToProj4_warnings" = "none") # to mute warnings of poss
 Start with the necessary packages and seed for the vignette.
 
 ```{r packages}
-loadedPackages <- c("broom", "geojsonio", "ggmap", "ggplot2", "grDevices", "maptools", "raster", "rgdal", "rgeos", "sp", "sparrpowR", "spatstat.core", "tibble")
+loadedPackages <- c("broom", "geojsonio", "ggmap", "ggplot2", "grDevices", "maptools", "raster", "rgdal", "rgeos", "sp", "sparrpowR", "spatstat.geom", "tibble")
 invisible(lapply(loadedPackages, library, character.only = TRUE))
 set.seed(1234) # for reproducibility
 ```
@@ -46,11 +46,11 @@ sp::plot(census,  main = "American Community Survey\n2018")
 sp::plot(dcc, main = "Clipped Boundary")
 ```
 
-Our developed method, [sparrpowR](https://CRAN.R-project.org/package=sparrpowR), relies on the [spatstat.core](https://CRAN.R-project.org/package=spatstat.core) package to simulate data, which assumes point locations are on a planar (i.e., flat) surface. Our boundary is made up of geographical coordinates on Earth (i.e., a sphere), so we need to flatten our boundary by spatially projecting it with an appropriate spatial reference system (CRS). For the District of Columbia, we are going to use the World Geodetic System 1984 (WGS84) Universal Transverse Mercator (UTM) Zone 18N [EPSG:32619](https://epsg.io/32618). We then convert the boundary into a `owin` object required by the [spatstat.core](https://CRAN.R-project.org/package=spatstat.core) package.
+Our developed method, [sparrpowR](https://CRAN.R-project.org/package=sparrpowR), relies on the [spatstat](https://cran.r-project.org/web/packages/spatstat/index.html) package suite to simulate data, which assumes point locations are on a planar (i.e., flat) surface. Our boundary is made up of geographical coordinates on Earth (i.e., a sphere), so we need to flatten our boundary by spatially projecting it with an appropriate spatial reference system (CRS). For the District of Columbia, we are going to use the World Geodetic System 1984 (WGS84) Universal Transverse Mercator (UTM) Zone 18N [EPSG:32619](https://epsg.io/32618). We then convert the boundary into a `owin` object required by the [spatstat.geom](https://CRAN.R-project.org/package=spatstat.geom) package.
 
 ```{r spatial_transformation}
 dcp <- sp::spTransform(dcc, CRSobj = sp::CRS(projargs = "+init=EPSG:32618"))
-dco <- spatstat.core::as.owin(dcp)
+dco <- spatstat.geom::as.owin(dcp)
 ```
 
 In this hypothetical example, we want to estimate the local power of detecting a spatial case cluster relative to control locations. Study participants that tested positive for a disease (i.e., cases) are hypothesized to be located in a circular area around the Navy Yard, an Environmental Protection Agency (EPA) Superfund Site [(see the success story)](https://cumulis.epa.gov/supercpad/cursites/csitinfo.cfm?id=0300031).

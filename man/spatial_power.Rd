@@ -5,7 +5,7 @@
 \title{Power of SRR function for randomly generated data.}
 \usage{
 spatial_power(
-  win = spatstat.core::unit.square(),
+  win = spatstat.geom::unit.square(),
   sim_total = 2,
   x_case,
   y_case,
@@ -32,7 +32,7 @@ spatial_power(
 )
 }
 \arguments{
-\item{win}{Window in which to simulate the random data. An object of class "owin" or something acceptable to \code{\link[spatstat.core]{as.owin}}.}
+\item{win}{Window in which to simulate the random data. An object of class "owin" or something acceptable to \code{\link[spatstat.geom]{as.owin}}.}
 
 \item{sim_total}{Integer, specifying the number of simulation iterations to perform.}
 
@@ -78,7 +78,7 @@ spatial_power(
 
 \item{n_core}{Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).}
 
-\item{...}{Arguments passed to \code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.core]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.core]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}. Arguments also passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.}
+\item{...}{Arguments passed to \code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.geom]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.geom]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}. Arguments also passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.}
 }
 \value{
 An object of class "list". This is a named list with the following components:

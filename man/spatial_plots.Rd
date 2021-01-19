@@ -9,7 +9,7 @@ spatial_plots(
   p_thresh = 0.8,
   cascon = FALSE,
   n_sim = 1,
-  cols = c("#000000", "#cccccc", "#ff0000", "#0000ff"),
+  cols = c("#000000", "#CCCCCC", "#FF0000", "#0000FF"),
   chars = c(1, 1),
   sizes = c(1, 1),
   scale = 1,
@@ -31,7 +31,7 @@ spatial_plots(
 
 \item{n_sim}{Integer. The number of simulated iterations to plot. The default is one (1).}
 
-\item{cols}{Character string of length four (4) specifying the colors for plotting: 1) sufficiently powered, 2) insufficiently powered, 3) case locations, 4) control locations. The default colors in hex are \code{c("#000000", "#cccccc", "#ff0000", "#0000ff")} or \code{c("grey0", "grey80", "red", "blue")}.}
+\item{cols}{Character string of length four (4) specifying the colors for plotting: 1) sufficiently powered, 2) insufficiently powered, 3) case locations, 4) control locations. The default colors in hex are \code{c("#000000", "#CCCCCC", "#FF0000", "#0000FF")} or \code{c("grey0", "grey80", "red", "blue")}.}
 
 \item{chars}{Vector of integers or character string of length two (2) for symbols of case and control locations. Default is \code{c(1,1)}.}
 
@@ -51,7 +51,7 @@ spatial_plots(
 
 \item{horizontal}{Logical. If TRUE (the default), the color key will be displayed horizontally, below the plots. If FALSE, the color key will be displayed vertically, to the right of the plots.}
 
-\item{...}{Arguments passed to \code{\link[spatstat.core]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.}
+\item{...}{Arguments passed to \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.}
 }
 \value{
 This function produces up to three plots: 1) example input, 2) local power, and 3) local power above a threshold. If the input is from the \code{\link{spatial_data}} function, this function will only display the first plot.
