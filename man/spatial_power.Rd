@@ -23,8 +23,7 @@ spatial_power(
   l_case = NULL,
   l_control = NULL,
   e_control = NULL,
-  lower_tail = 0.025,
-  upper_tail = 0.975,
+  alpha = 0.05,
   verbose = TRUE,
   parallel = FALSE,
   n_core = 2,
@@ -68,9 +67,7 @@ spatial_power(
 
 \item{e_control}{Optional. A single non-negative number for the size of the expansion of the simulation window for generating parent points. Ignored if \code{samp_control!="clustered"}.}
 
-\item{lower_tail}{Optional. Numeric value of lower p-value threshold (default=0.025).}
-
-\item{upper_tail}{Optional. Numeric value of upper p-value threshold (default=0.975).}
+\item{alpha}{Optional. Numeric value of the critical p-value (default=0.05).}
 
 \item{verbose}{Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.}
 
@@ -127,6 +124,8 @@ If \code{samp_control = "CSR"} the control locations are randomly generated assu
 If \code{samp_control = "IPP"} the control locations are randomly generated assuming an inhomogeneous Poisson process within the window \code{win} with a \code{lambda = l_control}, a function.
 
 If \code{samp_control = "clustered"} the control locations are randomly generated with a realization of the Neyman-Scott process within the window \code{win} with the intensity of the Poisson process cluster centres (\code{kappa = l_control}), the size of the expansion of the simulation window for generative parent points (\code{e_control}), and the radius (or radii) of the disc for each cluster (\code{r_control}).
+
+The function computes a one-sided hypothesis test for case clustering (\code{alpha = 0.05} by default). The function also computes a two-sided hypothesis test for case clustering and control clustering (lower tail = 0.025 and upper tail = 0.975).
 }
 \examples{
  spatial_power(x_case = c(0.25, 0.5, 0.75),

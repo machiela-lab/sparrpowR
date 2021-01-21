@@ -11,7 +11,7 @@
 * Changes to `spatial_power()`
   * Fixed typos in documentation
   * Moved `cascon` argument from `spatial_power()` to `spatial_plots()`
-  * Estimates case-only power (lower tail) and case/control (lower and upper tail) and captures both outputs
+  * Estimates case-only power (lower tail) and case/control (lower and upper tail) and captures both outputs. Case-only is now a one-tailed hypothesis test by default. The arguments 'lower_tail' and 'upper_tail' have been replaced with argument 'alpha'
   * Used `spatstat.core::as.solist()` to specify appropriate class to lists
 * Changes to `spatial_plots()`:
   * Added `cascon` argument to toggle the display of case-only power (lower tail) or case/control (lower and upper tail) output
@@ -27,7 +27,7 @@
 * Changes to `jitter_power()`
   * Specify all packages for functions
   * Moved `cascon` argument from `jitter_power()` to `spatial_plots()`
-  * Estimates case-only power (lower tail) and case/control (lower and upper tail) and captures both outputs
+  * Estimates case-only power (lower tail) and case/control (lower and upper tail) and captures both outputs. Case-only is now a one-tailed hypothesis test by default. The arguments 'lower_tail' and 'upper_tail' have been replaced with argument 'alpha'
   * Used `spatstat.core::as.solist()` to specify appropriate class to lists
 * Changes to vignette
   * Set global chunk options

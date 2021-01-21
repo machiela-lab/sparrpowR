@@ -20,8 +20,7 @@
 #' @param l_case Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for case clusters. Ignored if \code{samp_control!="IPP"}.
 #' @param l_control Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for control clusters. Ignored if \code{samp_control="uniform"}, \code{samp_control="systematic"}, \code{samp_control="MVN"}, or \code{samp_control="CSR"}.
 #' @param e_control Optional. A single non-negative number for the size of the expansion of the simulation window for generating parent points. Ignored if \code{samp_control!="clustered"}.
-#' @param lower_tail Optional. Numeric value of lower p-value threshold (default=0.025).
-#' @param upper_tail Optional. Numeric value of upper p-value threshold (default=0.975).
+#' @param alpha Optional. Numeric value of the critical p-value (default=0.05).
 #' @param parallel Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.
 #' @param n_core Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).
 #' @param verbose Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.
@@ -50,6 +49,8 @@
 #' If \code{samp_control = "IPP"} the control locations are randomly generated assuming an inhomogeneous Poisson process within the window \code{win} with a \code{lambda = l_control}, a function.
 #' 
 #' If \code{samp_control = "clustered"} the control locations are randomly generated with a realization of the Neyman-Scott process within the window \code{win} with the intensity of the Poisson process cluster centres (\code{kappa = l_control}), the size of the expansion of the simulation window for generative parent points (\code{e_control}), and the radius (or radii) of the disc for each cluster (\code{r_control}).
+#' 
+#' The function computes a one-sided hypothesis test for case clustering (\code{alpha = 0.05} by default). The function also computes a two-sided hypothesis test for case clustering and control clustering (lower tail = 0.025 and upper tail = 0.975).
 #' 
 #' @return An object of class "list". This is a named list with the following components:
 #' 
@@ -107,8 +108,7 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
                           s_case = NULL, s_control = NULL,
                           l_case = NULL, l_control = NULL,
                           e_control = NULL,
-                          lower_tail = 0.025,
-                          upper_tail = 0.975, 
+                          alpha = 0.05, 
                           verbose = TRUE,
                           parallel = FALSE,
                           n_core = 2,
@@ -397,27 +397,29 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
   ## Calculate proportion of tests were significant
   ### Significance level is user-specified
   #### Case and Control (lower and upper tail)
+  lower_tail <- alpha/2
+  upper_tail <- 1 - lower_tail
   pval_sig_cascon <- rapply(sim_pval, function(x) ifelse(x < lower_tail | x > upper_tail,
                                                          TRUE,
                                                          FALSE),
                             how = "replace")
-  pval_count_cascon <- rowSums(do.call(cbind,pval_sig_cascon), na.rm = TRUE)
+  pval_count_cascon <- rowSums(do.call(cbind, pval_sig_cascon), na.rm = TRUE)
   pval_prop_wNA_cascon <- sapply(pval_count_cascon, FUN = function(x, y = sim_total) (x / y))
   #### Case only (lower tail only)
-  pval_sig_cas <- rapply(sim_pval, function(x) ifelse(x < lower_tail, TRUE, FALSE),
+  pval_sig_cas <- rapply(sim_pval, function(x) ifelse(x < alpha, TRUE, FALSE),
                          how = "replace")
-  pval_count_cas <- rowSums(do.call(cbind,pval_sig_cas), na.rm = TRUE)
+  pval_count_cas <- rowSums(do.call(cbind, pval_sig_cas), na.rm = TRUE)
   pval_prop_wNA_cas <- sapply(pval_count_cas, FUN = function(x, y = sim_total) (x / y))
   
   ## Force NA values for graphing, match position of NAs of mean p-value
   #### Case and Control (lower and upper tail)
   pval_prop_wNA_cascon <- cbind(pval_mean,pval_prop_wNA_cascon)
-  pval_prop_wNA_cascon[,2][is.na(pval_prop_wNA_cascon[,1])] <- NA
-  pval_prop_cascon <- pval_prop_wNA_cascon[,2]
+  pval_prop_wNA_cascon[ , 2][is.na(pval_prop_wNA_cascon[ , 1])] <- NA
+  pval_prop_cascon <- pval_prop_wNA_cascon[ , 2]
   #### Case only (lower tail only)
   pval_prop_wNA_cas <- cbind(pval_mean,pval_prop_wNA_cas)
-  pval_prop_wNA_cas[,2][is.na(pval_prop_wNA_cas[,1])] <- NA
-  pval_prop_cas <- pval_prop_wNA_cas[,2]
+  pval_prop_wNA_cas[ , 2][is.na(pval_prop_wNA_cas[ , 1])] <- NA
+  pval_prop_cas <- pval_prop_wNA_cas[ , 2]
   
   # Output
   out_sim <- list("sim" = out_par[[5]][[1]],

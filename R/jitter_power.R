@@ -6,8 +6,7 @@
 #' @param sim_total Integer, specifying the number of simulation iterations to perform.
 #' @param samp_control Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), with complete spatial randomness (\code{samp_control="CSR"}), or multivariate normal (\code{samp_control="MVN"}).
 #' @param s_control Optional. Numeric value for the standard deviation of the multivariate normal distribution in the units of the \code{obs_data}.  The default value (1) assumes a unit square window. Ignored if Ignored if \code{samp_control="uniform"} or \code{samp_control="CSR"}.
-#' @param lower_tail Optional. Numeric value of lower p-value threshold (default=0.025).
-#' @param upper_tail Optional. Numeric value of upper p-value threshold (default=0.975).
+#' @param alpha Optional. Numeric value of the critical p-value (default=0.05).
 #' @param parallel Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.
 #' @param n_core Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).
 #' @param verbose Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.
@@ -22,6 +21,8 @@
 #' If \code{samp_control = "CSR"} the control locations are randomly generated assuming complete spatial randomness (homogeneous Poisson process) within the window of \code{obs_data} with a \code{lambda = number of controls / [resolution x resolution]}. By default, the resolution is an integer value of 128 and can be specified using the \code{resolution} argument in the internally called \code{\link[sparr]{risk}} function.
 #' 
 #' If \code{samp_control = "MVN"} the control locations are randomly generated assuming a multivariate normal distribution \emph{centered at each observed location}. The optional argument \code{s_control} specifies the standard deviation of the multivariate normal distribution (1 by default) in the units of the \code{obs_data}. 
+#' 
+#' The function computes a one-sided hypothesis test for case clustering (\code{alpha = 0.05} by default). The function also computes a two-sided hypothesis test for case clustering and control clustering (lower tail = 0.025 and upper tail = 0.975).
 #'
 #' @return An object of class "list". This is a named list with the following components:
 #' 
@@ -67,8 +68,7 @@ jitter_power <- function(obs_data,
                          sim_total,
                          samp_control = c("uniform", "CSR", "MVN"),
                          s_control = 1,
-                         lower_tail = 0.025, 
-                         upper_tail = 0.975,
+                         alpha = 0.05,
                          parallel = FALSE,
                          n_core = 2,
                          verbose = TRUE,
@@ -220,26 +220,28 @@ jitter_power <- function(obs_data,
   ## Calculate proportion of tests were significant
   ### Significance level is user-specified
   #### Case and Control (lower and upper tail)
+  lower_tail <- alpha/2
+  upper_tail <- 1 - lower_tail
   pval_sig_cascon <- rapply(sim_pval, function(x) ifelse(x < lower_tail | x > upper_tail,
                                                          TRUE,
                                                          FALSE),
                             how = "replace")
-  pval_count_cascon <- rowSums(do.call(cbind,pval_sig_cascon), na.rm = TRUE)
+  pval_count_cascon <- rowSums(do.call(cbind, pval_sig_cascon), na.rm = TRUE)
   pval_prop_wNA_cascon <- sapply(pval_count_cascon, FUN = function(x, y = sim_total) (x / y))
   #### Case only (lower tail only)
-  pval_sig_cas <- rapply(sim_pval, function(x) ifelse(x < lower_tail, TRUE, FALSE),
+  pval_sig_cas <- rapply(sim_pval, function(x) ifelse(x < alpha, TRUE, FALSE),
                          how = "replace")
-  pval_count_cas <- rowSums(do.call(cbind,pval_sig_cas), na.rm = TRUE)
+  pval_count_cas <- rowSums(do.call(cbind, pval_sig_cas), na.rm = TRUE)
   pval_prop_wNA_cas <- sapply(pval_count_cas, FUN = function(x, y = sim_total) (x / y))
   
   ## Force NA values for graphing, match position of NAs of mean p-value
   #### Case and Control (lower and upper tail)
-  pval_prop_wNA_cascon <- cbind(pval_mean,pval_prop_wNA_cascon)
-  pval_prop_wNA_cascon[,2][is.na(pval_prop_wNA_cascon[,1])] <- NA
-  pval_prop_cascon <- pval_prop_wNA_cascon[,2]
+  pval_prop_wNA_cascon <- cbind(pval_mean, pval_prop_wNA_cascon)
+  pval_prop_wNA_cascon[ , 2][is.na(pval_prop_wNA_cascon[ , 1])] <- NA
+  pval_prop_cascon <- pval_prop_wNA_cascon[ , 2]
   #### Case only (lower tail only)
-  pval_prop_wNA_cas <- cbind(pval_mean,pval_prop_wNA_cas)
-  pval_prop_wNA_cas[,2][is.na(pval_prop_wNA_cas[,1])] <- NA
+  pval_prop_wNA_cas <- cbind(pval_mean, pval_prop_wNA_cas)
+  pval_prop_wNA_cas[ , 2][is.na(pval_prop_wNA_cas[ , 1])] <- NA
   pval_prop_cas <- pval_prop_wNA_cas[,2]
   
   # Output
