@@ -120,3 +120,13 @@ spatial_plots(foo,
               plot_axes = TRUE,
               cascon = TRUE,
               horizontal = FALSE)
+
+set.seed(1234)
+f1 <- jitter_power(obs_data = unique(chorley),
+                   sim_total = 100,
+                   samp_control = "CSR",
+                   resolution = 20,
+                   p_correct = "FDR",
+                   verbose = FALSE)
+spatial_plots(f1)
+median(f1$alpha_correct)

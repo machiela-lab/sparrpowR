@@ -24,6 +24,7 @@ spatial_power(
   l_control = NULL,
   e_control = NULL,
   alpha = 0.05,
+  p_correct = c("none", "FDR", "Sidak", "Bonferroni"),
   verbose = TRUE,
   parallel = FALSE,
   n_core = 2,
@@ -69,6 +70,8 @@ spatial_power(
 
 \item{alpha}{Optional. Numeric value of the critical p-value (default=0.05).}
 
+\item{p_correct}{Optional. Character string specifying whether to apply a correction for multiple comparisons including a False Discovery Rate \code{p_correct = "FDR"}, a Sidak correction \code{p_correct = "uncorrelated Sidak"}, and a Bonferroni correction \code{p_correct = "uncorrelated Bonferroni"}. If \code{p_correct = "none"} (the default), then no correction is applied.}
+
 \item{verbose}{Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.}
 
 \item{parallel}{Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.}
@@ -95,6 +98,7 @@ An object of class "list". This is a named list with the following components:
 \item{\code{bandw}}{Vector of length \code{sim_total} of the bandwidth (of numerator) used in each iteration.}
 \item{\code{s_obs}}{Vector of length \code{sim_total} of the global s statistic.}
 \item{\code{t_obs}}{Vector of length \code{sim_total} of the global t statistic.}
+\item{\code{alpha_correct}}{Vector of length \code{sim_total} of the (un)corrected critical p-values.}
 }
 }
 \description{
@@ -126,6 +130,8 @@ If \code{samp_control = "IPP"} the control locations are randomly generated assu
 If \code{samp_control = "clustered"} the control locations are randomly generated with a realization of the Neyman-Scott process within the window \code{win} with the intensity of the Poisson process cluster centres (\code{kappa = l_control}), the size of the expansion of the simulation window for generative parent points (\code{e_control}), and the radius (or radii) of the disc for each cluster (\code{r_control}).
 
 The function computes a one-sided hypothesis test for case clustering (\code{alpha = 0.05} by default). The function also computes a two-sided hypothesis test for case clustering and control clustering (lower tail = 0.025 and upper tail = 0.975).
+
+The function has functionality for a correction for multiple testing. If \code{p_correct = "FDR"}, calculates a False Discovery Rate by Benjamini and Hochberg. If \code{p_correct = "Sidak"}, calculates a Sidak correction. If \code{p_correct = "Bonferroni"}, calculates a Bonferroni correction. If \code{p_correct = "none"} (the default), then the function does not account for multiple testing and uses the uncorrected \code{alpha} level. See the internal \code{pval_correct} function documentation for more details.
 }
 \examples{
  spatial_power(x_case = c(0.25, 0.5, 0.75),

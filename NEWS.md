@@ -9,6 +9,7 @@
 * Changes to `spatial_data()`
   * Used `spatstat.core::as.solist()` to specify appropriate class to lists
 * Changes to `spatial_power()`
+  * Added `p_correct` arugment to apply a multiple testing correction
   * Fixed typos in documentation
   * Moved `cascon` argument from `spatial_power()` to `spatial_plots()`
   * Estimates case-only power (lower tail) and case/control (lower and upper tail) and captures both outputs. Case-only is now a one-tailed hypothesis test by default. The arguments 'lower_tail' and 'upper_tail' have been replaced with argument 'alpha'
@@ -19,16 +20,18 @@
   * Removed main panel title in plots
   * Fixed default colors and removed mislabled 'midpoint' color
   * Removed annotation from `plot.ppp()` in plot #3 and plot #2 (if points are not plotted)
-  * Added `scale` argument to scale text for higher resolution plots
+  * Added `scale` arguement to scale text for higher resolution plots
   * Added `horizontal` argument to toggle the display of the color key to be on the right (vertical) or bottom (horizontal) of plots
   * Added `plot_axes` argument to toggle the display of axes in plots
   * Added `plot_square` argument to toggle the margins of plots
   * Changed the value of `cex.axis` and `cex` in plots
 * Changes to `jitter_power()`
+  * Added `p_correct` arugment to apply a multiple testing correction
   * Specify all packages for functions
   * Moved `cascon` argument from `jitter_power()` to `spatial_plots()`
   * Estimates case-only power (lower tail) and case/control (lower and upper tail) and captures both outputs. Case-only is now a one-tailed hypothesis test by default. The arguments 'lower_tail' and 'upper_tail' have been replaced with argument 'alpha'
   * Used `spatstat.core::as.solist()` to specify appropriate class to lists
+  * Updated example to reflect new updates
 * Changes to vignette
   * Set global chunk options
   * Named code chunks

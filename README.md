@@ -63,6 +63,9 @@ Available functions
 <td><code>spatial_plots</code></td>
 <td>Easily make multiple plots from <code>spatial_power</code>, <code>spatial_data</code>, and <code>jitter_power</code> outputs.</td>
 </tr>
+<td><code>pval_correct</code></td>
+<td>Called within <code>spatial_power</code> and <code>jitter_power</code>, calculates various multiple testing corrections for the alpha level.</td>
+</tr>
 </tbody>
 <table>
 
@@ -135,7 +138,7 @@ stats::t.test(x = foo$t_obs, mu = 1, alternative = "two.sided")
 # Run spatial_plots #
 # ----------------- #
 
-# Statistical power for case-only clustering
+# Statistical power for case-only clustering (one-tailed test)
 spatial_plots(foo)
 ```
 ![](man/figures/spatial_plots1.png)
@@ -144,9 +147,42 @@ spatial_plots(foo)
 
 ![](man/figures/spatial_plots3.png)
 ```
-# Statistical power for case clustering and control clustering
+# Statistical power for case clustering and control
+clustering (two-tailed test)
+## Only showing second and third plot
 spatial_plots(foo, cascon = TRUE)
 ```
 ![](man/figures/spatial_plots4.png)
 
 ![](man/figures/spatial_plots5.png)
+
+```
+# --------------------------- #
+# Multiple Testing Correction #
+# --------------------------- #
+
+# Same parameters as above
+# Apply a conservative Bonferroni correction
+
+set.seed(1234) # reset RNG
+
+# Run spatial_power()
+foo <- spatial_power(win = unit.circle,
+                     sim_total = 100,
+                     x_case = 0.5,
+                     y_case = 0.5,
+                     samp_case = "uniform",
+                     samp_control = "CSR",
+                     r_case = 0.1,
+                     n_case = 50,
+                     n_control = 250,
+                     alpha = 0.05,
+                     p_correct = "Bonferroni")
+                     
+median(foo$alpha) # critical p-value of 3e-6 
+
+# Run spatial_plots() for case-only clustering
+## Only showing third plot
+spatial_plots(foo, cascon = TRUE)
+```
+![](man/figures/spatial_plots6.png)
