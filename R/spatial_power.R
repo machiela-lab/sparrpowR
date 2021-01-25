@@ -371,11 +371,10 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
     
     ### Estimated global test statistics
     #### Global maximum relative risk: H0 = 1
-    s_obs <- max(exp(obs_lrr$rr$v[!is.na(obs_lrr$rr$v)]))
+    s_obs <- max(exp(obs_lrr$rr$v[!is.na(obs_lrr$rr$v) & is.finite(obs_lrr$rr$v)]))
     #### Approximation for integral: H0 = 0
-    t_obs <- sum((obs_lrr$rr$v[!is.na(obs_lrr$rr$v) 
-                               & is.finite(obs_lrr$rr$v)] / 
-                    (diff(obs_lrr$rr$xcol)[1] * diff(obs_lrr$rr$yrow)[1])) ^ 2)
+    t_obs <- sum((obs_lrr$rr$v[!is.na(obs_lrr$rr$v) & is.finite(obs_lrr$rr$v)] / 
+                    (diff(obs_lrr$rr$xrange) * diff(obs_lrr$rr$yrange))) ^ 2)
     
     if (k == 1) {
       sim <- z
