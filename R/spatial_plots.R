@@ -23,7 +23,7 @@
 #' @importFrom fields image.plot
 #' @importFrom graphics text par
 #' @importFrom grDevices colorRampPalette
-#' @importFrom raster raster values reclassify
+#' @importFrom raster cut raster values
 #' @importFrom sp coordinates gridded
 #' @importFrom spatstat.core plot.ppp plot.anylist
 #' @importFrom stats na.omit
@@ -184,9 +184,8 @@ spatial_plots <- function(input,
   # Plot 2: Power, labled
   ## Reclassify raster of proportion significant
   #### Here: power = 80
-  pvalprop_reclass <- raster::reclassify(pvalprop_raster,
-                                         c(-Inf, p_thresh-0.0000001, 1,
-                                           p_thresh-0.0000001, Inf, 2))
+  pvalprop_reclass <- raster::cut(pvalprop_raster,
+                                  breaks = c(-Inf, p_thresh, Inf))
   pvalprop_raster <- NULL # conserve memory
   
   ## Categorical Output
