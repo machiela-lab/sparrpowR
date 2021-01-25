@@ -24,7 +24,7 @@ spatial_power(
   l_control = NULL,
   e_control = NULL,
   alpha = 0.05,
-  p_correct = c("none", "FDR", "Sidak", "Bonferroni"),
+  p_correct = "none",
   verbose = TRUE,
   parallel = FALSE,
   n_core = 2,
@@ -98,7 +98,7 @@ An object of class "list". This is a named list with the following components:
 \item{\code{bandw}}{Vector of length \code{sim_total} of the bandwidth (of numerator) used in each iteration.}
 \item{\code{s_obs}}{Vector of length \code{sim_total} of the global s statistic.}
 \item{\code{t_obs}}{Vector of length \code{sim_total} of the global t statistic.}
-\item{\code{alpha_correct}}{Vector of length \code{sim_total} of the (un)corrected critical p-values.}
+\item{\code{alpha}}{Vector of length \code{sim_total} of the (un)corrected critical p-values.}
 }
 }
 \description{
