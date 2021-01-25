@@ -374,7 +374,7 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
     s_obs <- max(exp(obs_lrr$rr$v[!is.na(obs_lrr$rr$v) & is.finite(obs_lrr$rr$v)]))
     #### Approximation for integral: H0 = 0
     t_obs <- sum((obs_lrr$rr$v[!is.na(obs_lrr$rr$v) & is.finite(obs_lrr$rr$v)] / 
-                    (diff(obs_lrr$rr$xrange) * diff(obs_lrr$rr$yrange))) ^ 2)
+                    (obs_lrr$rr$xstep * obs_lrr$rr$ystep)) ^ 2)
     
     if (k == 1) {
       sim <- z
