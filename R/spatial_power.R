@@ -113,7 +113,7 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
                           l_case = NULL, l_control = NULL,
                           e_control = NULL,
                           alpha = 0.05,
-                          p_correct = c("none", "FDR", "Sidak", "Bonferroni"),
+                          p_correct = "none",
                           verbose = TRUE,
                           parallel = FALSE,
                           n_core = 2,
@@ -173,7 +173,6 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
   }
   
   match.arg(p_correct, choices = c("none", "FDR", "Sidak", "Bonferroni"))
-  if (is.null(p_correct)) { p_correct <- "none"}
   
   # marked uniform disc ppp with user-specified radius for cases
   rcluster_case <- function(x0, y0, rad, n, scalar, lamb, wind, types = "case", ...) {

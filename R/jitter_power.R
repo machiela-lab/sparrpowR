@@ -72,7 +72,7 @@ jitter_power <- function(obs_data,
                          samp_control = c("uniform", "CSR", "MVN"),
                          s_control = 1,
                          alpha = 0.05,
-                         p_correct = c("none", "FDR", "Sidak", "Bonferroni"),
+                         p_correct = "none",
                          parallel = FALSE,
                          n_core = 2,
                          verbose = TRUE,
@@ -84,7 +84,6 @@ jitter_power <- function(obs_data,
   }
   
   match.arg(p_correct, choices = c("none", "FDR", "Sidak", "Bonferroni"))
-  if (is.null(p_correct)) { p_correct <- "none"}
   
   # marked uniform ppp for controls
   rcluster_control <- function(n, l, win, s, types = "control", ...) {

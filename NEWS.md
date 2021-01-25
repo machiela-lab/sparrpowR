@@ -7,13 +7,13 @@
   * Added ORCID for all authors and contributors
   * Fixed typos in Description
 * Changes to `spatial_data()`
-  * Used `spatstat.core::as.solist()` to specify appropriate class to lists
+  * Used `as.solist()` to specify appropriate class to lists
 * Changes to `spatial_power()`
   * Added `p_correct` arugment to apply a multiple testing correction
   * Fixed typos in documentation
   * Moved `cascon` argument from `spatial_power()` to `spatial_plots()`
   * Estimates case-only power (lower tail) and case/control (lower and upper tail) and captures both outputs. Case-only is now a one-tailed hypothesis test by default. The arguments 'lower_tail' and 'upper_tail' have been replaced with argument 'alpha'
-  * Used `spatstat.core::as.solist()` to specify appropriate class to lists
+  * Used `as.solist()` to specify appropriate class to lists
 * Changes to `spatial_plots()`:
   * Added `cascon` argument to toggle the display of case-only power (lower tail) or case/control (lower and upper tail) output
   * Added `plot_title` argument to toggle the display of titles in plots. Changed the default title names. 
@@ -30,7 +30,7 @@
   * Specify all packages for functions
   * Moved `cascon` argument from `jitter_power()` to `spatial_plots()`
   * Estimates case-only power (lower tail) and case/control (lower and upper tail) and captures both outputs. Case-only is now a one-tailed hypothesis test by default. The arguments 'lower_tail' and 'upper_tail' have been replaced with argument 'alpha'
-  * Used `spatstat.core::as.solist()` to specify appropriate class to lists
+  * Used `as.solist()` to specify appropriate class to lists
   * Updated example to reflect new updates
 * Changes to vignette
   * Set global chunk options
