@@ -41,6 +41,7 @@ NULL
 #' @importFrom foreach %do% %dopar% foreach
 #' @importFrom graphics text par
 #' @importFrom grDevices colorRampPalette
+#' @importFrom lifecycle badge deprecate_warn deprecated is_present
 #' @importFrom parallel makeCluster stopCluster
 #' @importFrom raster raster values reclassify
 #' @importFrom sp coordinates gridded

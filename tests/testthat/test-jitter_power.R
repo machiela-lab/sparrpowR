@@ -10,7 +10,7 @@ test_that("jitter_power throws error with invalid arguments", {
     jitter_power(obs_data = NULL,
                  sim_total = 2,
                  samp_control = "MVN",
-                 s_control = .01, 
+                 s_control = 0.01, 
                  alpha = 0.01, 
                  resolution = 10, 
                  edge = "uniform")
@@ -20,7 +20,7 @@ test_that("jitter_power throws error with invalid arguments", {
     jitter_power(obs_data = unique(chorley),
                  sim_total = NULL,
                  samp_control = "MVN",
-                 s_control = .01, 
+                 s_control = 0.01, 
                  alpha = 0.01,
                  resolution = 10, 
                  edge = "uniform")
@@ -30,7 +30,7 @@ test_that("jitter_power throws error with invalid arguments", {
     jitter_power(obs_data = unique(chorley),
                  sim_total = 2,
                  samp_control =  NULL,
-                 s_control = .01, 
+                 s_control = 0.01, 
                  alpha = 0.01,
                  resolution = 10, 
                  edge = "uniform")
@@ -50,13 +50,14 @@ test_that("jitter_power throws error with invalid arguments", {
 
 
 test_that("jitter_power works", {  
+  
   expect_named(jitter_power(obs_data = unique(chorley),
                             sim_total = 2,
                             samp_control = "MVN",
                             s_control = 0.01, 
-                            alpha = 0.01, 
-                            resolution = 10, 
-                            edge = "uniform")
+                            alpha = 0.07, 
+                            resolution = 100, 
+                            p_correct = "FDR")
   ) 
   
 }

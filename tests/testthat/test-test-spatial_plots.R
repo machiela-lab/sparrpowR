@@ -41,7 +41,7 @@ test_that("spatial_plots throws error with invalid arguments", {
   
   expect_error(spatial_plots(input = spatial_power_output,
                              p_thresh = 0.8, 
-                             plot_pts = T, 
+                             plot_pts = TRUE, 
                              chars = c(4,5),
                              sizes = c(0.5,0.5), 
                              cascon = FALSE,
@@ -57,7 +57,7 @@ test_that("spatial_plots works", {
   skip_on_cran()
   expect_output(spatial_plots(input = spatial_power_output, 
                               p_thresh = 0.8, 
-                              plot_pts = T,
+                              plot_pts = TRUE,
                               chars = c(4,5), 
                               sizes = c(0.5,0.5), 
                               cascon = FALSE,

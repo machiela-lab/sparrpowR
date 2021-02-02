@@ -6,7 +6,7 @@
 \usage{
 jitter_power(
   obs_data,
-  sim_total,
+  sim_total = 2,
   samp_control = c("uniform", "CSR", "MVN"),
   s_control = 1,
   alpha = 0.05,
@@ -14,7 +14,10 @@ jitter_power(
   parallel = FALSE,
   n_core = 2,
   verbose = TRUE,
-  ...
+  ...,
+  cascon = lifecycle::deprecated(),
+  lower_tail = lifecycle::deprecated(),
+  upper_tail = lifecycle::deprecated()
 )
 }
 \arguments{
@@ -37,6 +40,12 @@ jitter_power(
 \item{verbose}{Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.}
 
 \item{...}{Arguments passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.}
+
+\item{cascon}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} \code{cascon} is no longer supported and this function will output power for case-only and case/control clustering. This argument has been moved to \code{spatial_plots} function.}
+
+\item{lower_tail}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} \code{lower_tail} is no longer supported; this function uses \code{alpha} to set the critical p-value.}
+
+\item{upper_tail}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} \code{lupper_tail} is no longer supported; this function uses \code{alpha} to set the critical p-value.}
 }
 \value{
 An object of class "list". This is a named list with the following components:
@@ -81,7 +90,6 @@ The function has functionality for a correction for multiple testing. If \code{p
 # Using the \code{\link[spatstat.data]{chorley}} dataset
 data(chorley)
  f1 <- jitter_power(obs_data = unique(chorley),
-                    sim_total = 10,
                     samp_control = "CSR",
                     verbose = FALSE)
 

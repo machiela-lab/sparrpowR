@@ -26,6 +26,9 @@
 #' @param n_core Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).
 #' @param verbose Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.
 #' @param ... Arguments passed to \code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.geom]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.geom]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}. Arguments also passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.
+#' @param cascon `r lifecycle::badge("deprecated")` \code{cascon} is no longer supported and this function will output power for case-only and case/control clustering. This argument has been moved to \code{spatial_plots} function.
+#' @param lower_tail `r lifecycle::badge("deprecated")` \code{lower_tail} is no longer supported; this function uses \code{alpha} to set the critical p-value. 
+#' @param upper_tail `r lifecycle::badge("deprecated")` \code{lupper_tail} is no longer supported; this function uses \code{alpha} to set the critical p-value. 
 #'
 #' @details This function computes the statistical power of the spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) for randomly generated data using various random point pattern generators from the \code{\link{spatstat.core}} package.
 #' 
@@ -78,6 +81,7 @@
 
 #' @importFrom doParallel registerDoParallel
 #' @importFrom foreach %do% %dopar% foreach
+#' @importFrom lifecycle badge deprecate_warn deprecated is_present
 #' @importFrom parallel makeCluster stopCluster
 #' @importFrom sparr risk
 #' @importFrom spatstat.core rNeymanScott rpoispp runifdisc runifpoint
@@ -117,7 +121,22 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
                           verbose = TRUE,
                           parallel = FALSE,
                           n_core = 2,
-                          ...) {
+                          ...,
+                          cascon = lifecycle::deprecated(),
+                          lower_tail = lifecycle::deprecated(),
+                          upper_tail = lifecycle::deprecated()) {
+  
+  # Checks
+  ## deprecate
+  if (lifecycle::is_present(cascon)) {
+    lifecycle::deprecate_warn("0.1.4", "sparrpowR::spatial_power(cascon)")
+  }
+  if (lifecycle::is_present(lower_tail)) {
+    lifecycle::deprecate_warn("0.1.4", "sparrpowR::spatial_power(lower_tail)")
+  }
+  if (lifecycle::is_present(upper_tail)) {
+    lifecycle::deprecate_warn("0.1.4", "sparrpowR::spatial_power(upper_tail)")
+  }
   
   # Inputs
   if (length(x_case) != length(y_case)) {
@@ -355,14 +374,14 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
     if (p_correct != "none") {
       alpha_correct <- pval_correct(input = obs_lrr, type = p_correct, alpha = alpha)
       
-      #### Case and Control (lower and upper tail)
+      #### Case and Control (two-tailed test)
       lower_tail <- alpha_correct/2
       upper_tail <- 1 - lower_tail
-      pval_sig_cascon <- sapply(sim_pval, function(x) ifelse(x < lower_tail | x > upper_tail,
-                                                             TRUE,
-                                                             FALSE))
-      #### Case only (lower tail only)
-      pval_sig_cas <- sapply(sim_pval, function(x) ifelse(x < alpha_correct, TRUE, FALSE))
+      pval_sig_cascon <- obs_lrr$P < lower_tail | obs_lrr$P > upper_tail
+      pval_sig_cascon <- as.vector(as.numeric(t(pval_sig_cascon$v)))
+      #### Case only (one-tailed test, lower tail only)
+      pval_sig_cas <- obs_lrr$P < alpha_correct
+      pval_sig_cas <- as.vector(as.numeric(t(pval_sig_cas$v)))
     } else {
       alpha_correct <- alpha
       pval_sig_cascon <- "Uncorrected"

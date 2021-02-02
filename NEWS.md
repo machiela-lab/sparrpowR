@@ -1,6 +1,6 @@
 # sparrpowR (development version)
 
-# sparrpowR 0.1.4.9000
+# sparrpowR 0.1.4
 
 * Updated `spatstat` dependency to `spatstat.core` and `spatstat.geom`
 * Changes to DESCRIPTION
@@ -11,8 +11,8 @@
 * Changes to `spatial_power()`
   * Added `p_correct` arugment to apply a multiple testing correction
   * Fixed typos in documentation
-  * Moved `cascon` argument from `spatial_power()` to `spatial_plots()`
-  * Estimates case-only power (lower tail) and case/control (lower and upper tail) and captures both outputs. Case-only is now a one-tailed hypothesis test by default. The arguments 'lower_tail' and 'upper_tail' have been replaced with argument 'alpha'
+  * Deprecated `cascon` argument (moved to `spatial_plots()`)
+  * Deprecated `lower_tail` and `upper_tail` arguments and replaced with argument `alpha`. Estimates case-only power (lower tail) and case/control (lower and upper tail) and captures both outputs. Case-only clustering (`cascon = FALSE`) is a (lower-tail) one-tailed hypothesis test by default, case and control clustering (`cascon = TRUE`) is a two-tailed hypothesis test by default, .
   * Used `as.solist()` to specify appropriate class to lists
 * Changes to `spatial_plots()`:
   * Added `cascon` argument to toggle the display of case-only power (lower tail) or case/control (lower and upper tail) output
@@ -28,8 +28,8 @@
 * Changes to `jitter_power()`
   * Added `p_correct` arugment to apply a multiple testing correction
   * Specify all packages for functions
-  * Moved `cascon` argument from `jitter_power()` to `spatial_plots()`
-  * Estimates case-only power (lower tail) and case/control (lower and upper tail) and captures both outputs. Case-only is now a one-tailed hypothesis test by default. The arguments 'lower_tail' and 'upper_tail' have been replaced with argument 'alpha'
+  * Deprecated `cascon` argument (moved to `spatial_plots()`)
+  * Estimates case-only power (lower tail) and case/control (lower and upper tail) and captures both outputs. Case-only is now a one-tailed hypothesis test by default. Deprecated `lower_tail` and `upper_tail` arguments and replaced with argument `alpha`
   * Used `as.solist()` to specify appropriate class to lists
   * Updated example to reflect new updates
 * Changes to vignette
@@ -46,3 +46,5 @@
   * Removed this internal helper functions from `jitter_power()`, `spatial_power()`, and `spatial_plots()`
 * Added zzz.R file
 * Added package.R file
+* Imports 'lifecycle' package to document deprecated argument `cascon` in `spatial_power()` and `jitter_power()` functions
+

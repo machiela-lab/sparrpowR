@@ -177,7 +177,7 @@ foo <- spatial_power(win = unit.circle,
                      n_case = 50,
                      n_control = 250,
                      alpha = 0.05,
-                     p_correct = "Bonferroni")
+                     p_correct = "FDR")
                      
 median(foo$alpha) # critical p-value of 3e-6 
 

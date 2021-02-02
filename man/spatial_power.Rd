@@ -28,7 +28,10 @@ spatial_power(
   verbose = TRUE,
   parallel = FALSE,
   n_core = 2,
-  ...
+  ...,
+  cascon = lifecycle::deprecated(),
+  lower_tail = lifecycle::deprecated(),
+  upper_tail = lifecycle::deprecated()
 )
 }
 \arguments{
@@ -79,6 +82,12 @@ spatial_power(
 \item{n_core}{Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).}
 
 \item{...}{Arguments passed to \code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.geom]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.geom]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}. Arguments also passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.}
+
+\item{cascon}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} \code{cascon} is no longer supported and this function will output power for case-only and case/control clustering. This argument has been moved to \code{spatial_plots} function.}
+
+\item{lower_tail}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} \code{lower_tail} is no longer supported; this function uses \code{alpha} to set the critical p-value.}
+
+\item{upper_tail}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} \code{lupper_tail} is no longer supported; this function uses \code{alpha} to set the critical p-value.}
 }
 \value{
 An object of class "list". This is a named list with the following components:
