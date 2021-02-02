@@ -6,7 +6,7 @@
 #' @param p_thresh A numeric value between 0 and 1 (default = 0.8) for the power threshold.
 #' @param cascon Logical. If TRUE, displays the statistical power to detect case clusters and control clusters. If FALSE (the default), displays the statistical power to detect case clusters only. 
 #' @param n_sim Integer. The number of simulated iterations to plot. The default is one (1).
-#' @param cols Character string of length four (4) specifying the colors for plotting: 1) sufficiently powered, 2) insufficiently powered, 3) case locations, 4) control locations. The default colors in hex are \code{c("#000000", "#cccccc", "#ff0000", "#0000ff")} or \code{c("grey0", "grey80", "red", "blue")}.
+#' @param cols Character string of length four (4) specifying the colors for plotting: 1) sufficiently powered, 2) insufficiently powered, 3) case locations, 4) control locations. The default colors in hex are \code{c("#000000", "#CCCCCC", "#FF0000", "#0000FF")} or \code{c("grey0", "grey80", "red", "blue")}.
 #' @param chars Vector of integers or character string of length two (2) for symbols of case and control locations. Default is \code{c(1,1)}. 
 #' @param sizes Vector of integers of length two (2) for the size of the symbols for case and control locations. Default is \code{c(1,1)}. 
 #' @param scale Integer. A graphical expansion factor (default is 1) for text (and point) size within plots. Intended for scaling plot features with plot resolution.
@@ -25,20 +25,34 @@
 #' @importFrom grDevices colorRampPalette
 #' @importFrom raster cut raster values
 #' @importFrom sp coordinates gridded
-#' @importFrom spatstat.core plot.ppp plot.anylist
+#' @importFrom spatstat.core plot.anylist plot.ppp 
 #' @importFrom stats na.omit
 #' @export 
 #'
 #' @examples
 #' \donttest{
-#' spatial_plots(input = sim_power)
+#'  # run spatial_power(), jitter_power(), or spatial_data()
+#'  sim_power <- spatial_power(x_case = c(0.25, 0.5, 0.75),
+#'                             y_case = c(0.75, 0.25, 0.75),
+#'                             samp_case = "MVN", 
+#'                             samp_control = "MVN",
+#'                             x_control = c(0.25, 0.5, 0.75),
+#'                             y_control = c(0.75, 0.25, 0.75),
+#'                             n_case = 100,
+#'                             n_control = c(100,500,300),
+#'                             s_case = c(0.05,0.01,0.05),
+#'                             s_control = 0.05,
+#'                             verbose = FALSE)
+#'                
+#'  # run spatial_plots()
+#'  spatial_plots(input = sim_power)
 #' }
 #' 
 spatial_plots <- function(input,
                           p_thresh = 0.8,
                           cascon = FALSE,
                           n_sim = 1,
-                          cols = c("#000000", "#cccccc", "#ff0000", "#0000ff"),
+                          cols = c("#000000", "#CCCCCC", "#FF0000", "#0000FF"),
                           chars = c(1,1),
                           sizes = c(1,1),
                           scale = 1, 
@@ -99,7 +113,7 @@ spatial_plots <- function(input,
                                 cex = sizes * scale,
                                 cols = c(cols[3], cols[4]),
                                 leg.side = "bottom",
-                                leg.args = list(cex.axis = .75 * scale,
+                                leg.args = list(cex.axis = 0.75 * scale,
                                                 cex = 2 * scale,
                                                 pch = chars),
                                 main = plot_titles[1],
@@ -126,8 +140,8 @@ spatial_plots <- function(input,
                     length.out = length(raster::values(pvalprop_raster)) + 1)
   ## Continuous Output
   if (plot_pts == TRUE) {
-    p2 <- spatstat.core::plot.ppp(input$sim,
-                                  pch = chars,
+    p2 <- spatstat.core::plot.ppp(input$sim, 
+                                  pch = chars, 
                                   cex = 0,
                                   cols = c(cols[3], cols[4]),
                                   leg.side = "bottom",
@@ -137,8 +151,8 @@ spatial_plots <- function(input,
                                   main = plot_titles[2],
                                   ...)
   } else {
-    p2 <- spatstat.core::plot.ppp(input$sim,
-                                  pch = chars,
+    p2 <- spatstat.core::plot.ppp(input$sim, 
+                                  pch = chars, 
                                   cex = sizes * scale,
                                   cols = c("transparent", "transparent"),
                                   leg.side = "bottom",

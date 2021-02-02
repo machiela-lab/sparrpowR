@@ -11,11 +11,9 @@ test_that("jitter_power throws error with invalid arguments", {
                  sim_total = 2,
                  samp_control = "MVN",
                  s_control = .01, 
-                 upper_tail = 0.995,
-                 lower_tail = 0.005, 
+                 alpha = 0.01, 
                  resolution = 10, 
-                 edge = "uniform", 
-                 cascon = FALSE)
+                 edge = "uniform")
   )
   
   expect_error(
@@ -23,11 +21,9 @@ test_that("jitter_power throws error with invalid arguments", {
                  sim_total = NULL,
                  samp_control = "MVN",
                  s_control = .01, 
-                 upper_tail = 0.995,
-                 lower_tail = 0.005, 
+                 alpha = 0.01,
                  resolution = 10, 
-                 edge = "uniform", 
-                 cascon = FALSE)
+                 edge = "uniform")
   )
   
   expect_error(
@@ -35,11 +31,9 @@ test_that("jitter_power throws error with invalid arguments", {
                  sim_total = 2,
                  samp_control =  NULL,
                  s_control = .01, 
-                 upper_tail = 0.995,
-                 lower_tail = 0.005, 
+                 alpha = 0.01,
                  resolution = 10, 
-                 edge = "uniform", 
-                 cascon = FALSE)
+                 edge = "uniform")
   )
   
   expect_error(
@@ -47,11 +41,9 @@ test_that("jitter_power throws error with invalid arguments", {
                  sim_total = 2,
                  samp_control = "MVN",
                  s_control = NULL, 
-                 upper_tail = 0.995,
-                 lower_tail = 0.005, 
+                 alpha = 0.01, 
                  resolution = 10, 
-                 edge = "uniform", 
-                 cascon = FALSE)
+                 edge = "uniform")
   )
 }
 )
@@ -61,12 +53,10 @@ test_that("jitter_power works", {
   expect_named(jitter_power(obs_data = unique(chorley),
                             sim_total = 2,
                             samp_control = "MVN",
-                            s_control = .01, 
-                            upper_tail = 0.995,
-                            lower_tail = 0.005, 
+                            s_control = 0.01, 
+                            alpha = 0.01, 
                             resolution = 10, 
-                            edge = "uniform", 
-                            cascon = FALSE)
+                            edge = "uniform")
   ) 
   
 }

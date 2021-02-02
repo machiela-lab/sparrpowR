@@ -24,7 +24,7 @@ test_that("spatial_data throws error with invalid arguments", {
                  samp_control = "MVN",
                  sim_total = 1,
                  npc_control = 10,
-                 win = spatstat::disc(radius = 0.5, centre = c(0.5,0.5)))
+                 win = spatstat.core::disc(radius = 0.5, centre = c(0.5,0.5)))
   )
   
   expect_error(
@@ -45,7 +45,7 @@ test_that("spatial_data throws error with invalid arguments", {
                  samp_control = "MVN",
                  sim_total = 1,
                  npc_control = 10,
-                 win = spatstat::disc(radius = 0.5, centre = c(0.5,0.5)))
+                 win = spatstat.core::disc(radius = 0.5, centre = c(0.5,0.5)))
   )
   
   expect_error(
@@ -66,7 +66,7 @@ test_that("spatial_data throws error with invalid arguments", {
                  samp_control = "MVN",
                  sim_total = 1,
                  npc_control = 10,
-                 win = spatstat::disc(radius = 0.5, centre = c(0.5,0.5)))
+                 win = spatstat.core::disc(radius = 0.5, centre = c(0.5,0.5)))
   )
   
   expect_error(
@@ -87,7 +87,7 @@ test_that("spatial_data throws error with invalid arguments", {
                  samp_control = "MVN",
                  sim_total = 1,
                  npc_control = 10,
-                 win = spatstat::disc(radius = 0.5, centre = c(0.5,0.5)))
+                 win = spatstat.core::disc(radius = 0.5, centre = c(0.5,0.5)))
   )
   
   expect_error(
@@ -108,7 +108,7 @@ test_that("spatial_data throws error with invalid arguments", {
                  samp_control = "MVN",
                  sim_total = NULL,
                  npc_control = 10,
-                 win = spatstat::disc(radius = 0.5, centre = c(0.5,0.5)))
+                 win = spatstat.core::disc(radius = 0.5, centre = c(0.5,0.5)))
   )
 }
 )   
@@ -131,7 +131,7 @@ test_that("spatial_data works", {
                              samp_control = "MVN",
                              sim_total = 1,
                              npc_control = 10,
-                             win = spatstat::disc(radius = 0.5, centre = c(0.5,0.5)))
+                             win = spatstat.core::disc(radius = 0.5, centre = c(0.5,0.5)))
   ) 
   
 }

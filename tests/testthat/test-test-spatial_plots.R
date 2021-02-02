@@ -22,7 +22,6 @@ spatial_power_output<- spatial_power(x_case = c(0.25),
                                      npc_control = 100,
                                      e_control = 0,
                                      sim_total = 2,
-                                     cascon = FALSE, 
                                      verbose = FALSE
 ) 
 
@@ -36,6 +35,7 @@ test_that("spatial_plots throws error with invalid arguments", {
                              plot_pts = TRUE, 
                              chars = c(4,5), 
                              sizes = c(0.5,0.5),
+                             cascon = FALSE,
                              cols = c("grey0", "grey80", "grey100", "red", "blue"))
   )
   
@@ -44,6 +44,7 @@ test_that("spatial_plots throws error with invalid arguments", {
                              plot_pts = T, 
                              chars = c(4,5),
                              sizes = c(0.5,0.5), 
+                             cascon = FALSE,
                              cols = NULL)
   )
   
@@ -59,6 +60,7 @@ test_that("spatial_plots works", {
                               plot_pts = T,
                               chars = c(4,5), 
                               sizes = c(0.5,0.5), 
+                              cascon = FALSE,
                               cols = c("grey0", "grey80", "grey100", "red", "blue")),
                 NA)
   

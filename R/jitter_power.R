@@ -6,8 +6,8 @@
 #' @param sim_total Integer, specifying the number of simulation iterations to perform.
 #' @param samp_control Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), with complete spatial randomness (\code{samp_control="CSR"}), or multivariate normal (\code{samp_control="MVN"}).
 #' @param s_control Optional. Numeric value for the standard deviation of the multivariate normal distribution in the units of the \code{obs_data}.  The default value (1) assumes a unit square window. Ignored if Ignored if \code{samp_control="uniform"} or \code{samp_control="CSR"}.
-#' @param lower_tail Optional. Numeric value of lower p-value threshold (default=0.025).
-#' @param upper_tail Optional. Numeric value of upper p-value threshold (default=0.975).
+#' @param alpha Optional. Numeric value of the critical p-value (default=0.05).
+#' @param p_correct Optional. Character string specifying whether to apply a correction for multiple comparisons including a False Discovery Rate \code{p_correct = "FDR"}, a Sidak correction \code{p_correct = "uncorrelated Sidak"}, and a Bonferroni correction \code{p_correct = "uncorrelated Bonferroni"}. If \code{p_correct = "none"} (the default), then no correction is applied. 
 #' @param parallel Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.
 #' @param n_core Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).
 #' @param verbose Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.
@@ -22,6 +22,10 @@
 #' If \code{samp_control = "CSR"} the control locations are randomly generated assuming complete spatial randomness (homogeneous Poisson process) within the window of \code{obs_data} with a \code{lambda = number of controls / [resolution x resolution]}. By default, the resolution is an integer value of 128 and can be specified using the \code{resolution} argument in the internally called \code{\link[sparr]{risk}} function.
 #' 
 #' If \code{samp_control = "MVN"} the control locations are randomly generated assuming a multivariate normal distribution \emph{centered at each observed location}. The optional argument \code{s_control} specifies the standard deviation of the multivariate normal distribution (1 by default) in the units of the \code{obs_data}. 
+#' 
+#' The function computes a one-sided hypothesis test for case clustering (\code{alpha = 0.05} by default). The function also computes a two-sided hypothesis test for case clustering and control clustering (lower tail = 0.025 and upper tail = 0.975).
+#' 
+#' The function has functionality for a correction for multiple testing. If \code{p_correct = "FDR"}, calculates a False Discovery Rate by Benjamini and Hochberg. If \code{p_correct = "Sidak"}, calculates a Sidak correction. If \code{p_correct = "Bonferroni"}, calculates a Bonferroni correction. If \code{p_correct = "none"} (the default), then the function does not account for multiple testing and uses the uncorrected \code{alpha} level. See the internal \code{pval_correct} function documentation for more details.
 #'
 #' @return An object of class "list". This is a named list with the following components:
 #' 
@@ -40,6 +44,7 @@
 #' \item{\code{bandw}}{Vector of length \code{sim_total} of the bandwidth (of numerator) used in each iteration.}
 #' \item{\code{s_obs}}{Vector of length \code{sim_total} of the global s statistic.}
 #' \item{\code{t_obs}}{Vector of length \code{sim_total} of the global t statistic.}
+#' \item{\code{alpha}}{Vector of length \code{sim_total} of the (un)corrected critical p-values.}
 #' }
 #' 
 #' @importFrom doParallel registerDoParallel
@@ -56,19 +61,17 @@
 #' @examples
 #' # Using the \code{\link[spatstat.data]{chorley}} dataset
 #' data(chorley)
-#' f1 <- jitter_power(obs_data = unique(chorley),
-#'                    sim_total = 2,
-#'                    samp_control = "MVN",
-#'                    s_control = 0.01,
-#'                    verbose = FALSE
-#'                    )
+#'  f1 <- jitter_power(obs_data = unique(chorley),
+#'                     sim_total = 10,
+#'                     samp_control = "CSR",
+#'                     verbose = FALSE)
 #' 
 jitter_power <- function(obs_data,
                          sim_total,
                          samp_control = c("uniform", "CSR", "MVN"),
                          s_control = 1,
-                         lower_tail = 0.025, 
-                         upper_tail = 0.975,
+                         alpha = 0.05,
+                         p_correct = "none",
                          parallel = FALSE,
                          n_core = 2,
                          verbose = TRUE,
@@ -78,6 +81,8 @@ jitter_power <- function(obs_data,
   if (class(obs_data) != "ppp"){
     stop("Argument 'obs_data' must be of class 'ppp'")
   }
+  
+  match.arg(p_correct, choices = c("none", "FDR", "Sidak", "Bonferroni"))
   
   # marked uniform ppp for controls
   rcluster_control <- function(n, l, win, s, types = "control", ...) {
@@ -125,6 +130,7 @@ jitter_power <- function(obs_data,
                               .multicombine = TRUE, 
                               .packages = c("sparr", "spatstat.core", "utils"),
                               .init = list(list(), list(), list(),
+                                           list(), list(), list(),
                                            list(), list(), list(), 
                                            list(), list(), list(),
                                            list(), list())) %fun% {
@@ -164,6 +170,23 @@ jitter_power <- function(obs_data,
                                              sim_risk <- as.vector(t(obs_lrr$rr$v))
                                              sim_pval <- as.vector(t(obs_lrr$P$v))
                                              
+                                             if (p_correct != "none") {
+                                               alpha_correct <- pval_correct(input = obs_lrr, type = p_correct, alpha = alpha)
+                                               
+                                               #### Case and Control (lower and upper tail)
+                                               lower_tail <- alpha_correct/2
+                                               upper_tail <- 1 - lower_tail
+                                               pval_sig_cascon <- sapply(sim_pval, function(x) ifelse(x < lower_tail | x > upper_tail,
+                                                                                                      TRUE,
+                                                                                                      FALSE))
+                                               #### Case only (lower tail only)
+                                               pval_sig_cas <- sapply(sim_pval, function(x) ifelse(x < alpha_correct, TRUE, FALSE))
+                                             } else {
+                                               alpha_correct <- alpha
+                                               pval_sig_cascon <- "Uncorrected"
+                                               pval_sig_cas <- "Uncorrected"
+                                             }
+                                             
                                              ### Estimated global test statistics
                                              #### Global maximum relative risk: H0 = 1
                                              s_obs <- max(exp(obs_lrr$rr$v[!is.na(obs_lrr$rr$v)]))
@@ -194,7 +217,10 @@ jitter_power <- function(obs_data,
                                                                  "n_con" = con$n,
                                                                  "bandw" = obs_lrr$f$h0,
                                                                  "s_obs" = s_obs,
-                                                                 "t_obs" = t_obs)
+                                                                 "t_obs" = t_obs,
+                                                                 "alpha_correct" = alpha_correct,
+                                                                 "pval_sig_cascon" = pval_sig_cascon,
+                                                                 "pval_sig_cas" = pval_sig_cas)
                                              return(par_results)
                                            }
   
@@ -218,28 +244,38 @@ jitter_power <- function(obs_data,
   rr_sd <- apply(sim_rr_dat, 1, sd, na.rm = TRUE) # standard deviation log relative risk
   
   ## Calculate proportion of tests were significant
-  ### Significance level is user-specified
-  #### Case and Control (lower and upper tail)
-  pval_sig_cascon <- rapply(sim_pval, function(x) ifelse(x < lower_tail | x > upper_tail,
-                                                         TRUE,
-                                                         FALSE),
-                            how = "replace")
-  pval_count_cascon <- rowSums(do.call(cbind,pval_sig_cascon), na.rm = TRUE)
+  ### Correction for multiple testing
+  if (p_correct != "none") {
+    pval_sig_cascon <- out_par[[13]]
+    pval_sig_cas <- out_par[[14]]
+  } else {
+    ### Uncorrected for multiple testing
+    #### Case and Control (lower and upper tail)
+    lower_tail <- alpha/2
+    upper_tail <- 1 - lower_tail
+    pval_sig_cascon <- rapply(sim_pval, function(x) ifelse(x < lower_tail | x > upper_tail,
+                                                           TRUE,
+                                                           FALSE),
+                              how = "replace")
+    #### Case only (lower tail only)
+    pval_sig_cas <- rapply(sim_pval, function(x) ifelse(x < alpha, TRUE, FALSE),
+                           how = "replace")
+  }
+  
+  pval_count_cascon <- rowSums(do.call(cbind, pval_sig_cascon), na.rm = TRUE)
   pval_prop_wNA_cascon <- sapply(pval_count_cascon, FUN = function(x, y = sim_total) (x / y))
-  #### Case only (lower tail only)
-  pval_sig_cas <- rapply(sim_pval, function(x) ifelse(x < lower_tail, TRUE, FALSE),
-                         how = "replace")
-  pval_count_cas <- rowSums(do.call(cbind,pval_sig_cas), na.rm = TRUE)
+  
+  pval_count_cas <- rowSums(do.call(cbind, pval_sig_cas), na.rm = TRUE)
   pval_prop_wNA_cas <- sapply(pval_count_cas, FUN = function(x, y = sim_total) (x / y))
   
   ## Force NA values for graphing, match position of NAs of mean p-value
   #### Case and Control (lower and upper tail)
-  pval_prop_wNA_cascon <- cbind(pval_mean,pval_prop_wNA_cascon)
-  pval_prop_wNA_cascon[,2][is.na(pval_prop_wNA_cascon[,1])] <- NA
-  pval_prop_cascon <- pval_prop_wNA_cascon[,2]
+  pval_prop_wNA_cascon <- cbind(pval_mean, pval_prop_wNA_cascon)
+  pval_prop_wNA_cascon[ , 2][is.na(pval_prop_wNA_cascon[ , 1])] <- NA
+  pval_prop_cascon <- pval_prop_wNA_cascon[ , 2]
   #### Case only (lower tail only)
-  pval_prop_wNA_cas <- cbind(pval_mean,pval_prop_wNA_cas)
-  pval_prop_wNA_cas[,2][is.na(pval_prop_wNA_cas[,1])] <- NA
+  pval_prop_wNA_cas <- cbind(pval_mean, pval_prop_wNA_cas)
+  pval_prop_wNA_cas[ , 2][is.na(pval_prop_wNA_cas[ , 1])] <- NA
   pval_prop_cas <- pval_prop_wNA_cas[,2]
   
   # Output
@@ -256,5 +292,6 @@ jitter_power <- function(obs_data,
                   "n_con" = unlist(out_par[[8]]),
                   "bandw" = unlist(out_par[[9]]),
                   "s_obs" = unlist(out_par[[10]]),
-                  "t_obs" = unlist(out_par[[11]]))
+                  "t_obs" = unlist(out_par[[11]]),
+                  "alpha" = unlist(out_par[[12]]))
 }
