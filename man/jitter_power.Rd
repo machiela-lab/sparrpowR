@@ -9,9 +9,8 @@ jitter_power(
   sim_total,
   samp_control = c("uniform", "CSR", "MVN"),
   s_control = 1,
-  cascon = FALSE,
-  lower_tail = 0.025,
-  upper_tail = 0.975,
+  alpha = 0.05,
+  p_correct = "none",
   parallel = FALSE,
   n_core = 2,
   verbose = TRUE,
@@ -27,11 +26,9 @@ jitter_power(
 
 \item{s_control}{Optional. Numeric value for the standard deviation of the multivariate normal distribution in the units of the \code{obs_data}.  The default value (1) assumes a unit square window. Ignored if Ignored if \code{samp_control="uniform"} or \code{samp_control="CSR"}.}
 
-\item{cascon}{Logical. If FALSE (the default) computes the power to detect only relative case clustering. If TRUE, computes power to detect both case and control clustering.}
+\item{alpha}{Optional. Numeric value of the critical p-value (default=0.05).}
 
-\item{lower_tail}{Optional. Numeric value of lower p-value threshold (default=0.025).}
-
-\item{upper_tail}{Optional. Numeric value of upper p-value threshold (default=0.975). Ignored if cascon=FALSE.}
+\item{p_correct}{Optional. Character string specifying whether to apply a correction for multiple comparisons including a False Discovery Rate \code{p_correct = "FDR"}, a Sidak correction \code{p_correct = "uncorrelated Sidak"}, and a Bonferroni correction \code{p_correct = "uncorrelated Bonferroni"}. If \code{p_correct = "none"} (the default), then no correction is applied.}
 
 \item{parallel}{Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.}
 
@@ -50,13 +47,16 @@ An object of class "list". This is a named list with the following components:
 \item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the mean relative risk values at each gridded knot.}
 \item{\code{pval_mean}}{Vector of length \code{[resolution x resolution]} of the mean asymptotic p-value at each gridded knot.}
 \item{\code{rr_sd}}{Vector of length \code{[resolution x resolution]} of the standard deviation of relative risk values at each gridded knot.}
-\item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values that were significant at each gridded knot.}
+\item{\code{pval_prop_cascon}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values that were significant for both case and control locations at each gridded knot.}
+\item{\code{pval_prop_cas}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values that were significant for only case locations at each gridded knot.}
 \item{\code{rx}}{Vector of length \code{[resolution x resolution]} of the x-coordinates of each gridded knot.}
 \item{\code{ry}}{Vector of length \code{[resolution x resolution]} of the y-coordinates of each gridded knot.}
-\item{\code{rx}}{Vector of length \code{sim_total} of the number of control locations simulated in each iteration.}
+\item{\code{n_cas}}{Vector of length \code{sim_total} of the number of case locations simulated in each iteration.}
+\item{\code{n_con}}{Vector of length \code{sim_total} of the number of control locations simulated in each iteration.}
 \item{\code{bandw}}{Vector of length \code{sim_total} of the bandwidth (of numerator) used in each iteration.}
-\item{\code{bandw}}{Vector of length \code{sim_total} of the global s statistic.}
-\item{\code{bandw}}{Vector of length \code{sim_total} of the global t statistic.}
+\item{\code{s_obs}}{Vector of length \code{sim_total} of the global s statistic.}
+\item{\code{t_obs}}{Vector of length \code{sim_total} of the global t statistic.}
+\item{\code{alpha}}{Vector of length \code{sim_total} of the (un)corrected critical p-values.}
 }
 }
 \description{
@@ -72,16 +72,18 @@ If \code{samp_control = "uniform"} the control locations are randomly generated 
 If \code{samp_control = "CSR"} the control locations are randomly generated assuming complete spatial randomness (homogeneous Poisson process) within the window of \code{obs_data} with a \code{lambda = number of controls / [resolution x resolution]}. By default, the resolution is an integer value of 128 and can be specified using the \code{resolution} argument in the internally called \code{\link[sparr]{risk}} function.
 
 If \code{samp_control = "MVN"} the control locations are randomly generated assuming a multivariate normal distribution \emph{centered at each observed location}. The optional argument \code{s_control} specifies the standard deviation of the multivariate normal distribution (1 by default) in the units of the \code{obs_data}.
+
+The function computes a one-sided hypothesis test for case clustering (\code{alpha = 0.05} by default). The function also computes a two-sided hypothesis test for case clustering and control clustering (lower tail = 0.025 and upper tail = 0.975).
+
+The function has functionality for a correction for multiple testing. If \code{p_correct = "FDR"}, calculates a False Discovery Rate by Benjamini and Hochberg. If \code{p_correct = "Sidak"}, calculates a Sidak correction. If \code{p_correct = "Bonferroni"}, calculates a Bonferroni correction. If \code{p_correct = "none"} (the default), then the function does not account for multiple testing and uses the uncorrected \code{alpha} level. See the internal \code{pval_correct} function documentation for more details.
 }
 \examples{
 # Using the \code{\link[spatstat.data]{chorley}} dataset
 data(chorley)
-f1 <- jitter_power(obs_data = unique(chorley),
-                   sim_total = 2,
-                   samp_control = "MVN",
-                   s_control = 0.01,
-                   verbose = FALSE
-                   )
+ f1 <- jitter_power(obs_data = unique(chorley),
+                    sim_total = 10,
+                    samp_control = "CSR",
+                    verbose = FALSE)
 
 }
 \seealso{

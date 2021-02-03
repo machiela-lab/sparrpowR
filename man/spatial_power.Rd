@@ -5,7 +5,7 @@
 \title{Power of SRR function for randomly generated data.}
 \usage{
 spatial_power(
-  win = spatstat::unit.square(),
+  win = spatstat.geom::unit.square(),
   sim_total = 2,
   x_case,
   y_case,
@@ -23,9 +23,8 @@ spatial_power(
   l_case = NULL,
   l_control = NULL,
   e_control = NULL,
-  lower_tail = 0.025,
-  upper_tail = 0.975,
-  cascon = FALSE,
+  alpha = 0.05,
+  p_correct = "none",
   verbose = TRUE,
   parallel = FALSE,
   n_core = 2,
@@ -33,7 +32,7 @@ spatial_power(
 )
 }
 \arguments{
-\item{win}{Window in which to simulate the random data. An object of class "owin" or something acceptable to \code{\link[spatstat]{as.owin}}.}
+\item{win}{Window in which to simulate the random data. An object of class "owin" or something acceptable to \code{\link[spatstat.geom]{as.owin}}.}
 
 \item{sim_total}{Integer, specifying the number of simulation iterations to perform.}
 
@@ -43,7 +42,7 @@ spatial_power(
 
 \item{samp_case}{Character string specifying whether to randomize the case locations uniformly (\code{samp_control="uniform"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), or using the inhomogeneous Poisson process (\code{samp_control="IPP"}) around each case centroid.}
 
-\item{samp_control}{Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), systematically (\code{samp_control="systematic"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), using the inhomogeneous Poisson process (\code{samp_control="IPP"}), or a realisation of the Neyman-Scott cluster process (\code{samp_control="clustered"}).}
+\item{samp_control}{Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), systematically (\code{samp_control="systematic"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), using the inhomogeneous Poisson process (\code{samp_control="IPP"}), or a realization of the Neyman-Scott cluster process (\code{samp_control="clustered"}).}
 
 \item{x_control}{Numeric value, or numeric vector, of x-coordinate(s) of case cluster(s). Ignored if \code{samp_control!="MVN"}.}
 
@@ -69,11 +68,9 @@ spatial_power(
 
 \item{e_control}{Optional. A single non-negative number for the size of the expansion of the simulation window for generating parent points. Ignored if \code{samp_control!="clustered"}.}
 
-\item{lower_tail}{Optional. Numeric value of lower p-value threshold (default=0.025).}
+\item{alpha}{Optional. Numeric value of the critical p-value (default=0.05).}
 
-\item{upper_tail}{Optional. Numeric value of upper p-value threshold (default=0.975). Ignored if cascon=FALSE.}
-
-\item{cascon}{Logical. If TRUE, computes the statistical power to detect case clusters and control clusters. If FALSE (the default), computes the statistical power to detect case clusters only.}
+\item{p_correct}{Optional. Character string specifying whether to apply a correction for multiple comparisons including a False Discovery Rate \code{p_correct = "FDR"}, a Sidak correction \code{p_correct = "uncorrelated Sidak"}, and a Bonferroni correction \code{p_correct = "uncorrelated Bonferroni"}. If \code{p_correct = "none"} (the default), then no correction is applied.}
 
 \item{verbose}{Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.}
 
@@ -81,31 +78,34 @@ spatial_power(
 
 \item{n_core}{Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).}
 
-\item{...}{Arguments passed to \code{\link[spatstat]{runifdisc}}, \code{\link[spatstat]{disc}}, \code{\link[spatstat]{rpoispp}}, \code{\link[spatstat]{rsyst}}, or \code{\link[spatstat]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}. Arguments also passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.}
+\item{...}{Arguments passed to \code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.geom]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.geom]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}. Arguments also passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.}
 }
 \value{
 An object of class "list". This is a named list with the following components:
 
-#' \describe{
+\describe{
 \item{\code{sim}}{An object of class 'rrs' for the first iteration of simulated data.}
 \item{\code{out}}{An object of class 'rrs' for the observed spatial relative risk function without randomization.}
 \item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the mean relative risk values at each gridded knot.}
 \item{\code{pval_mean}}{Vector of length \code{[resolution x resolution]} of the mean asymptotic p-value at each gridded knot.}
 \item{\code{rr_sd}}{Vector of length \code{[resolution x resolution]} of the standard deviation of relative risk values at each gridded knot.}
-\item{\code{rr_mean}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values that were significant at each gridded knot.}
+\item{\code{pval_prop_cascon}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values that were significant for both case and control locations at each gridded knot.}
+\item{\code{pval_prop_cas}}{Vector of length \code{[resolution x resolution]} of the proportion of asymptotic p-values that were significant for only case locations at each gridded knot.}
 \item{\code{rx}}{Vector of length \code{[resolution x resolution]} of the x-coordinates of each gridded knot.}
 \item{\code{ry}}{Vector of length \code{[resolution x resolution]} of the y-coordinates of each gridded knot.}
-\item{\code{rx}}{Vector of length \code{sim_total} of the number of control locations simulated in each iteration.}
+\item{\code{n_cas}}{Vector of length \code{sim_total} of the number of case locations simulated in each iteration.}
+\item{\code{n_con}}{Vector of length \code{sim_total} of the number of control locations simulated in each iteration.}
 \item{\code{bandw}}{Vector of length \code{sim_total} of the bandwidth (of numerator) used in each iteration.}
-\item{\code{bandw}}{Vector of length \code{sim_total} of the global s statistic.}
-\item{\code{bandw}}{Vector of length \code{sim_total} of the global t statistic.}
+\item{\code{s_obs}}{Vector of length \code{sim_total} of the global s statistic.}
+\item{\code{t_obs}}{Vector of length \code{sim_total} of the global t statistic.}
+\item{\code{alpha}}{Vector of length \code{sim_total} of the (un)corrected critical p-values.}
 }
 }
 \description{
 Compute the statistical power of a spatial relative risk function using randomly generated data.
 }
 \details{
-This function computes the statistical power of the spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) for randomly generated data using various random point pattern generators from the \code{\link{spatstat}} package.
+This function computes the statistical power of the spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) for randomly generated data using various random point pattern generators from the \code{\link{spatstat.core}} package.
 
 The function uses the \code{\link[sparr]{risk}} function to estimate the spatial relative risk function and forces the \code{tolerate} argument to be TRUE in order to calculate asymptotic p-values.
 
@@ -127,7 +127,11 @@ If \code{samp_control = "CSR"} the control locations are randomly generated assu
 
 If \code{samp_control = "IPP"} the control locations are randomly generated assuming an inhomogeneous Poisson process within the window \code{win} with a \code{lambda = l_control}, a function.
 
-If \code{samp_control = "clustered"} the control locations are randomly generated with a realisation of the Neyman-Scott process within the window \code{win} with the intensity of the Poisson process cluster centres (\code{kappa = l_control}), the size of the expansion of the simulation window for generative parent points (\code{e_control}), and the radius (or radii) of the disc for each cluster (\code{r_control}).
+If \code{samp_control = "clustered"} the control locations are randomly generated with a realization of the Neyman-Scott process within the window \code{win} with the intensity of the Poisson process cluster centres (\code{kappa = l_control}), the size of the expansion of the simulation window for generative parent points (\code{e_control}), and the radius (or radii) of the disc for each cluster (\code{r_control}).
+
+The function computes a one-sided hypothesis test for case clustering (\code{alpha = 0.05} by default). The function also computes a two-sided hypothesis test for case clustering and control clustering (lower tail = 0.025 and upper tail = 0.975).
+
+The function has functionality for a correction for multiple testing. If \code{p_correct = "FDR"}, calculates a False Discovery Rate by Benjamini and Hochberg. If \code{p_correct = "Sidak"}, calculates a Sidak correction. If \code{p_correct = "Bonferroni"}, calculates a Bonferroni correction. If \code{p_correct = "none"} (the default), then the function does not account for multiple testing and uses the uncorrected \code{alpha} level. See the internal \code{pval_correct} function documentation for more details.
 }
 \examples{
  spatial_power(x_case = c(0.25, 0.5, 0.75),
@@ -140,7 +144,6 @@ If \code{samp_control = "clustered"} the control locations are randomly generate
                n_control = c(100,500,300),
                s_case = c(0.05,0.01,0.05),
                s_control = 0.05,
-               verbose = FALSE
-               )
+               verbose = FALSE)
 
 }

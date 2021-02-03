@@ -16,7 +16,7 @@
 #' @param plot_axes Logical. If TRUE, the axes with labels will be included in the plot(s). Not if FALSE (the default).
 #' @param plot_square Logical. If TRUE, the plot will have margins with similar units. Not if FALSE (the default).
 #' @param horizontal Logical. If TRUE (the default), the color key will be displayed horizontally, below the plots. If FALSE, the color key will be displayed vertically, to the right of the plots.
-#' @param ... Arguments passed to \code{\link[spatstat.core]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.
+#' @param ... Arguments passed to \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.
 #'
 #' @return This function produces up to three plots: 1) example input, 2) local power, and 3) local power above a threshold. If the input is from the \code{\link{spatial_data}} function, this function will only display the first plot. 
 #' 
@@ -25,7 +25,7 @@
 #' @importFrom grDevices colorRampPalette
 #' @importFrom raster cut raster values
 #' @importFrom sp coordinates gridded
-#' @importFrom spatstat.core plot.anylist plot.ppp 
+#' @importFrom spatstat.geom plot.anylist plot.ppp 
 #' @importFrom stats na.omit
 #' @export 
 #'
@@ -94,7 +94,7 @@ spatial_plots <- function(input,
   
   # If input from spatial_data() function
   if("ppplist" %in% class(input)) {
-    return(spatstat.core::plot.anylist(input[1:n_sim], 
+    return(spatstat.geom::plot.anylist(input[1:n_sim], 
                                        pch = chars,
                                        cex = sizes * scale,
                                        cols = c(cols[3], cols[4]),
@@ -108,7 +108,7 @@ spatial_plots <- function(input,
   }
   
   # Plot 1: Example input
-  p1 <- spatstat.core::plot.ppp(input$sim, 
+  p1 <- spatstat.geom::plot.ppp(input$sim, 
                                 pch = chars, 
                                 cex = sizes * scale,
                                 cols = c(cols[3], cols[4]),
@@ -140,7 +140,7 @@ spatial_plots <- function(input,
                     length.out = length(raster::values(pvalprop_raster)) + 1)
   ## Continuous Output
   if (plot_pts == TRUE) {
-    p2 <- spatstat.core::plot.ppp(input$sim, 
+    p2 <- spatstat.geom::plot.ppp(input$sim, 
                                   pch = chars, 
                                   cex = 0,
                                   cols = c(cols[3], cols[4]),
@@ -151,7 +151,7 @@ spatial_plots <- function(input,
                                   main = plot_titles[2],
                                   ...)
   } else {
-    p2 <- spatstat.core::plot.ppp(input$sim, 
+    p2 <- spatstat.geom::plot.ppp(input$sim, 
                                   pch = chars, 
                                   cex = sizes * scale,
                                   cols = c("transparent", "transparent"),
@@ -177,7 +177,7 @@ spatial_plots <- function(input,
                                         cex = 0.67 * scale),
                      ...)
   if (plot_pts == TRUE) {
-    spatstat.core::plot.ppp(input$sim, 
+    spatstat.geom::plot.ppp(input$sim, 
                             pch = chars, 
                             cex = sizes * scale,
                             cols = c(cols[3], cols[4]),
@@ -203,7 +203,7 @@ spatial_plots <- function(input,
   pvalprop_raster <- NULL # conserve memory
   
   ## Categorical Output
-  p3 <- spatstat.core::plot.ppp(input$sim, 
+  p3 <- spatstat.geom::plot.ppp(input$sim, 
                                 pch = chars, 
                                 cex = sizes * scale,
                                 cols = c("transparent", "transparent"),

@@ -5,7 +5,7 @@
 \title{Simulate random data for SRR function}
 \usage{
 spatial_data(
-  win = spatstat::unit.square(),
+  win = spatstat.geom::unit.square(),
   sim_total = 2,
   x_case,
   y_case,
@@ -27,7 +27,7 @@ spatial_data(
 )
 }
 \arguments{
-\item{win}{Window in which to simulate the random data. An object of class "owin" or something acceptable to \code{\link[spatstat]{as.owin}}.}
+\item{win}{Window in which to simulate the random data. An object of class "owin" or something acceptable to \code{\link[spatstat.geom]{as.owin}}.}
 
 \item{sim_total}{Integer, specifying the number of simulation iterations to perform.}
 
@@ -35,44 +35,44 @@ spatial_data(
 
 \item{y_case}{Numeric value, or numeric vector, of y-coordinate(s) of case cluster(s).}
 
-\item{samp_case}{Character string specifying whether to randomize the case locations uniformly (\code{samp_control="uniform"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), or using the inhomogeneous Poisson process (\code{samp_control="IPP"}) around each case centroid.}
+\item{samp_case}{Character string specifying whether to randomize the case locations uniformly (\code{samp_control = "uniform"}), multivariate normal (\code{samp_control = "MVN"}), with complete spatial randomness (\code{samp_control = "CSR"}), or using the inhomogeneous Poisson process (\code{samp_control = "IPP"}) around each case centroid.}
 
-\item{samp_control}{Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), systematically (\code{samp_control="systematic"}), multivariate normal (\code{samp_control="MVN"}), with complete spatial randomness (\code{samp_control="CSR"}), using the inhomogeneous Poisson process (\code{samp_control="IPP"}), or a realisation of the Neyman-Scott cluster process (\code{samp_control="clustered"}).}
+\item{samp_control}{Character string specifying whether to randomize the control locations uniformly (\code{samp_control = "uniform"}), systematically (\code{samp_control = "systematic"}), multivariate normal (\code{samp_control = "MVN"}), with complete spatial randomness (\code{samp_control = "CSR"}), using the inhomogeneous Poisson process (\code{samp_control = "IPP"}), or a realization of the Neyman-Scott cluster process (\code{samp_control = "clustered"}).}
 
-\item{x_control}{Numeric value, or numeric vector, of x-coordinate(s) of case cluster(s). Ignored if \code{samp_control!="MVN"}.}
+\item{x_control}{Numeric value, or numeric vector, of x-coordinate(s) of case cluster(s). Ignored if \code{samp_control != "MVN"}.}
 
-\item{y_control}{Numeric value, or numeric vector, of y-coordinate(s) of case cluster(s). Ignored if \code{samp_control!="MVN"}.}
+\item{y_control}{Numeric value, or numeric vector, of y-coordinate(s) of case cluster(s). Ignored if \code{samp_control != "MVN"}.}
 
 \item{n_case}{Numeric value, or numeric vector, of the sample size for case locations in each cluster.}
 
 \item{n_control}{Numeric value, or numeric vector, of the sample size for control locations in each cluster.}
 
-\item{npc_control}{Optional. Numeric value of the number of clusters of control locations. Ignored if \code{samp_control!="clustered"}.}
+\item{npc_control}{Optional. Numeric value of the number of clusters of control locations. Ignored if \code{samp_control != "clustered"}.}
 
-\item{r_case}{Optional. Numeric value, or numeric vector, of radius (radii) of case cluster(s) in the units of \code{win}. Ignored if \code{samp_case="MVN"}.}
+\item{r_case}{Optional. Numeric value, or numeric vector, of radius (radii) of case cluster(s) in the units of \code{win}. Ignored if \code{samp_case = "MVN"}.}
 
-\item{r_control}{Optional. Numeric value, or numeric vector, of radius (radii) of control cluster(s) in the units of \code{win}. Ignored if \code{samp_control!="clustered"}.}
+\item{r_control}{Optional. Numeric value, or numeric vector, of radius (radii) of control cluster(s) in the units of \code{win}. Ignored if \code{samp_control != "clustered"}.}
 
-\item{s_case}{Optional. Numeric value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for case locations in the units of \code{win}.  Ignored if \code{samp_control!="MVN"}.}
+\item{s_case}{Optional. Numeric value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for case locations in the units of \code{win}.  Ignored if \code{samp_control != "MVN"}.}
 
-\item{s_control}{Optional. Numeric value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for control locations in the units of \code{win}. Ignored if \code{samp_control!="MVN"}.}
+\item{s_control}{Optional. Numeric value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for control locations in the units of \code{win}. Ignored if \code{samp_control != "MVN"}.}
 
-\item{l_case}{Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for case clusters. Ignored if \code{samp_control!="IPP"}.}
+\item{l_case}{Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for case clusters. Ignored if \code{samp_control != "IPP"}.}
 
-\item{l_control}{Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for control clusters. Ignored if \code{samp_control="uniform"}, \code{samp_control="systematic"}, \code{samp_control="MVN"}, or \code{samp_control="CSR"}.}
+\item{l_control}{Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for control clusters. Ignored if \code{samp_control = "uniform"}, \code{samp_control = "systematic"}, \code{samp_control = "MVN"}, or \code{samp_control = "CSR"}.}
 
-\item{e_control}{Optional. A single non-negative number for the size of the expansion of the simulation window for generating parent points. Ignored if \code{samp_control!="clustered"}.}
+\item{e_control}{Optional. A single non-negative number for the size of the expansion of the simulation window for generating parent points. Ignored if \code{samp_control != "clustered"}.}
 
-\item{...}{Arguments passed to \code{\link[spatstat]{runifdisc}}, \code{\link[spatstat]{disc}}, \code{\link[spatstat]{rpoispp}}, \code{\link[spatstat]{rsyst}}, or \code{\link[spatstat]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}.}
+\item{...}{Arguments passed to \code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.geom]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.geom]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}.}
 }
 \value{
 An object of class "ppplist". This is a list of marked point patterns that have a single mark with two levels: case and control.
 }
 \description{
-Generate random bivariate data for a spatial relative risk function.
+Generate random two-group data for a spatial relative risk function.
 }
 \details{
-This function generates random data for a spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) using various random point pattern generators from the \code{\link{spatstat}} package to generate data.
+This function generates random data for a spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) using various random point pattern generators from the \code{\link{spatstat.core}} package to generate data.
 
 If \code{samp_case = "uniform"} the case locations are randomly generated uniformly within a disc of radius \code{r_case} (or discs of radii \code{r_case}) centered at coordinates (\code{x_case}, \code{y_case}).
 
@@ -92,7 +92,7 @@ If \code{samp_control = "CSR"} the control locations are randomly generated assu
 
 If \code{samp_control = "IPP"} the control locations are randomly generated assuming an inhomogeneous Poisson process within the window \code{win} with a \code{lambda = l_control}, a function.
 
-If \code{samp_control = "clustered"} the control locations are randomly generated with a realisation of the Neyman-Scott process within the window \code{win} with the intensity of the Poisson process cluster centres (\code{kappa = l_control}), the size of the expansion of the simulation window for generative parent points (\code{e_control}), and the radius (or radii) of the disc for each cluster (\code{r_control}).
+If \code{samp_control = "clustered"} the control locations are randomly generated with a realization of the Neyman-Scott process within the window \code{win} with the intensity of the Poisson process cluster centres (\code{kappa = l_control}), the size of the expansion of the simulation window for generative parent points (\code{e_control}), and the radius (or radii) of the disc for each cluster (\code{r_control}).
 }
 \examples{
  spatial_data(x_case = c(0.25, 0.5, 0.75),
@@ -105,11 +105,10 @@ If \code{samp_control = "clustered"} the control locations are randomly generate
               n_control = c(100,500,300),
               s_case = c(0.05,0.01,0.05),
               s_control = 0.05,
-              verbose = FALSE
-              )
+              verbose = FALSE)
  
 
 }
 \seealso{
-\code{\link[spatstat]{runifdisc}}, \code{\link[spatstat]{disc}}, \code{\link[spatstat]{rpoispp}}, \code{\link[spatstat]{rsyst}}, or \code{\link[spatstat]{rNeymanScott}} for additional arguments for random point pattern generation.
+\code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.geom]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.geom]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} for additional arguments for random point pattern generation.
 }

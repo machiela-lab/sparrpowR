@@ -51,7 +51,8 @@
 #' @importFrom foreach %do% %dopar% foreach
 #' @importFrom parallel makeCluster stopCluster
 #' @importFrom sparr risk
-#' @importFrom spatstat.core marks runifpoint rpoispp ppp superimpose
+#' @importFrom spatstat.core rpoispp runifpoint
+#' @importFrom spatstat.geom marks ppp superimpose
 #' @importFrom stats sd
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @export
@@ -100,16 +101,16 @@ jitter_power <- function(obs_data,
     if (samp_control == "MVN") {
       x1 <- obs_data$x + rnorm(length(obs_data$x), 0, s) 
       y1 <- obs_data$y + rnorm(length(obs_data$y), 0, s) 
-      x <- spatstat.core::ppp(x1, y1, window = win)
+      x <- spatstat.geom::ppp(x1, y1, window = win)
     }
     
-    spatstat.core::marks(x) <- types
+    spatstat.geom::marks(x) <- types
     return(x)
   }
   
   # extract case locations
   cas <- split(obs_data)[[1]]
-  spatstat.core::marks(cas) <- "case"
+  spatstat.geom::marks(cas) <- "case"
   
   # progress bar
   if (verbose == TRUE & parallel == FALSE){
@@ -151,8 +152,8 @@ jitter_power <- function(obs_data,
                                                                      ...)
                                              
                                              # Combine random clusters of cases and controls into one marked ppp
-                                             z <- spatstat.core::superimpose(con, cas)
-                                             spatstat.core::marks(z) <- as.factor(spatstat.core::marks(z))
+                                             z <- spatstat.geom::superimpose(con, cas)
+                                             spatstat.geom::marks(z) <- as.factor(spatstat.geom::marks(z))
                                              
                                              # Calculate observed kernel density ratio
                                              obs_lrr <- sparr::risk(z, tolerate = TRUE, verbose = FALSE, ...)
@@ -173,14 +174,14 @@ jitter_power <- function(obs_data,
                                              if (p_correct != "none") {
                                                alpha_correct <- pval_correct(input = obs_lrr, type = p_correct, alpha = alpha)
                                                
-                                               #### Case and Control (lower and upper tail)
+                                               #### Case and Control (two-tailed test)
                                                lower_tail <- alpha_correct/2
                                                upper_tail <- 1 - lower_tail
-                                               pval_sig_cascon <- sapply(sim_pval, function(x) ifelse(x < lower_tail | x > upper_tail,
-                                                                                                      TRUE,
-                                                                                                      FALSE))
-                                               #### Case only (lower tail only)
-                                               pval_sig_cas <- sapply(sim_pval, function(x) ifelse(x < alpha_correct, TRUE, FALSE))
+                                               pval_sig_cascon <- obs_lrr$P < lower_tail | obs_lrr$P > upper_tail
+                                               pval_sig_cascon <- as.vector(as.numeric(t(pval_sig_cascon$v)))
+                                               #### Case only (one-tailed test, lower tail only)
+                                               pval_sig_cas <- obs_lrr$P < alpha_correct
+                                               pval_sig_cas <- as.vector(as.numeric(t(pval_sig_cas$v)))
                                              } else {
                                                alpha_correct <- alpha
                                                pval_sig_cascon <- "Uncorrected"

@@ -2,7 +2,7 @@
 #' 
 #' Compute the statistical power of a spatial relative risk function using randomly generated data.
 #'
-#' @param win Window in which to simulate the random data. An object of class "owin" or something acceptable to \code{\link[spatstat.core]{as.owin}}.
+#' @param win Window in which to simulate the random data. An object of class "owin" or something acceptable to \code{\link[spatstat.geom]{as.owin}}.
 #' @param sim_total Integer, specifying the number of simulation iterations to perform.
 #' @param x_case Numeric value, or numeric vector, of x-coordinate(s) of case cluster(s).
 #' @param y_case Numeric value, or numeric vector, of y-coordinate(s) of case cluster(s).
@@ -25,7 +25,7 @@
 #' @param parallel Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.
 #' @param n_core Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).
 #' @param verbose Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.
-#' @param ... Arguments passed to \code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.core]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.core]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}. Arguments also passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.
+#' @param ... Arguments passed to \code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.geom]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.geom]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}. Arguments also passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.
 #'
 #' @details This function computes the statistical power of the spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) for randomly generated data using various random point pattern generators from the \code{\link{spatstat.core}} package.
 #' 
@@ -80,7 +80,8 @@
 #' @importFrom foreach %do% %dopar% foreach
 #' @importFrom parallel makeCluster stopCluster
 #' @importFrom sparr risk
-#' @importFrom spatstat.core as.solist disc marks ppp rNeymanScott rpoispp rsyst runifdisc runifpoint shift superimpose unit.square
+#' @importFrom spatstat.core rNeymanScott rpoispp runifdisc runifpoint
+#' @importFrom spatstat.geom as.solist disc marks ppp rsyst shift superimpose unit.square
 #' @importFrom stats rnorm sd
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @export
@@ -98,7 +99,7 @@
 #'                s_control = 0.05,
 #'                verbose = FALSE)
 #' 
-spatial_power <- function(win = spatstat.core::unit.square(),
+spatial_power <- function(win = spatstat.geom::unit.square(),
                           sim_total = 2,
                           x_case, y_case,
                           samp_case = c("uniform", "MVN", "CSR", "IPP"),
@@ -185,26 +186,26 @@ spatial_power <- function(win = spatstat.core::unit.square(),
       y1 <- rep(y0, n)
       x2 <- x1 + stats::rnorm(n, 0, scalar) 
       y2 <- y1 + stats::rnorm(n, 0, scalar) 
-      x <- spatstat.core::ppp(x2, y2, window = wind)
+      x <- spatstat.geom::ppp(x2, y2, window = wind)
     }  
     
     if (samp_case == "CSR") {
-      win_case <- spatstat.core::disc(radius = rad, centre = c(0.5, 0.5), ...)
+      win_case <- spatstat.geom::disc(radius = rad, centre = c(0.5, 0.5), ...)
       l <- n/(diff(win_case$xrange)*diff(win_case$yrange))
       x <- spatstat.core::rpoispp(lambda = l, win = win_case, ...)
-      x <- spatstat.core::shift(x, c(x0 - 0.5, y0 - 0.5))
+      x <- spatstat.geom::shift(x, c(x0 - 0.5, y0 - 0.5))
     }
     
     if (samp_case == "IPP") {
       if (class(lamb) != "function") {
         stop("The argument 'l_case' should be an intensity function")
       }
-      win_case <- spatstat.core::disc(radius = rad, centre = c(0.5, 0.5), ...)
+      win_case <- spatstat.geom::disc(radius = rad, centre = c(0.5, 0.5), ...)
       x <- spatstat.core::rpoispp(lambda = lamb, win = win_case, ...)
-      x <- spatstat.core::shift(x, c(x0 - 0.5, y0 - 0.5))
+      x <- spatstat.geom::shift(x, c(x0 - 0.5, y0 - 0.5))
     }
     
-    spatstat.core::marks(x) <- types
+    spatstat.geom::marks(x) <- types
     return(x)
   }
   
@@ -215,7 +216,7 @@ spatial_power <- function(win = spatstat.core::unit.square(),
     }
     
     if (samp_control == "systematic") {
-      x <- spatstat.core::rsyst(nx = sqrt(n), win = wind, ...)
+      x <- spatstat.geom::rsyst(nx = sqrt(n), win = wind, ...)
     }
     
     if (samp_control == "MVN") {
@@ -223,7 +224,7 @@ spatial_power <- function(win = spatstat.core::unit.square(),
       y1 <- rep(y0, n)
       x2 <- x1 + stats::rnorm(n, 0, scalar) 
       y2 <- y1 + stats::rnorm(n, 0, scalar) 
-      x <- spatstat.core::ppp(x2, y2, window = wind)
+      x <- spatstat.geom::ppp(x2, y2, window = wind)
     }  
     
     if (samp_control == "CSR") {
@@ -251,7 +252,7 @@ spatial_power <- function(win = spatstat.core::unit.square(),
                                        win = wind,
                                        ...)
     }
-    spatstat.core::marks(x) <- types
+    spatstat.geom::marks(x) <- types
     return(x)
   }
   
@@ -267,8 +268,8 @@ spatial_power <- function(win = spatstat.core::unit.square(),
                           wind = win, ...))
     pppCase[[i]] <- x1
   }
-  pppCase <- spatstat.core::as.solist(pppCase)
-  cas <- spatstat.core::superimpose(pppCase)
+  pppCase <- spatstat.geom::as.solist(pppCase)
+  cas <- spatstat.geom::superimpose(pppCase)
   
   # Progress bar
   if (verbose == TRUE & parallel == FALSE) {
@@ -316,8 +317,8 @@ spatial_power <- function(win = spatstat.core::unit.square(),
                                                                           wind = win, ...))
                                                  pppControl[[i]] <- y1
                                                }
-                                               pppControl <- spatstat.core::as.solist(pppControl)
-                                               con <- spatstat.core::superimpose(pppControl)
+                                               pppControl <- spatstat.geom::as.solist(pppControl)
+                                               con <- spatstat.geom::superimpose(pppControl)
                                              } else { 
                                                suppressWarnings(
                                                  con <- rcluster_control(x0 = NULL, y0 = NULL,
@@ -332,8 +333,8 @@ spatial_power <- function(win = spatstat.core::unit.square(),
                                              }
                                              
                                              # Combine random clusters of cases and controls into one marked ppp
-                                             z <- spatstat.core::superimpose(con, cas)
-                                             spatstat.core::marks(z) <- as.factor(spatstat.core::marks(z))
+                                             z <- spatstat.geom::superimpose(con, cas)
+                                             spatstat.geom::marks(z) <- as.factor(spatstat.geom::marks(z))
                                              
                                              # Calculate observed kernel density ratio
                                              obs_lrr <- sparr::risk(z, tolerate = TRUE, verbose = FALSE, ...)
@@ -354,14 +355,14 @@ spatial_power <- function(win = spatstat.core::unit.square(),
                                              if (p_correct != "none") {
                                                alpha_correct <- pval_correct(input = obs_lrr, type = p_correct, alpha = alpha)
                                                
-                                               #### Case and Control (lower and upper tail)
+                                               #### Case and Control (two-tailed test)
                                                lower_tail <- alpha_correct/2
                                                upper_tail <- 1 - lower_tail
-                                               pval_sig_cascon <- sapply(sim_pval, function(x) ifelse(x < lower_tail | x > upper_tail,
-                                                                                                      TRUE,
-                                                                                                      FALSE))
-                                               #### Case only (lower tail only)
-                                               pval_sig_cas <- sapply(sim_pval, function(x) ifelse(x < alpha_correct, TRUE, FALSE))
+                                               pval_sig_cascon <- obs_lrr$P < lower_tail | obs_lrr$P > upper_tail
+                                               pval_sig_cascon <- as.vector(as.numeric(t(pval_sig_cascon$v)))
+                                               #### Case only (one-tailed test, lower tail only)
+                                               pval_sig_cas <- obs_lrr$P < alpha_correct
+                                               pval_sig_cas <- as.vector(as.numeric(t(pval_sig_cas$v)))
                                              } else {
                                                alpha_correct <- alpha
                                                pval_sig_cascon <- "Uncorrected"

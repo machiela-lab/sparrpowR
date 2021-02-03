@@ -7,12 +7,18 @@
 spatial_plots(
   input,
   p_thresh = 0.8,
+  cascon = FALSE,
   n_sim = 1,
-  cols = c("#000000", "#cccccc", "#ffffff", "#ff0000", "#0000ff"),
+  cols = c("#000000", "#CCCCCC", "#FF0000", "#0000FF"),
   chars = c(1, 1),
   sizes = c(1, 1),
+  scale = 1,
   plot_pts = TRUE,
+  plot_title = TRUE,
   plot_text = FALSE,
+  plot_axes = FALSE,
+  plot_square = FALSE,
+  horizontal = TRUE,
   ...
 )
 }
@@ -21,19 +27,31 @@ spatial_plots(
 
 \item{p_thresh}{A numeric value between 0 and 1 (default = 0.8) for the power threshold.}
 
+\item{cascon}{Logical. If TRUE, displays the statistical power to detect case clusters and control clusters. If FALSE (the default), displays the statistical power to detect case clusters only.}
+
 \item{n_sim}{Integer. The number of simulated iterations to plot. The default is one (1).}
 
-\item{cols}{Character string of length five (5) specifying the colors for plotting: 1) sufficiently powered, midpoint, insufficiently powered, case locations, control locations. The default colors in hex are \code{c("#0000ff", "#00ff00", "#ff0000", "#a020f0", "#ffa500")} or \code{c("grey0", "grey80", "grey100", "red", "blue")}.}
+\item{cols}{Character string of length four (4) specifying the colors for plotting: 1) sufficiently powered, 2) insufficiently powered, 3) case locations, 4) control locations. The default colors in hex are \code{c("#000000", "#CCCCCC", "#FF0000", "#0000FF")} or \code{c("grey0", "grey80", "red", "blue")}.}
 
 \item{chars}{Vector of integers or character string of length two (2) for symbols of case and control locations. Default is \code{c(1,1)}.}
 
 \item{sizes}{Vector of integers of length two (2) for the size of the symbols for case and control locations. Default is \code{c(1,1)}.}
 
+\item{scale}{Integer. A graphical expansion factor (default is 1) for text (and point) size within plots. Intended for scaling plot features with plot resolution.}
+
 \item{plot_pts}{Logical. If TRUE (the default), the points from the first simulation iteration will be added to second plot. Not if FALSE.}
+
+\item{plot_title}{Logical. If TRUE (the default), a title will be included in the plot(s). Not if FALSE.}
 
 \item{plot_text}{Logical. If TRUE, the local statistical power will be printed at each grid cell. Not if FALSE (the default).}
 
-\item{...}{Arguments passed to \code{\link[spatstat]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.}
+\item{plot_axes}{Logical. If TRUE, the axes with labels will be included in the plot(s). Not if FALSE (the default).}
+
+\item{plot_square}{Logical. If TRUE, the plot will have margins with similar units. Not if FALSE (the default).}
+
+\item{horizontal}{Logical. If TRUE (the default), the color key will be displayed horizontally, below the plots. If FALSE, the color key will be displayed vertically, to the right of the plots.}
+
+\item{...}{Arguments passed to \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.}
 }
 \value{
 This function produces up to three plots: 1) example input, 2) local power, and 3) local power above a threshold. If the input is from the \code{\link{spatial_data}} function, this function will only display the first plot.
@@ -43,7 +61,21 @@ Create multiple plots of output from \code{\link{spatial_data}}, \code{\link{spa
 }
 \examples{
 \donttest{
-spatial_plots(input = sim_power)
+ # run spatial_power(), jitter_power(), or spatial_data()
+ sim_power <- spatial_power(x_case = c(0.25, 0.5, 0.75),
+                            y_case = c(0.75, 0.25, 0.75),
+                            samp_case = "MVN", 
+                            samp_control = "MVN",
+                            x_control = c(0.25, 0.5, 0.75),
+                            y_control = c(0.75, 0.25, 0.75),
+                            n_case = 100,
+                            n_control = c(100,500,300),
+                            s_case = c(0.05,0.01,0.05),
+                            s_control = 0.05,
+                            verbose = FALSE)
+               
+ # run spatial_plots()
+ spatial_plots(input = sim_power)
 }
 
 }
