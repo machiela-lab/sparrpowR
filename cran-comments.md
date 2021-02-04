@@ -46,17 +46,19 @@
 * Added zzz.R file
 * Added package.R file
 * Imports 'lifecycle' package to document deprecated argument `cascon` in `spatial_power()` and `jitter_power()` functions
+* Removed 'parallel' package from Imports for parallel processing in `spatial_power()` and `jitter_power()` functions
+* Removed 'tidyverse' package from Suggests 
 
 * Documentation for `pval_correct()` references a doi <https://doi.org/10.2307/2283989> that throws a NOTE in win-builder but no other environment
   
 ## Test environments
-* local OS X install, R 3.6.3
+* local OS X install, R 4.0.3
 * win-builder, (devel, release, oldrelease)
 * Rhub
-  * Oracle Solaris 10, x86, 32 bit, R-release
-  * Fedora Linux, R-devel, GCC
-  * Debian Linux, R-devel, GCC
   * Fedora Linux, R-devel, clang, gfortran
+  * Ubuntu Linux 16.04 LTS, R-release, GCC
+  * Windows Server 2008 R2 SP1, R-devel, 32/64 bit
+  * Oracle Solaris 10, x86, 32 bit, R-release
 
 ## R CMD check results
 0 errors | 0 warnings | 0 notes

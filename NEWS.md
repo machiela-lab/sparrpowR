@@ -47,4 +47,5 @@
 * Added zzz.R file
 * Added package.R file
 * Imports 'lifecycle' package to document deprecated argument `cascon` in `spatial_power()` and `jitter_power()` functions
-
+* Removed 'parallel' package from Imports for parallel processing in `spatial_power()` and `jitter_power()` functions
+* Removed 'tidyverse' package from Suggests 

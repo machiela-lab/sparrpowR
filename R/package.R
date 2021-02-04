@@ -26,7 +26,7 @@
 #' @aliases sparrpowR-package sparrpowR
 #' @docType package
 #' 
-#' @section Dependencies: The 'sparrpowR' package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.core}}, and \code{\link{raster}} for computing the statistical power and visualizing the output. Computation can be performed in parallel using \code{\link[doParallel]{doParallel}}, \code{\link[parallel]{parallel}}, and \code{\link[foreach]{foreach}}. Basic visualizations rely on the \code{\link{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
+#' @section Dependencies: The 'sparrpowR' package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.core}}, \code{\link{spatstat.geom}}, and \code{\link{raster}} for computing the statistical power and visualizing the output. Computation can be performed in parallel using \code{\link{doParallel}} and \code{\link[foreach]{foreach}}. Basic visualizations rely on the \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
 #' 
 #' @author Ian D. Buller\cr \emph{Occupational and Environmental Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland, USA.} \cr\cr
 #' Derek W. Brown\cr \emph{Integrative Tumor Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland, USA.}
@@ -42,7 +42,6 @@ NULL
 #' @importFrom graphics text par
 #' @importFrom grDevices colorRampPalette
 #' @importFrom lifecycle badge deprecate_warn deprecated is_present
-#' @importFrom parallel makeCluster stopCluster
 #' @importFrom raster raster values reclassify
 #' @importFrom sp coordinates gridded
 #' @importFrom sparr risk

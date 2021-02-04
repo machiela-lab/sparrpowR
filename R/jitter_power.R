@@ -53,7 +53,6 @@
 #' @importFrom doParallel registerDoParallel
 #' @importFrom foreach %do% %dopar% foreach
 #' @importFrom lifecycle badge deprecate_warn deprecated is_present
-#' @importFrom parallel makeCluster stopCluster
 #' @importFrom sparr risk
 #' @importFrom spatstat.core rpoispp runifpoint
 #' @importFrom spatstat.geom marks ppp superimpose
@@ -138,8 +137,7 @@ jitter_power <- function(obs_data,
   
   ## Set function used in foreach
   if (parallel == TRUE){
-    cl <- parallel::makeCluster(n_core)
-    doParallel::registerDoParallel(cl)
+    doParallel::registerDoParallel(cores = n_core)
     `%fun%` <- foreach::`%dopar%`
   } else { `%fun%` <- foreach::`%do%` }
   
@@ -147,7 +145,7 @@ jitter_power <- function(obs_data,
   out_par <- foreach::foreach(k = 1:sim_total, 
                               .combine = comb, 
                               .multicombine = TRUE, 
-                              .packages = c("sparr", "spatstat.core", "utils"),
+                              .packages = c("sparr", "spatstat.geom", "spatstat.core", "stats", "utils"),
                               .init = list(list(), list(), list(),
                                            list(), list(), list(),
                                            list(), list(), list(), 
@@ -241,11 +239,6 @@ jitter_power <- function(obs_data,
                         "pval_sig_cascon" = pval_sig_cascon,
                         "pval_sig_cas" = pval_sig_cas)
     return(par_results)
-  }
-  
-  # Stop clusters, if parallel
-  if (parallel == TRUE){
-    parallel::stopCluster(cl)
   }
   
   # Summarize iterative results

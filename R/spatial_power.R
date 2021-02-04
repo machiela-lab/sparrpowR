@@ -82,7 +82,6 @@
 #' @importFrom doParallel registerDoParallel
 #' @importFrom foreach %do% %dopar% foreach
 #' @importFrom lifecycle badge deprecate_warn deprecated is_present
-#' @importFrom parallel makeCluster stopCluster
 #' @importFrom sparr risk
 #' @importFrom spatstat.core rNeymanScott rpoispp runifdisc runifpoint
 #' @importFrom spatstat.geom as.solist disc marks ppp rsyst shift superimpose unit.square
@@ -298,8 +297,7 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
   
   ## Set function used in foreach
   if (parallel == TRUE) {
-    cl <- parallel::makeCluster(n_core)
-    doParallel::registerDoParallel(cl)
+    doParallel::registerDoParallel(cores = n_core)
     `%fun%` <- foreach::`%dopar%`
   } else { `%fun%` <- foreach::`%do%` }
   
@@ -307,7 +305,7 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
   out_par <- foreach::foreach(k = 1:sim_total, 
                               .combine = comb, 
                               .multicombine = TRUE, 
-                              .packages = c("sparr", "spatstat.core", "utils"),
+                              .packages = c("sparr", "spatstat.geom", "spatstat.core", "stats", "utils"),
                               .init = list(list(), list(), list(),
                                            list(), list(), list(),
                                            list(), list(), list(),
@@ -422,9 +420,6 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
                         "pval_sig_cas" = pval_sig_cas)
     return(par_results)
   }
-  
-  # Stop clusters, if parallel
-  if (parallel == TRUE) { parallel::stopCluster(cl) }
   
   # Summarize iterative results
   sim_rr <- out_par[[1]]

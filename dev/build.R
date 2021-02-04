@@ -130,3 +130,61 @@ f1 <- jitter_power(obs_data = unique(chorley),
                    verbose = FALSE)
 spatial_plots(f1)
 median(f1$alpha_correct)
+
+#### EXAMPLES
+
+t1 <- Sys.time()
+ttt <- spatial_power(x_case = c(0.25, 0.5, 0.75),
+                             y_case = c(0.75, 0.25, 0.75),
+                             samp_case = "MVN",
+                             samp_control = "MVN",
+                             x_control = c(0.25, 0.5, 0.75),
+                             y_control = c(0.75, 0.25, 0.75),
+                             n_case = 100,
+                             n_control = c(100,500,300),
+                             s_case = c(0.05,0.01,0.05),
+                             s_control = 0.05,
+                     sim_total = 1000,
+                             parallel = TRUE,
+                             verbose = FALSE)
+t2 <- Sys.time()
+t2-t1
+spatial_plots(ttt)
+
+t1 <- Sys.time()
+tttt <- spatial_power(x_case = c(0.25, 0.5, 0.75),
+                     y_case = c(0.75, 0.25, 0.75),
+                     samp_case = "MVN",
+                     samp_control = "MVN",
+                     x_control = c(0.25, 0.5, 0.75),
+                     y_control = c(0.75, 0.25, 0.75),
+                     n_case = 100,
+                     n_control = c(100,500,300),
+                     s_case = c(0.05,0.01,0.05),
+                     s_control = 0.05,
+                     sim_total = 1000,
+                     parallel = FALSE,
+                     verbose = TRUE)
+t2 <- Sys.time()
+t2-t1
+spatial_plots(tttt)
+
+data(chorley)
+t1 <- Sys.time()
+f1 <- jitter_power(obs_data = unique(chorley),
+                  samp_control = "CSR",
+                  sim_total = 1000,
+                  parallel = TRUE,
+                  verbose = FALSE)
+t2 <- Sys.time()
+t2-t1
+spatial_plots(f1)
+
+t1 <- Sys.time()
+f1 <- jitter_power(obs_data = unique(chorley),
+                   samp_control = "CSR",
+                   sim_total = 1000,
+                   verbose = TRUE)
+t2 <- Sys.time()
+t2-t1
+spatial_plots(f1)
