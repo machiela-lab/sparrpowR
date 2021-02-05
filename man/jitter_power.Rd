@@ -45,7 +45,7 @@ jitter_power(
 
 \item{lower_tail}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} \code{lower_tail} is no longer supported; this function uses \code{alpha} to set the critical p-value.}
 
-\item{upper_tail}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} \code{lupper_tail} is no longer supported; this function uses \code{alpha} to set the critical p-value.}
+\item{upper_tail}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} \code{upper_tail} is no longer supported; this function uses \code{alpha} to set the critical p-value.}
 }
 \value{
 An object of class "list". This is a named list with the following components:
@@ -87,8 +87,8 @@ The function computes a one-sided hypothesis test for case clustering (\code{alp
 The function has functionality for a correction for multiple testing. If \code{p_correct = "FDR"}, calculates a False Discovery Rate by Benjamini and Hochberg. If \code{p_correct = "Sidak"}, calculates a Sidak correction. If \code{p_correct = "Bonferroni"}, calculates a Bonferroni correction. If \code{p_correct = "none"} (the default), then the function does not account for multiple testing and uses the uncorrected \code{alpha} level. See the internal \code{pval_correct} function documentation for more details.
 }
 \examples{
-# Using the \code{\link[spatstat.data]{chorley}} dataset
-data(chorley)
+# Using the 'chorley' data set from 'spatstat.data' package
+ data(chorley)
  f1 <- jitter_power(obs_data = unique(chorley),
                     samp_control = "CSR",
                     verbose = FALSE)

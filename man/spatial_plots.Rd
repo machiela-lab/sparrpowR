@@ -54,7 +54,7 @@ spatial_plots(
 \item{...}{Arguments passed to \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.}
 }
 \value{
-This function produces up to three plots: 1) example input, 2) local power, and 3) local power above a threshold. If the input is from the \code{\link{spatial_data}} function, this function will only display the first plot.
+This function produces up to three plots: 1) example input, 2) local power, and 3) local power above a threshold if the input is from the \code{\link{spatial_power}} r \code{\link{jitter_power}} functions. If the input is from the \code{\link{spatial_data}} function, this function will only display the first plot.
 }
 \description{
 Create multiple plots of output from \code{\link{spatial_data}}, \code{\link{spatial_power}} and \code{\link{jitter_power}} functions.

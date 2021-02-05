@@ -14,7 +14,7 @@
 #' @param ... Arguments passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.
 #' @param cascon `r lifecycle::badge("deprecated")` \code{cascon} is no longer supported and this function will output power for case-only and case/control clustering. This argument has been moved to \code{spatial_plots} function.
 #' @param lower_tail `r lifecycle::badge("deprecated")` \code{lower_tail} is no longer supported; this function uses \code{alpha} to set the critical p-value. 
-#' @param upper_tail `r lifecycle::badge("deprecated")` \code{lupper_tail} is no longer supported; this function uses \code{alpha} to set the critical p-value. 
+#' @param upper_tail `r lifecycle::badge("deprecated")` \code{upper_tail} is no longer supported; this function uses \code{alpha} to set the critical p-value. 
 #' 
 #' @details This function computes the statistical power of the spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) for previously collected studies with known case and control locations. 
 #' 
@@ -53,7 +53,7 @@
 #' @importFrom doFuture registerDoFuture
 #' @importFrom doRNG %dorng%
 #' @importFrom foreach %do% %dopar% foreach
-#' @importFrom future multiprocess plan
+#' @importFrom future multisession plan
 #' @importFrom lifecycle badge deprecate_warn deprecated is_present
 #' @importFrom sparr risk
 #' @importFrom spatstat.core rpoispp runifpoint
@@ -64,8 +64,8 @@
 #' @seealso \code{\link[sparr]{risk}} for additional arguments for bandwidth selection, edge correction, and resolution.
 #'
 #' @examples
-#' # Using the \code{\link[spatstat.data]{chorley}} dataset
-#' data(chorley)
+#' # Using the 'chorley' data set from 'spatstat.data' package
+#'  data(chorley)
 #'  f1 <- jitter_power(obs_data = unique(chorley),
 #'                     samp_control = "CSR",
 #'                     verbose = FALSE)
@@ -133,7 +133,7 @@ jitter_power <- function(obs_data,
   ## Set function used in foreach
   if (parallel == TRUE){
     doFuture::registerDoFuture()
-    future::plan(multiprocess, workers = n_core)
+    future::plan(multisession, workers = n_core)
     `%fun%` <- doRNG::`%dorng%`
   } else { `%fun%` <- foreach::`%do%` }
   

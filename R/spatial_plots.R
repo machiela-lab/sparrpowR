@@ -18,7 +18,7 @@
 #' @param horizontal Logical. If TRUE (the default), the color key will be displayed horizontally, below the plots. If FALSE, the color key will be displayed vertically, to the right of the plots.
 #' @param ... Arguments passed to \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} for additional graphical features.
 #'
-#' @return This function produces up to three plots: 1) example input, 2) local power, and 3) local power above a threshold. If the input is from the \code{\link{spatial_data}} function, this function will only display the first plot. 
+#' @return This function produces up to three plots: 1) example input, 2) local power, and 3) local power above a threshold if the input is from the \code{\link{spatial_power}} r \code{\link{jitter_power}} functions. If the input is from the \code{\link{spatial_data}} function, this function will only display the first plot. 
 #' 
 #' @importFrom fields image.plot
 #' @importFrom graphics text par
