@@ -130,13 +130,13 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
   # Checks
   ## deprecate
   if (lifecycle::is_present(cascon)) {
-    lifecycle::deprecate_warn("0.1.4", "sparrpowR::spatial_power(cascon)")
+    lifecycle::deprecate_warn("0.2.0", "sparrpowR::spatial_power(cascon = )")
   }
   if (lifecycle::is_present(lower_tail)) {
-    lifecycle::deprecate_warn("0.1.4", "sparrpowR::spatial_power(lower_tail)")
+    lifecycle::deprecate_warn("0.2.0", "sparrpowR::spatial_power(lower_tail = )")
   }
   if (lifecycle::is_present(upper_tail)) {
-    lifecycle::deprecate_warn("0.1.4", "sparrpowR::spatial_power(upper_tail)")
+    lifecycle::deprecate_warn("0.2.0", "sparrpowR::spatial_power(upper_tail = )")
   }
   
   # Inputs

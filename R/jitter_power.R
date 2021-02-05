@@ -87,13 +87,13 @@ jitter_power <- function(obs_data,
   # Checks
   ## deprecate
   if (lifecycle::is_present(cascon)) {
-    lifecycle::deprecate_warn("0.1.4", "sparrpowR::jitter_power(cascon)")
+    lifecycle::deprecate_warn("0.2.0", "sparrpowR::jitter_power(cascon = )")
   }
   if (lifecycle::is_present(lower_tail)) {
-    lifecycle::deprecate_warn("0.1.4", "sparrpowR::jitter_power(lower_tail)")
+    lifecycle::deprecate_warn("0.2.0", "sparrpowR::jitter_power(lower_tail = )")
   }
   if (lifecycle::is_present(upper_tail)) {
-    lifecycle::deprecate_warn("0.1.4", "sparrpowR::jitter_power(upper_tail)")
+    lifecycle::deprecate_warn("0.2.0", "sparrpowR::jitter_power(upper_tail = )")
   }
   
   # Input
