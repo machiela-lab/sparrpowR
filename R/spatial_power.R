@@ -79,14 +79,16 @@
 #' }
 #' 
 
-#' @importFrom doParallel registerDoParallel
+#' @importFrom doFuture registerDoFuture
+#' @importFrom doRNG %dorng%
 #' @importFrom foreach %do% %dopar% foreach
+#' @importFrom future multiprocess plan
+#' @importFrom iterators icount
 #' @importFrom lifecycle badge deprecate_warn deprecated is_present
 #' @importFrom sparr risk
 #' @importFrom spatstat.core rNeymanScott rpoispp runifdisc runifpoint
 #' @importFrom spatstat.geom as.solist disc marks ppp rsyst shift superimpose unit.square
 #' @importFrom stats rnorm sd
-#' @importFrom utils setTxtProgressBar txtProgressBar
 #' @export
 #'
 #' @examples
@@ -289,23 +291,18 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
   pppCase <- spatstat.geom::as.solist(pppCase)
   cas <- spatstat.geom::superimpose(pppCase)
   
-  # Progress bar
-  if (verbose == TRUE & parallel == FALSE) {
-    message("Generating Data, Estimating Relative Risk, Calculating Power")
-    pb <- utils::txtProgressBar(min = 0, max = sim_total, style = 3)
-   }
-  
   ## Set function used in foreach
   if (parallel == TRUE) {
-    doParallel::registerDoParallel(cores = n_core)
-    `%fun%` <- foreach::`%dopar%`
+    doFuture::registerDoFuture()
+    future::plan(multiprocess, workers = n_core)
+    `%fun%` <- doRNG::`%dorng%`
   } else { `%fun%` <- foreach::`%do%` }
   
   # Iteratively calculate the log relative risk and asymptotic p-value surfaces
-  out_par <- foreach::foreach(k = 1:sim_total, 
+  out_par <- foreach::foreach(k = 1:sim_total,
+                              kk = iterators::icount(),
                               .combine = comb, 
                               .multicombine = TRUE, 
-                              .packages = c("sparr", "spatstat.geom", "spatstat.core", "stats", "utils"),
                               .init = list(list(), list(), list(),
                                            list(), list(), list(),
                                            list(), list(), list(),
@@ -313,11 +310,8 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
                                            list(), list())) %fun% {
     
     # Progress bar
-    if (verbose == TRUE & parallel == FALSE) {
-      utils::setTxtProgressBar(pb, k)
-      if (k == sim_total) cat("\n")
-    }
-    
+    if (verbose == TRUE) { progBar(kk, sim_total) }
+                                             
     # Create empty list                           
     pppControl <- vector('list', length(x_control))
     

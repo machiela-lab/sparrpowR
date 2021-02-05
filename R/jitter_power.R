@@ -50,14 +50,15 @@
 #' \item{\code{alpha}}{Vector of length \code{sim_total} of the (un)corrected critical p-values.}
 #' }
 #' 
-#' @importFrom doParallel registerDoParallel
+#' @importFrom doFuture registerDoFuture
+#' @importFrom doRNG %dorng%
 #' @importFrom foreach %do% %dopar% foreach
+#' @importFrom future multiprocess plan
 #' @importFrom lifecycle badge deprecate_warn deprecated is_present
 #' @importFrom sparr risk
 #' @importFrom spatstat.core rpoispp runifpoint
 #' @importFrom spatstat.geom marks ppp superimpose
 #' @importFrom stats sd
-#' @importFrom utils setTxtProgressBar txtProgressBar
 #' @export
 #' 
 #' @seealso \code{\link[sparr]{risk}} for additional arguments for bandwidth selection, edge correction, and resolution.
@@ -129,23 +130,18 @@ jitter_power <- function(obs_data,
   cas <- split(obs_data)[[1]]
   spatstat.geom::marks(cas) <- "case"
   
-  # progress bar
-  if (verbose == TRUE & parallel == FALSE){
-    message("Generating Data, Estimating Relative Risk, Calculating Power")
-    pb <- utils::txtProgressBar(min = 0, max = sim_total, style = 3)
-  }
-  
   ## Set function used in foreach
   if (parallel == TRUE){
-    doParallel::registerDoParallel(cores = n_core)
-    `%fun%` <- foreach::`%dopar%`
+    doFuture::registerDoFuture()
+    future::plan(multiprocess, workers = n_core)
+    `%fun%` <- doRNG::`%dorng%`
   } else { `%fun%` <- foreach::`%do%` }
   
   # Iteratively calculate the log relative risk and asymptotic p-value surfaces
-  out_par <- foreach::foreach(k = 1:sim_total, 
+  out_par <- foreach::foreach(k = 1:sim_total,
+                              kk = iterators::icount(),
                               .combine = comb, 
-                              .multicombine = TRUE, 
-                              .packages = c("sparr", "spatstat.geom", "spatstat.core", "stats", "utils"),
+                              .multicombine = TRUE,
                               .init = list(list(), list(), list(),
                                            list(), list(), list(),
                                            list(), list(), list(), 
@@ -153,10 +149,7 @@ jitter_power <- function(obs_data,
                                            list(), list())) %fun% {
     
     # Progress bar
-    if (verbose == TRUE & parallel == FALSE){
-      utils::setTxtProgressBar(pb, k)
-      if (k == sim_total) cat("\n")
-    }
+    if (verbose == TRUE) { progBar(kk, sim_total) }
     
     # Create random cluster of controls
     con <- rcluster_control(n = split(obs_data)[[2]]$n,

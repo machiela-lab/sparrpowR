@@ -60,5 +60,13 @@ test_that("jitter_power works", {
                             p_correct = "FDR")
   ) 
   
+  expect_named(jitter_power(obs_data = unique(chorley),
+                            sim_total = 2,
+                            samp_control = "MVN",
+                            s_control = 0.01,
+                            parallel = TRUE,
+                            n_core = 2)
+  )
+  
 }
 )  
