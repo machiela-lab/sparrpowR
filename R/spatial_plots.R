@@ -4,9 +4,9 @@
 #' 
 #' @param input An object of class "ppplist" from the \code{\link{spatial_data}} function or an object of class "list" from the \code{\link{spatial_power}} or \code{\link{jitter_power}} functions.
 #' @param p_thresh A numeric value between 0 and 1 (default = 0.8) for the power threshold.
-#' @param cascon Logical. If TRUE, displays the statistical power to detect case clusters and control clusters. If FALSE (the default), displays the statistical power to detect case clusters only. 
+#' @param cascon Logical. If TRUE, displays the statistical power to detect case clusters and control clusters (two-tailed hypothesis). If FALSE (the default), displays the statistical power to detect case clusters only (one-tailed, lower-tail hypothesis). 
 #' @param n_sim Integer. The number of simulated iterations to plot. The default is one (1).
-#' @param cols Character string of length four (4) specifying the colors for plotting: 1) sufficiently powered, 2) insufficiently powered, 3) case locations, 4) control locations. The default colors in hex are \code{c("#000000", "#CCCCCC", "#FF0000", "#0000FF")} or \code{c("grey0", "grey80", "red", "blue")}.
+#' @param cols Character string of length four (4) specifying the colors for plotting: 1) insufficiently powered, 2) sufficiently powered, 3) case locations, 4) control locations. The default colors in hex are \code{c("#000000", "#CCCCCC", "#FF0000", "#0000FF")} or \code{c("grey0", "grey80", "red", "blue")}.
 #' @param chars Vector of integers or character string of length two (2) for symbols of case and control locations. Default is \code{c(1,1)}. 
 #' @param sizes Vector of integers of length two (2) for the size of the symbols for case and control locations. Default is \code{c(1,1)}. 
 #' @param scale Integer. A graphical expansion factor (default is 1) for text (and point) size within plots. Intended for scaling plot features with plot resolution.

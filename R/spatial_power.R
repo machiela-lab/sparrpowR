@@ -195,10 +195,10 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
   match.arg(p_correct, choices = c("none", "FDR", "Sidak", "Bonferroni"))
   
   # marked uniform disc ppp with user-specified radius for cases
-  rcluster_case <- function(x0, y0, rad, n, scalar, lamb, wind, types = "case", ...) {
+  rcluster_case <- function(x0, y0, rad, n, scalar, lamb, win, types = "case", ...) {
     
     if (samp_case == "uniform") {
-      x <- spatstat.core::runifdisc(n = n, radius = rad, centre = c(x0, y0), win = wind, ...)
+      x <- spatstat.core::runifdisc(n = n, radius = rad, centre = c(x0, y0), win = win, ...)
     }  
     
     if (samp_case == "MVN") {
@@ -206,7 +206,7 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
       y1 <- rep(y0, n)
       x2 <- x1 + stats::rnorm(n, 0, scalar) 
       y2 <- y1 + stats::rnorm(n, 0, scalar) 
-      x <- spatstat.geom::ppp(x2, y2, window = wind)
+      x <- spatstat.geom::ppp(x2, y2, window = win)
      }  
     
     if (samp_case == "CSR") {
@@ -230,13 +230,13 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
    }
   
   # marked uniform ppp for controls
-  rcluster_control <- function(x0, y0, scalar, n, lamb, ex, nclust, rad, types = "control", wind, ...) {
+  rcluster_control <- function(x0, y0, scalar, n, lamb, ex, nclust, rad, types = "control", win, ...) {
     if (samp_control == "uniform") { 
-      x <- spatstat.core::runifpoint(n, win = wind, ...) 
+      x <- spatstat.core::runifpoint(n, win = win, ...) 
      }
     
     if (samp_control == "systematic") {
-      x <- spatstat.geom::rsyst(nx = sqrt(n), win = wind, ...)
+      x <- spatstat.geom::rsyst(nx = sqrt(n), win = win, ...)
      }
     
     if (samp_control == "MVN") {
@@ -244,19 +244,19 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
       y1 <- rep(y0, n)
       x2 <- x1 + stats::rnorm(n, 0, scalar) 
       y2 <- y1 + stats::rnorm(n, 0, scalar) 
-      x <- spatstat.geom::ppp(x2, y2, window = wind)
+      x <- spatstat.geom::ppp(x2, y2, window = win)
      }  
     
     if (samp_control == "CSR") {
-      l <- n / (diff(wind$xrange) * diff(wind$yrange))
-      x <- spatstat.core::rpoispp(lambda = l, win = wind, ...)
+      l <- n / (diff(win$xrange) * diff(win$yrange))
+      x <- spatstat.core::rpoispp(lambda = l, win = win, ...)
      }
     
     if (samp_control == "IPP") {
       if (class(lamb) != "function") {
         stop("The argument 'l_control' should be an intensity function")
       }
-      x <- spatstat.core::rpoispp(lambda = lamb, win = wind, ...)
+      x <- spatstat.core::rpoispp(lambda = lamb, win = win, ...)
     }
     
     if (samp_control == "clustered") {
@@ -269,7 +269,7 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
                                        rcluster = control_clustering, 
                                        n = nclust,
                                        radius = rad,
-                                       win = wind,
+                                       win = win,
                                        ...)
      }
     spatstat.geom::marks(x) <- types
@@ -285,7 +285,7 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
       x1 <- rcluster_case(x0 = x_case[i], y0 = y_case[i],
                           rad = r_case[i], n = n_case[i],
                           scalar = s_case[i], lamb = l_case[[i]],
-                          wind = win, ...))
+                          win = win, ...))
     pppCase[[i]] <- x1
   }
   pppCase <- spatstat.geom::as.solist(pppCase)
@@ -325,7 +325,7 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
                                  n = n_control[i],
                                  scalar = s_control[i],
                                  lamb =NULL,
-                                 wind = win, ...))
+                                 win = win, ...))
         pppControl[[i]] <- y1
        }
       pppControl <- spatstat.geom::as.solist(pppControl)
@@ -339,7 +339,7 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
                                 ex = e_control,
                                 lamb = l_control,
                                 scalar = NULL,
-                                wind = win,
+                                win = win,
                                 ...))
       }
     

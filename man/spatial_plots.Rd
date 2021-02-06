@@ -27,11 +27,11 @@ spatial_plots(
 
 \item{p_thresh}{A numeric value between 0 and 1 (default = 0.8) for the power threshold.}
 
-\item{cascon}{Logical. If TRUE, displays the statistical power to detect case clusters and control clusters. If FALSE (the default), displays the statistical power to detect case clusters only.}
+\item{cascon}{Logical. If TRUE, displays the statistical power to detect case clusters and control clusters (two-tailed hypothesis). If FALSE (the default), displays the statistical power to detect case clusters only (one-tailed, lower-tail hypothesis).}
 
 \item{n_sim}{Integer. The number of simulated iterations to plot. The default is one (1).}
 
-\item{cols}{Character string of length four (4) specifying the colors for plotting: 1) sufficiently powered, 2) insufficiently powered, 3) case locations, 4) control locations. The default colors in hex are \code{c("#000000", "#CCCCCC", "#FF0000", "#0000FF")} or \code{c("grey0", "grey80", "red", "blue")}.}
+\item{cols}{Character string of length four (4) specifying the colors for plotting: 1) insufficiently powered, 2) sufficiently powered, 3) case locations, 4) control locations. The default colors in hex are \code{c("#000000", "#CCCCCC", "#FF0000", "#0000FF")} or \code{c("grey0", "grey80", "red", "blue")}.}
 
 \item{chars}{Vector of integers or character string of length two (2) for symbols of case and control locations. Default is \code{c(1,1)}.}
 
