@@ -2,7 +2,7 @@
 
 * Actions taken since previous submission:
 * Updates to dependencies
-  * Updated `spatstat` package to new subsetted packages based on feedback from the Spatstat Team (Adrian Baddeley and Ege Rubak). `spatstat.geom` and `spatstat.core` packages replace `spatstat` package in Depends
+  * Updated `spatstat` package to new subsetted packages based on feedback from the Spatstat Team (Adrian Baddeley and Ege Rubak). Now `spatstat.geom`, `spatstat.core`, `spatstat.linnet`, and `spatstat (>= 2.0-0)` are in Depends
   * Imports `lifecycle` package to document deprecated argument `cascon` in `spatial_power()` and `jitter_power()` functions
   * Replaced `parallel` and `doParallel` packages in Imports with `doFuture`, `doRNG`, and `future` packages to allow for parallel processing in `spatial_power()` and `jitter_power()` functions to work across all CRAN environments
   * Removed `tidyverse` package from Suggests

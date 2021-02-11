@@ -1,7 +1,7 @@
 Package: sparrpowR
 Title: Power Analysis to Detect Spatial Relative Risk Clusters
 Version: 0.2.0
-Date: 2021-02-06
+Date: 2021-02-11
 Authors@R:
     c(person(given = "Ian D.",
              family = "Buller",
@@ -40,7 +40,9 @@ RoxygenNote: 7.1.1
 Depends: 
     R (>= 3.5.0),
     spatstat.geom,
-    spatstat.core
+    spatstat.core,
+    spatstat.linnet,
+    spatstat (>= 2.0-0)
 Imports: 
     doFuture,
     doRNG,

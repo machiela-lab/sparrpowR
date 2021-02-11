@@ -48,7 +48,7 @@ jitter_power(
 \item{upper_tail}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} \code{upper_tail} is no longer supported; this function uses \code{alpha} to set the critical p-value.}
 }
 \value{
-An object of class "list". This is a named list with the follog components:
+An object of class "list". This is a named list with the following components:
 
 \describe{
 \item{\code{sim}}{An object of class 'rrs' for the first iteration of simulated data.}
