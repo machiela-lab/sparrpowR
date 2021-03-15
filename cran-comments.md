@@ -12,7 +12,7 @@
 * Changes to `spatial_data()`
   * Used `as.solist()` to specify appropriate class to lists
 * Changes to `spatial_power()`
-  * Added `p_correct` arugment to apply a multiple testing correction
+  * Added `p_correct` argument to apply a multiple testing correction
   * Fixed typos in documentation
   * Deprecated `cascon` argument (moved to `spatial_plots()` function)
   * Estimates case-only power (lower tail) and case/control (lower and upper tail) and captures both outputs. Case-only is now a one-tailed hypothesis test by default. The arguments `lower_tail` and `upper_tail` have been replaced with argument `alpha`
@@ -21,9 +21,9 @@
   * Added `cascon` argument to toggle the display of case-only power (lower tail) or case/control (lower and upper tail) output
   * Added `plot_title` argument to toggle the display of titles in plots. Changed the default title names.
   * Removed main panel title in plots
-  * Fixed default colors and removed mislabled `midpoint` color
+  * Fixed default colors and removed mislabeled `midpoint` color
   * Removed annotation from `plot.ppp()` in plot #3 and plot #2 (if points are not plotted)
-  * Added `scale` arguement to scale text for higher resolution plots
+  * Added `scale` argument to scale text for higher resolution plots
   * Added `horizontal` argument to toggle the display of the color key to be on the right (vertical) or bottom (horizontal) of plots
   * Added `plot_axes` argument to toggle the display of axes in plots
   * Added `plot_square` argument to toggle the margins of plots
@@ -58,7 +58,7 @@
 * Documentation for `pval_correct()` references a doi <https://doi.org/10.2307/2283989> that throws a NOTE in win-builder but no other environment
   
 ## Test environments
-* local OS X install, R 4.0.3
+* local OS X install, R 4.0.4
 * win-builder, (devel, release, oldrelease)
 * Rhub
   * Fedora Linux, R-devel, clang, gfortran
