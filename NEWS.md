@@ -1,5 +1,8 @@
 # sparrpowR (development version)
 
+# sparrpowR 0.2.1
+* Updated vignette with appropriate hyperlinks
+
 # sparrpowR 0.2.0
 * Updates to dependencies
   * Updated `spatstat` package to new subsetted packages based on feedback from the Spatstat Team (Adrian Baddeley and Ege Rubak). `spatstat.geom` and `spatstat.core` packages replace `spatstat` package in Depends
