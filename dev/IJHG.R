@@ -4,16 +4,18 @@
 #
 # Created by: Ian Buller, Ph.D., M.A. (GitHub: @idblr)
 # Created on: January 09, 2021
+# Updated on: March 22, 2021
 #
 # Co-author: Derek Brown, Ph.D., M.S. (GitHub: @derekbrown12)
 #
 # Notes:
-# A) Includes code for all scenarios and figures in manuscript
-# B) Must use your own census key to generate Figure 1A
+# A) Code runs on sparrpowR version 0.2.1 
+# B) Includes code for all scenarios and figures in manuscript: https://ij-healthgeographics.biomedcentral.com/articles/10.1186/s12942-021-00267-z#article-info
+# C) Must use your own census key to generate Figure 1A
 # ----------------------------------------------------------- #
 
 # Packages
-loadedPackages <- c("broom", "cowplot", "ggmap", "ggplot2", "maptools", "parallel", "raster", "rgeos", "sf", "sp", "sparrpowR", "tibble", "tidycensus")
+loadedPackages <- c("broom", "cowplot", "ggmap", "ggplot2", "maptools", "parallel", "raster", "rgeos", "sf", "sp", "sparrpowR", "tibble", "tidycensus", "doRNG", "future", "doFuture")
 invisible(lapply(loadedPackages, require, character.only = TRUE))
 
 # Setting
@@ -136,7 +138,7 @@ sim_power2 <- sparrpowR::spatial_power(x_case = sf::st_coordinates(utm15)[1], # 
                                        samp_control = "MVN", # sampler for controls
                                        s_case = 2500/3, # standard deviation of case cluster
                                        s_control = 5000/3, # standard deviation of control cluster
-                                       lower_tail = 0.025, upper_tail = 0.975, # two-tailed alpha (defaults)
+                                       alpha = 0.025, # One-sided alpha
                                        sim_total = 10000, # number of iterations
                                        parallel = TRUE,
                                        n_core = (parallel::detectCores() - 1),
@@ -156,7 +158,7 @@ points(sf::st_coordinates(utm15), col = 1, pch = 13, cex = 3, lwd = 2)
 
 ### Power Calculation 
 pvalprop <- tibble::tibble(x = sim_power2$rx, y = sim_power2$ry,
-                           z = sim_power2$pval_prop) # extract proportion significant
+                           z = sim_power2$pval_prop_cas) # extract proportion significant
 lrr_narm <- na.omit(pvalprop) # remove NAs
 sp::coordinates(lrr_narm) <- ~ x + y # coordinates
 sp::gridded(lrr_narm) <- TRUE # gridded
@@ -214,8 +216,7 @@ sim_power3 <- sparrpowR::spatial_power(x_case = sf::st_coordinates(utm15)[1], # 
                                        samp_control = "MVN", # sampler for controls
                                        s_case = 2500/3, # standard deviation of case cluster
                                        s_control = 5000/3, # standard deviation of control cluster
-                                       cascon = FALSE, # power for case cluster(s) only
-                                       lower_tail = 0.025, upper_tail = 0.975, # two-tailed alpha (defaults)
+                                       alpha = 0.025, # One-sided alpha
                                        sim_total = 10000, # number of iterations
                                        parallel = TRUE,
                                        n_core = (parallel::detectCores() - 1),
@@ -235,7 +236,7 @@ points(sf::st_coordinates(utm15), col = 1, pch = 13, cex = 3, lwd = 2)
 
 ## Power Calculation 
 pvalprop <- tibble::tibble(x = sim_power3$rx, y = sim_power3$ry,
-                           z = sim_power3$pval_prop) # extract proportion significant
+                           z = sim_power3$pval_prop_cas) # extract proportion significant
 lrr_narm <- na.omit(pvalprop) # remove NAs
 sp::coordinates(lrr_narm) <- ~ x + y # coordinates
 sp::gridded(lrr_narm) <- TRUE # gridded
@@ -293,15 +294,14 @@ sim_powerSA <- sparrpowR::spatial_power(x_case = sf::st_coordinates(utm15)[1], #
                                         samp_control = "MVN", # sampler for controls
                                         s_case = 2500/3, # standard deviation of case cluster
                                         s_control = 5000/3, # standard deviation of control cluster
-                                        cascon = FALSE, # power for case cluster(s) only
-                                        lower_tail = 0.025, upper_tail = 0.975, # two-tailed alpha (defaults)
+                                        alpha = 0.025, # One-sided alpha
                                         sim_total = 10000, # number of iterations
                                         parallel = TRUE,
                                         n_core = (parallel::detectCores() - 1),
                                         win = ow) # study area
 ## Plotting
 pvalprop <- tibble::tibble(x = sim_powerSA$rx, y = sim_powerSA$ry,
-                           z = sim_powerSA$pval_prop) # extract proportion significant
+                           z = sim_powerSA$pval_prop_cas) # extract proportion significant
 lrr_narm <- na.omit(pvalprop) # remove NAs
 sp::coordinates(lrr_narm) <- ~ x + y # coordinates
 sp::gridded(lrr_narm) <- TRUE # gridded
@@ -359,15 +359,14 @@ sim_powerSB <- sparrpowR::spatial_power(x_case = sf::st_coordinates(utm15)[1], #
                                         samp_control = "MVN", # sampler for controls
                                         s_case = 2500/3, # standard deviation of case cluster
                                         s_control = 5000/3, # standard deviation of control cluster
-                                        cascon = FALSE, # power for case cluster(s) only
-                                        lower_tail = 0.025, upper_tail = 0.975, # two-tailed alpha (defaults)
+                                        alpha = 0.025, # One-sided alpha
                                         sim_total = 10000, # number of iterations
                                         parallel = TRUE,
                                         n_core = (parallel::detectCores() - 1),
                                         win = ow) # study area
 ## Plotting
 pvalprop <- tibble::tibble(x = sim_powerSB$rx, y = sim_powerSB$ry,
-                           z = sim_powerSB$pval_prop) # extract proportion significant
+                           z = sim_powerSB$pval_prop_cas) # extract proportion significant
 lrr_narm <- na.omit(pvalprop) # remove NAs
 sp::coordinates(lrr_narm) <- ~ x + y # coordinates
 sp::gridded(lrr_narm) <- TRUE # gridded
@@ -425,15 +424,14 @@ sim_powerSC <- sparrpowR::spatial_power(x_case = sf::st_coordinates(utm15)[1], #
                                         samp_control = "MVN", # sampler for controls
                                         s_case = 2500/3, # standard deviation of case cluster
                                         s_control = 5000/3, # standard deviation of control cluster
-                                        cascon = FALSE, # power for case cluster(s) only
-                                        lower_tail = 0.025, upper_tail = 0.975, # two-tailed alpha (defaults)
+                                        alpha = 0.025, # One-sided alpha
                                         sim_total = 10000, # number of iterations
                                         parallel = TRUE,
                                         n_core = (parallel::detectCores() - 1),
                                         win = ow) # study area
 ## Plotting
 pvalprop <- tibble::tibble(x = sim_powerSC$rx, y = sim_powerSC$ry,
-                           z = sim_powerSC$pval_prop) # extract proportion significant
+                           z = sim_powerSC$pval_prop_cas) # extract proportion significant
 lrr_narm <- na.omit(pvalprop) # remove NAs
 sp::coordinates(lrr_narm) <- ~ x + y # coordinates
 sp::gridded(lrr_narm) <- TRUE # gridded
@@ -491,15 +489,14 @@ sim_powerSD <- sparrpowR::spatial_power(x_case = sf::st_coordinates(utm15)[1], #
                                         samp_control = "MVN", # sampler for controls
                                         s_case = 2500/3, # standard deviation of case cluster
                                         s_control = 5000/3, # standard deviation of control cluster
-                                        cascon = FALSE, # power for case cluster(s) only
-                                        lower_tail = 0.025, upper_tail = 0.975, # two-tailed alpha (defaults)
+                                        alpha = 0.025, # One-sided alpha
                                         sim_total = 10000, # number of iterations
                                         parallel = TRUE,
                                         n_core = (parallel::detectCores() - 1),
                                         win = ow) # study area
 ## Plotting
 pvalprop <- tibble::tibble(x = sim_powerSD$rx, y = sim_powerSD$ry,
-                           z = sim_powerSD$pval_prop) # extract proportion significant
+                           z = sim_powerSD$pval_prop_cas) # extract proportion significant
 lrr_narm <- na.omit(pvalprop) # remove NAs
 sp::coordinates(lrr_narm) <- ~ x + y # coordinates
 sp::gridded(lrr_narm) <- TRUE # gridded
@@ -557,15 +554,14 @@ sim_powerSE <- sparrpowR::spatial_power(x_case = sf::st_coordinates(utm15)[1], #
                                         samp_control = "MVN", # sampler for controls
                                         s_case = 2500/3, # standard deviation of case cluster
                                         s_control = 5000/3, # standard deviation of control cluster
-                                        cascon = FALSE, # power for case cluster(s) only
-                                        lower_tail = 0.025, upper_tail = 0.975, # two-tailed alpha (defaults)
+                                        alpha = 0.025, # One-sided alpha
                                         sim_total = 10000, # number of iterations
                                         parallel = TRUE,
                                         n_core = (parallel::detectCores() - 1),
                                         win = ow) # study area
 ## Plotting
 pvalprop <- tibble::tibble(x = sim_powerSE$rx, y = sim_powerSE$ry,
-                           z = sim_powerSE$pval_prop) # extract proportion significant
+                           z = sim_powerSE$pval_prop_cas) # extract proportion significant
 lrr_narm <- na.omit(pvalprop) # remove NAs
 sp::coordinates(lrr_narm) <- ~ x + y # coordinates
 sp::gridded(lrr_narm) <- TRUE # gridded
@@ -623,8 +619,7 @@ sim_powerSF <- sparrpowR::spatial_power(x_case = sf::st_coordinates(utm15)[1], #
                                         samp_control = "MVN", # sampler for controls
                                         s_case = 2500/3, # standard deviation of case cluster
                                         s_control = 5000/3, # standard deviation of control cluster
-                                        cascon = FALSE, # power for case cluster(s) only
-                                        lower_tail = 0.025, upper_tail = 0.975, # two-tailed alpha (defaults)
+                                        alpha = 0.025, # One-sided alpha
                                         sim_total = 10000, # number of iterations
                                         parallel = TRUE,
                                         n_core = (parallel::detectCores() - 1),
@@ -632,7 +627,7 @@ sim_powerSF <- sparrpowR::spatial_power(x_case = sf::st_coordinates(utm15)[1], #
 
 ## Plotting
 pvalprop <- tibble::tibble(x = sim_powerSF$rx, y = sim_powerSF$ry,
-                           z = sim_powerSF$pval_prop) # extract proportion significant
+                           z = sim_powerSF$pval_prop_cas) # extract proportion significant
 lrr_narm <- na.omit(pvalprop) # remove NAs
 sp::coordinates(lrr_narm) <- ~ x + y # coordinates
 sp::gridded(lrr_narm) <- TRUE # gridded
