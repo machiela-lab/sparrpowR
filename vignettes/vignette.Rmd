@@ -46,7 +46,7 @@ sp::plot(census,  main = "American Community Survey\n2018")
 sp::plot(dcc, main = "Clipped Boundary")
 ```
 
-Our developed method, [sparrpowR](https://CRAN.R-project.org/package=sparrpowR), relies on the [spatstat](https://cran.r-project.org/web/packages/spatstat/index.html) package suite to simulate data, which assumes point locations are on a planar (i.e., flat) surface. Our boundary is made up of geographical coordinates on Earth (i.e., a sphere), so we need to flatten our boundary by spatially projecting it with an appropriate spatial reference system (SRS). For the District of Columbia, we are going to use the World Geodetic System 1984 (WGS84) Universal Transverse Mercator (UTM) Zone 18N [EPSG:32619](https://epsg.io/32618). We then convert the boundary into a `owin` object required by the [spatstat.geom](https://CRAN.R-project.org/package=spatstat.geom) package.
+Our developed method, [sparrpowR](https://CRAN.R-project.org/package=sparrpowR), relies on the [spatstat](https://CRAN.R-project.org/package=spatstat) package suite to simulate data, which assumes point locations are on a planar (i.e., flat) surface. Our boundary is made up of geographical coordinates on Earth (i.e., a sphere), so we need to flatten our boundary by spatially projecting it with an appropriate spatial reference system (SRS). For the District of Columbia, we are going to use the World Geodetic System 1984 (WGS84) Universal Transverse Mercator (UTM) Zone 18N [EPSG:32619](https://epsg.io/32618). We then convert the boundary into a `owin` object required by the [spatstat.geom](https://CRAN.R-project.org/package=spatstat.geom) package.
 
 ```{r spatial_transformation}
 dcp <- sf::st_transform(sf::st_as_sf(dcc), crs = st_crs(32618))
@@ -107,7 +107,7 @@ spatial_plots(input = sim_power, # use output of above simulation
               cols = cols) # colors of plot
 ```
 
-Now, lets overlay our results on top of a basemap. Here, we will use an open-source map from [Stamen](http://maps.stamen.com/#terrain/12/37.7706/-122.3782), that is unprojected in WGS84. We extract the rectangular box (i.e., bounding box) surrounding our polygon boundary of the District of Columbia (WGS84). 
+Now, lets overlay our results on top of a basemap. Here, we will use an open-source map from [Stamen](https://maps.stamen.com/#terrain/12/37.7706/-122.3782), that is unprojected in WGS84. We extract the rectangular box (i.e., bounding box) surrounding our polygon boundary of the District of Columbia (WGS84). 
 
 ```{r basemap}
 dcbb <- sf::st_bbox(sf::st_buffer(sf::st_as_sf(dc), dist = 0.015))
@@ -197,7 +197,7 @@ Based on `r length(sim_power$n_con)` iterations of multivariate normal sampling 
 
 ### Advanced Features
 
-We provide functionality to run the `spatial_power()` with parallel processing to speed up computation (`parallel = TRUE`). Parallelization is accomplished with the `doFuture` package, the `future::multisession` plan, and the `doRNG::%dorng%` operator for the `foreach` package to produce reproducible results. (Note: simpler windows, such as unit circles, require substantially less computational resources.)
+We provide functionality to run the `spatial_power()` with parallel processing to speed up computation (`parallel = TRUE`). Parallelization is accomplished with the [doFuture](https://CRAN.R-project.org/package=doFuture) package, the [future::multisession](https://CRAN.R-project.org/package=future) plan, and the [%dorng%](https://CRAN.R-project.org/package=doRNG) operator for the [foreach](https://CRAN.R-project.org/package=foreach) package to produce reproducible results. (Note: simpler windows, such as unit circles, require substantially less computational resources.)
 
 We also provide functionality to correct for multiple testing. A hypothesis is tested at each gridded knot and the tests are spatially correlated by nature. With the `p_correct` argument you can choose a multiple testing correction. The most conservative, `p_correct = "Bonferroni"` and `p_correct = "Sidak"`, apply corrections that assumes independent tests, which are likely not appropriate for this setting but we include to allow for sensitivity tests. The `p_correct = "FDR"` applies a False Discovery Rate for the critical p-value that is not as conservative as the other two options. 
 
