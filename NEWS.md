@@ -1,5 +1,9 @@
 # sparrpowR (development version)
 
+# sparrpowR 0.2.2
+* Added 'CITATION' file
+* Deprecation badges in 'jitter_power.Rd' and 'spatial_power.Rd' files now hyperlink to `lifecycle` r-lib.org site
+
 # sparrpowR 0.2.1
 * Updated vignette with appropriate hyperlinks
 

@@ -1,7 +1,8 @@
-## This is the fifth resubmission
+## This is the sixth resubmission
 
-* Actions taken since previous submission after feedback from Uwe Ligges:
-  * Updated vignette with appropriate hyperlinks
+* Actions taken since previous submission:
+  * Added 'CITATION' file
+  * Deprecation badges in 'jitter_power.Rd' and 'spatial_power.Rd' files now hyperlink to `lifecycle` r-lib.org site
 
 * Documentation for `pval_correct()` references a doi <https://doi.org/10.2307/2283989> that throws a NOTE in win-builder but no other environment
   
