@@ -1,6 +1,8 @@
 ## This is the sixth resubmission
 
 * Actions taken since previous submission:
+  * Removed `LazyData: true` from 'DESCRIPTION' file because the package has no data accessed via a `data()` command and has no `data/` directory (in response to CRAN NOTE: 'LazyData' is specified without a 'data' directory)
+  * Changed hyperlink for Stamen basemap in 'vignette' file with a Hypertext Transfer Protocol Secure destination
   * Added 'CITATION' file
   * Deprecation badges in 'jitter_power.Rd' and 'spatial_power.Rd' files now hyperlink to `lifecycle` r-lib.org site
 

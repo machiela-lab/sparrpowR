@@ -1,8 +1,10 @@
 # sparrpowR (development version)
 
 # sparrpowR 0.2.2
-* Added 'CITATION' file
-* Deprecation badges in 'jitter_power.Rd' and 'spatial_power.Rd' files now hyperlink to `lifecycle` r-lib.org site
+  * Removed `LazyData: true` from 'DESCRIPTION' file because the package has no data accessed via a `data()` command and has no `data/` directory (in response to CRAN NOTE: 'LazyData' is specified without a 'data' directory)
+  * Changed hyperlink for Stamen basemap in 'vignette' file with a Hypertext Transfer Protocol Secure destination
+  * Added 'CITATION' file
+  * Deprecation badges in 'jitter_power.Rd' and 'spatial_power.Rd' files now hyperlink to `lifecycle` r-lib.org site
 
 # sparrpowR 0.2.1
 * Updated vignette with appropriate hyperlinks

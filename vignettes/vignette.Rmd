@@ -107,7 +107,7 @@ spatial_plots(input = sim_power, # use output of above simulation
               cols = cols) # colors of plot
 ```
 
-Now, lets overlay our results on top of a basemap. Here, we will use an open-source map from [Stamen](https://maps.stamen.com/#terrain/12/37.7706/-122.3782), that is unprojected in WGS84. We extract the rectangular box (i.e., bounding box) surrounding our polygon boundary of the District of Columbia (WGS84). 
+Now, lets overlay our results on top of a basemap. Here, we will use an open-source map from [Stamen](https://stamen.com/open-source/), that is unprojected in WGS84. We extract the rectangular box (i.e., bounding box) surrounding our polygon boundary of the District of Columbia (WGS84). 
 
 ```{r basemap}
 dcbb <- sf::st_bbox(sf::st_buffer(sf::st_as_sf(dc), dist = 0.015))
