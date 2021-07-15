@@ -1,6 +1,6 @@
 # sparrpowR (development version)
 
-# sparrpowR 0.2.2-1
+# sparrpowR 0.2.3
 * Following advice from `future` package maintainer, now `spatial_power()` and `jitter_power()` functions reset future strategy when exiting
 * Addressed ERROR in MacOS CRAN environments by setting the `parallelly.makeNodePSOCK.setup_strategy = sequential` for MacOS environments running `tcltk` until `parallelly` (>=1.26.1-9002) is on CRAN. This workaround was suggested by the `parallelly` maintainer <https://github.com/HenrikBengtsson/parallelly/issues/62#issuecomment-880665390>
 
