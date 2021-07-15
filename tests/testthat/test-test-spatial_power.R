@@ -191,7 +191,17 @@ test_that("spatial_power works", {
                              verbose = FALSE,
                              p_correct = "Bonferroni")
   )
-  
+}
+)
+
+## WORKAROUND: Avoid R bug 18119 [1] that is trigger when for instance the
+## 'tcltk' package is loaded on macOS, or when running in the RStudio Console
+## [1] https://bugs.r-project.org/bugzilla/show_bug.cgi?id=18119
+if (getRversion() >= "4.0.0" && getRversion() <= "4.1.0") {
+  options(parallelly.makeNodePSOCK.setup_strategy = "sequential")
+}
+
+test_that("parallel processing with future package functions properly", {
   expect_named(spatial_power(x_case = c(0.25),
                              x_control = c(0.25),
                              y_case = c(0.75),
@@ -213,6 +223,6 @@ test_that("spatial_power works", {
                              n_core = 2,
                              verbose = FALSE)
   )
-  
 }
 )
+

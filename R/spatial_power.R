@@ -81,7 +81,7 @@
 
 #' @importFrom doFuture registerDoFuture
 #' @importFrom doRNG %dorng%
-#' @importFrom foreach %do% %dopar% foreach
+#' @importFrom foreach %do% %dopar% foreach setDoPar
 #' @importFrom future multisession plan
 #' @importFrom iterators icount
 #' @importFrom lifecycle badge deprecate_warn deprecated is_present
@@ -293,8 +293,9 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
   
   ## Set function used in foreach
   if (parallel == TRUE) {
-    doFuture::registerDoFuture()
-    future::plan(multisession, workers = n_core)
+    oldplan <- doFuture::registerDoFuture()
+    on.exit(with(oldplan, foreach::setDoPar(fun=fun, data=data, info=info)), add = TRUE)
+    future::plan(future::multisession, workers = n_core)
     `%fun%` <- doRNG::`%dorng%`
   } else { `%fun%` <- foreach::`%do%` }
   

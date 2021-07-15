@@ -39,7 +39,7 @@ NULL
 #' @importFrom doFuture registerDoFuture
 #' @importFrom doRNG %dorng%
 #' @importFrom fields image.plot
-#' @importFrom foreach %do% %dopar% foreach
+#' @importFrom foreach %do% %dopar% foreach setDoPar
 #' @importFrom future multisession plan 
 #' @importFrom graphics text par
 #' @importFrom grDevices colorRampPalette
