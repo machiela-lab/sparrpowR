@@ -56,7 +56,7 @@
 #' @importFrom future multisession plan
 #' @importFrom lifecycle badge deprecate_warn deprecated is_present
 #' @importFrom sparr risk
-#' @importFrom spatstat.core rpoispp runifpoint
+#' @importFrom spatstat.random rpoispp runifpoint
 #' @importFrom spatstat.geom marks ppp superimpose
 #' @importFrom stats sd
 #' @export
@@ -65,7 +65,7 @@
 #'
 #' @examples
 #' # Using the 'chorley' data set from 'spatstat.data' package
-#'  data(chorley)
+#'  data(chorley, package="spatstat.data")
 #'  f1 <- jitter_power(obs_data = unique(chorley),
 #'                     samp_control = "CSR",
 #'                     verbose = FALSE)
@@ -107,13 +107,13 @@ jitter_power <- function(obs_data,
   rcluster_control <- function(n, l, win, s, types = "control", ...) {
     if (samp_control == "uniform") {
       repeat {  
-        x <- spatstat.core::runifpoint(n = n, win = win, ...)
+        x <- spatstat.random::runifpoint(n = n, win = win, ...)
         if (x$n == n) break
       }
     }
     
     if (samp_control == "CSR") {
-      x <- spatstat.core::rpoispp(lambda = l, win = win, ...)
+      x <- spatstat.random::rpoispp(lambda = l, win = win, ...)
     }
     
     if (samp_control == "MVN") {

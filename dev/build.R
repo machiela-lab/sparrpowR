@@ -169,7 +169,7 @@ t2 <- Sys.time()
 t2-t1
 spatial_plots(tttt)
 
-data(chorley)
+data(chorley, package="spatstat.data")
 t1 <- Sys.time()
 f1 <- jitter_power(obs_data = unique(chorley),
                   samp_control = "CSR",

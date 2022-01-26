@@ -88,7 +88,7 @@ The function has functionality for a correction for multiple testing. If \code{p
 }
 \examples{
 # Using the 'chorley' data set from 'spatstat.data' package
- data(chorley)
+ data(chorley, package="spatstat.data")
  f1 <- jitter_power(obs_data = unique(chorley),
                     samp_control = "CSR",
                     verbose = FALSE)

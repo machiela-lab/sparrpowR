@@ -3,6 +3,7 @@ context("jitter_power")
 ###########################
 # spatial_jitter testthat #
 ###########################
+data(chorley, package = "spatstat.data")
 
 test_that("jitter_power throws error with invalid arguments", {
   

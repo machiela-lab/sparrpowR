@@ -38,10 +38,6 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Depends: 
     R (>= 3.5.0),
-    spatstat.geom,
-    spatstat.core,
-    spatstat.linnet,
-    spatstat (>= 2.0-0)
 Imports: 
     doFuture,
     doRNG,
@@ -55,8 +51,12 @@ Imports:
     raster,
     sp,
     sparr,
+    spatstat.geom,
+    spatstat.random,
     stats
 Suggests: 
+    spatstat.data,
+    spatstat (>= 2.0-0),
     testthat,
     spelling,
     R.rsp
