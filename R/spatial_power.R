@@ -25,12 +25,12 @@
 #' @param parallel Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.
 #' @param n_core Optional. Integer specifying the number of CPU cores on current host to use for parallelization (the default is 2 cores).
 #' @param verbose Logical. If TRUE (the default), will print function progress during execution. If FALSE, will not print.
-#' @param ... Arguments passed to \code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.geom]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.geom]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}. Arguments also passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.
+#' @param ... Arguments passed to \code{\link[spatstat.random]{runifdisc}}, \code{\link[spatstat.geom]{disc}}, \code{\link[spatstat.random]{rpoispp}}, \code{\link[spatstat.geom]{rsyst}}, or \code{\link[spatstat.random]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}. Arguments also passed to \code{\link[sparr]{risk}} to select bandwidth, edge correction, and resolution.
 #' @param cascon `r lifecycle::badge("deprecated")` \code{cascon} is no longer supported and this function will output power for case-only and case/control clustering. This argument has been moved to \code{spatial_plots} function.
 #' @param lower_tail `r lifecycle::badge("deprecated")` \code{lower_tail} is no longer supported; this function uses \code{alpha} to set the critical p-value. 
 #' @param upper_tail `r lifecycle::badge("deprecated")` \code{lupper_tail} is no longer supported; this function uses \code{alpha} to set the critical p-value. 
 #'
-#' @details This function computes the statistical power of the spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) for randomly generated data using various random point pattern generators from the \code{\link{spatstat.core}} package.
+#' @details This function computes the statistical power of the spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) for randomly generated data using various random point pattern generators from the \code{\link{spatstat.random}} package.
 #' 
 #' The function uses the \code{\link[sparr]{risk}} function to estimate the spatial relative risk function and forces the \code{tolerate} argument to be TRUE in order to calculate asymptotic p-values.
 #' 
@@ -86,7 +86,7 @@
 #' @importFrom iterators icount
 #' @importFrom lifecycle badge deprecate_warn deprecated is_present
 #' @importFrom sparr risk
-#' @importFrom spatstat.core rNeymanScott rpoispp runifdisc runifpoint
+#' @importFrom spatstat.random rNeymanScott rpoispp runifdisc runifpoint
 #' @importFrom spatstat.geom as.solist disc marks ppp rsyst shift superimpose unit.square
 #' @importFrom stats rnorm sd
 #' @export
@@ -198,7 +198,7 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
   rcluster_case <- function(x0, y0, rad, n, scalar, lamb, win, types = "case", ...) {
     
     if (samp_case == "uniform") {
-      x <- spatstat.core::runifdisc(n = n, radius = rad, centre = c(x0, y0), win = win, ...)
+      x <- spatstat.random::runifdisc(n = n, radius = rad, centre = c(x0, y0), win = win, ...)
     }  
     
     if (samp_case == "MVN") {
@@ -212,7 +212,7 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
     if (samp_case == "CSR") {
       win_case <- spatstat.geom::disc(radius = rad, centre = c(0.5, 0.5), ...)
       l <- n/(diff(win_case$xrange)*diff(win_case$yrange))
-      x <- spatstat.core::rpoispp(lambda = l, win = win_case, ...)
+      x <- spatstat.random::rpoispp(lambda = l, win = win_case, ...)
       x <- spatstat.geom::shift(x, c(x0 - 0.5, y0 - 0.5))
      }
     
@@ -221,7 +221,7 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
         stop("The argument 'l_case' should be an intensity function")
        }
       win_case <- spatstat.geom::disc(radius = rad, centre = c(0.5, 0.5), ...)
-      x <- spatstat.core::rpoispp(lambda = lamb, win = win_case, ...)
+      x <- spatstat.random::rpoispp(lambda = lamb, win = win_case, ...)
       x <- spatstat.geom::shift(x, c(x0 - 0.5, y0 - 0.5))
      }
     
@@ -232,7 +232,7 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
   # marked uniform ppp for controls
   rcluster_control <- function(x0, y0, scalar, n, lamb, ex, nclust, rad, types = "control", win, ...) {
     if (samp_control == "uniform") { 
-      x <- spatstat.core::runifpoint(n, win = win, ...) 
+      x <- spatstat.random::runifpoint(n, win = win, ...) 
      }
     
     if (samp_control == "systematic") {
@@ -249,22 +249,22 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
     
     if (samp_control == "CSR") {
       l <- n / (diff(win$xrange) * diff(win$yrange))
-      x <- spatstat.core::rpoispp(lambda = l, win = win, ...)
+      x <- spatstat.random::rpoispp(lambda = l, win = win, ...)
      }
     
     if (samp_control == "IPP") {
       if (class(lamb) != "function") {
         stop("The argument 'l_control' should be an intensity function")
       }
-      x <- spatstat.core::rpoispp(lambda = lamb, win = win, ...)
+      x <- spatstat.random::rpoispp(lambda = lamb, win = win, ...)
     }
     
     if (samp_control == "clustered") {
       control_clustering <- function(x0, y0, radius, n) {
-        X <- spatstat.core::runifdisc(n, radius, centre = c(x0, y0))
+        X <- spatstat.random::runifdisc(n, radius, centre = c(x0, y0))
         return(X)
        }
-      x <- spatstat.core::rNeymanScott(kappa = lamb,
+      x <- spatstat.random::rNeymanScott(kappa = lamb,
                                        expand = ex,
                                        rcluster = control_clustering, 
                                        n = nclust,

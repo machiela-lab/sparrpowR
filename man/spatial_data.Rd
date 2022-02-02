@@ -63,7 +63,7 @@ spatial_data(
 
 \item{e_control}{Optional. A single non-negative number for the size of the expansion of the simulation window for generating parent points. Ignored if \code{samp_control != "clustered"}.}
 
-\item{...}{Arguments passed to \code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.geom]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.geom]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}.}
+\item{...}{Arguments passed to \code{\link[spatstat.random]{runifdisc}}, \code{\link[spatstat.geom]{disc}}, \code{\link[spatstat.random]{rpoispp}}, \code{\link[spatstat.geom]{rsyst}}, or \code{\link[spatstat.random]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}.}
 }
 \value{
 An object of class "ppplist". This is a list of marked point patterns that have a single mark with two levels: case and control.
@@ -72,7 +72,7 @@ An object of class "ppplist". This is a list of marked point patterns that have 
 Generate random two-group data for a spatial relative risk function.
 }
 \details{
-This function generates random data for a spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) using various random point pattern generators from the \code{\link{spatstat.core}} package to generate data.
+This function generates random data for a spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) using various random point pattern generators from the \code{\link{spatstat.random}} package to generate data.
 
 If \code{samp_case = "uniform"} the case locations are randomly generated uniformly within a disc of radius \code{r_case} (or discs of radii \code{r_case}) centered at coordinates (\code{x_case}, \code{y_case}).
 
@@ -110,5 +110,5 @@ If \code{samp_control = "clustered"} the control locations are randomly generate
 
 }
 \seealso{
-\code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.geom]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.geom]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} for additional arguments for random point pattern generation.
+\code{\link[spatstat.random]{runifdisc}}, \code{\link[spatstat.geom]{disc}}, \code{\link[spatstat.random]{rpoispp}}, \code{\link[spatstat.geom]{rsyst}}, or \code{\link[spatstat.random]{rNeymanScott}} for additional arguments for random point pattern generation.
 }

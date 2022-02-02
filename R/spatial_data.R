@@ -20,9 +20,9 @@
 #' @param l_case Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for case clusters. Ignored if \code{samp_control != "IPP"}.
 #' @param l_control Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for control clusters. Ignored if \code{samp_control = "uniform"}, \code{samp_control = "systematic"}, \code{samp_control = "MVN"}, or \code{samp_control = "CSR"}.
 #' @param e_control Optional. A single non-negative number for the size of the expansion of the simulation window for generating parent points. Ignored if \code{samp_control != "clustered"}.
-#' @param ... Arguments passed to \code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.geom]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.geom]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}.
+#' @param ... Arguments passed to \code{\link[spatstat.random]{runifdisc}}, \code{\link[spatstat.geom]{disc}}, \code{\link[spatstat.random]{rpoispp}}, \code{\link[spatstat.geom]{rsyst}}, or \code{\link[spatstat.random]{rNeymanScott}} depending on \code{samp_control} or \code{samp_control}.
 #' 
-#' @details This function generates random data for a spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) using various random point pattern generators from the \code{\link{spatstat.core}} package to generate data.
+#' @details This function generates random data for a spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) using various random point pattern generators from the \code{\link{spatstat.random}} package to generate data.
 #' 
 #' If \code{samp_case = "uniform"} the case locations are randomly generated uniformly within a disc of radius \code{r_case} (or discs of radii \code{r_case}) centered at coordinates (\code{x_case}, \code{y_case}). 
 #' 
@@ -47,11 +47,11 @@
 #' @return An object of class "ppplist". This is a list of marked point patterns that have a single mark with two levels: case and control.
 #' 
 #' @importFrom stats rnorm
-#' @importFrom spatstat.core rNeymanScott rpoispp runifdisc runifpoint
+#' @importFrom spatstat.random rNeymanScott rpoispp runifdisc runifpoint
 #' @importFrom spatstat.geom as.solist disc marks ppp rsyst shift superimpose unit.square
 #' @export
 #'
-#' @seealso \code{\link[spatstat.core]{runifdisc}}, \code{\link[spatstat.geom]{disc}}, \code{\link[spatstat.core]{rpoispp}}, \code{\link[spatstat.geom]{rsyst}}, or \code{\link[spatstat.core]{rNeymanScott}} for additional arguments for random point pattern generation.
+#' @seealso \code{\link[spatstat.random]{runifdisc}}, \code{\link[spatstat.geom]{disc}}, \code{\link[spatstat.random]{rpoispp}}, \code{\link[spatstat.geom]{rsyst}}, or \code{\link[spatstat.random]{rNeymanScott}} for additional arguments for random point pattern generation.
 #'
 #' @examples
 #'  spatial_data(x_case = c(0.25, 0.5, 0.75),
@@ -139,7 +139,7 @@ spatial_data <- function(win = spatstat.geom::unit.square(),
   rcluster_case <- function(x0, y0, rad, n, scalar, lamb, wind, types = "case", ...) {
     
     if (samp_case == "uniform"){
-      x <- spatstat.core::runifdisc(n = n, radius = rad, centre = c(x0, y0), win = wind, ...)
+      x <- spatstat.random::runifdisc(n = n, radius = rad, centre = c(x0, y0), win = wind, ...)
     }  
     
     if (samp_case == "MVN"){
@@ -153,7 +153,7 @@ spatial_data <- function(win = spatstat.geom::unit.square(),
     if (samp_case == "CSR"){
       win_case <- spatstat.geom::disc(radius = rad, centre = c(0.5, 0.5), ...)
       l <- n / (diff(win_case$xrange)*diff(win_case$yrange))
-      x <- spatstat.core::rpoispp(lambda = l, win = win_case, ...)
+      x <- spatstat.random::rpoispp(lambda = l, win = win_case, ...)
       x <- spatstat.geom::shift(x, c(x0 - 0.5, y0 - 0.5))
     }
     
@@ -162,7 +162,7 @@ spatial_data <- function(win = spatstat.geom::unit.square(),
         stop("The argument 'l_case' should be an intensity function")
       }
       win_case <- spatstat.geom::disc(radius = rad, centre = c(0.5, 0.5), ...)
-      x <- spatstat.core::rpoispp(lambda = lamb, win = win_case, ...)
+      x <- spatstat.random::rpoispp(lambda = lamb, win = win_case, ...)
       x <- spatstat.geom::shift(x, c(x0 - 0.5, y0 - 0.5))
     }
     
@@ -173,7 +173,7 @@ spatial_data <- function(win = spatstat.geom::unit.square(),
   # marked uniform ppp for controls
   rcluster_control <- function(x0, y0, scalar, n, lamb, ex, nclust, rad, types = "control", wind, ...) {
     if (samp_control == "uniform"){ 
-      x <- spatstat.core::runifpoint(n, win = wind, ...) 
+      x <- spatstat.random::runifpoint(n, win = wind, ...) 
     }
     
     if (samp_control == "systematic") {
@@ -190,22 +190,22 @@ spatial_data <- function(win = spatstat.geom::unit.square(),
     
     if (samp_control == "CSR") {
       l <- n / (diff(wind$xrange)*diff(wind$yrange))
-      x <- spatstat.core::rpoispp(lambda = l, win = wind, ...)
+      x <- spatstat.random::rpoispp(lambda = l, win = wind, ...)
     }
     
     if (samp_control == "IPP") {
       if (class(lamb) != "function") {
         stop("The argument 'l_control' should be an intensity function")
       }
-      x <- spatstat.core::rpoispp(lambda = lamb, win = wind, ...)
+      x <- spatstat.random::rpoispp(lambda = lamb, win = wind, ...)
     }
     
     if (samp_control == "clustered") {
       control_clustering <- function(x0, y0, radius, n) {
-        X <- spatstat.core::runifdisc(n, radius, centre = c(x0, y0))
+        X <- spatstat.random::runifdisc(n, radius, centre = c(x0, y0))
         return(X)
       }
-      x <- spatstat.core::rNeymanScott(kappa = lamb,
+      x <- spatstat.random::rNeymanScott(kappa = lamb,
                                   expand = ex,
                                   rcluster = control_clustering, 
                                   n = nclust,
