@@ -49,5 +49,6 @@ NULL
 #' @importFrom sp coordinates gridded
 #' @importFrom sparr risk
 #' @importFrom stats na.omit rnorm sd
-#' @import spatstat.geom
+#' @importFrom spatstat.random rNeymanScott rpoispp runifdisc runifpoint
+#' @import spatstat.geom 
 NULL

@@ -1,7 +1,11 @@
-## This is the eigth resubmission
+## This is the ninth resubmission
 
 * Actions taken since previous submission:
-  * Addressed ERROR on R-devel CRAN environments by setting `parallelly.makeNodePSOCK.setup_strategy = sequential` for all CRAN tests as suggested by the maintainer for the `future` and `parallelly` packages who is actively working on a solution <https://github.com/HenrikBengtsson/parallelly/issues/65>
+  * Updated dependencies `spatstat.core` and `spatstat.linnet` packages based on feedback from the Spatstat Team (Adrian Baddeley and Ege Rubak). All random generators in `spatstat.core` were moved to a new package `spatstat.random`
+    * `spatstat.geom`, `spatstat.core`, `spatstat.linnet`, and `spatstat (>=2.0-0)` are no longer Depends.
+    * `spatstat.geom` and `spatstat.random` are now Imports
+    * `spatstat.data` and `spatstat (>= 2.0-0)` are now Suggests.
+    * [See the GitHub merge pull request](https://github.com/machiela-lab/sparrpowR/commit/4df5d85343dd222c9d4b1ae30f894ed6482bcb52).
 
 * Documentation for `pval_correct()` references a doi <https://doi.org/10.2307/2283989> that throws a NOTE but is a valid URL
   
@@ -10,8 +14,9 @@
 * win-builder, (devel, release, oldrelease)
 * Rhub
   * Fedora Linux, R-devel, clang, gfortran
-  * Ubuntu Linux 16.04 LTS, R-release, GCC
-  * Windows Server 2008 R2 SP1, R-devel, 32/64 bit
+  * Ubuntu Linux 20.04.1 LTS, R-release, GCC
+  * Windows Server 2022, R-devel, 64 bit
+  * Windows Server 2008 R2 SP1, R-release, 32/64 bit
   * Oracle Solaris 10, x86, 32 bit, R-release
   * macOS 10.13.6 High Sierra, R-release, CRAN's setup
 
