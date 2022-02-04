@@ -1,29 +1,30 @@
 # sparrpowR (development version)
 
-# sparrpowR 0.2.5
+# sparrpowR v0.2.5
 * Updated dependencies `spatstat.core` and `spatstat.linnet` packages based on feedback from the Spatstat Team (Adrian Baddeley and Ege Rubak). All random generators in `spatstat.core` were moved to a new package `spatstat.random`
   * `spatstat.geom`, `spatstat.core`, `spatstat.linnet`, and `spatstat (>=2.0-0)` are no longer Depends.
   * `spatstat.geom` and `spatstat.random` are now Imports
-  * `spatstat.data` and `spatstat (>= 2.0-0)` are now Suggests.
+  * `spatstat.data` is now Suggests
   * [See the GitHub merge pull request](https://github.com/machiela-lab/sparrpowR/commit/4df5d85343dd222c9d4b1ae30f894ed6482bcb52).
+* Fixed annotation typos in the `pval_correct()` function
 
-# sparrpowR 0.2.4
+# sparrpowR v0.2.4
 * Addressed ERROR on R-devel CRAN environments by setting `parallelly.makeNodePSOCK.setup_strategy = sequential` for all CRAN tests as suggested by the maintainer for the `future` and `parallelly` packages who is actively working on a solution. [See the GitHub issue](https://github.com/HenrikBengtsson/parallelly/issues/65).
 
-# sparrpowR 0.2.3
+# sparrpowR v0.2.3
 * Following advice from `future` package maintainer, now `spatial_power()` and `jitter_power()` functions reset future strategy when exiting
 * Addressed ERROR in MacOS CRAN environments by setting the `parallelly.makeNodePSOCK.setup_strategy = sequential` for MacOS environments running `tcltk` until `parallelly` (>=1.26.1-9002) is on CRAN. This workaround was suggested by the `parallelly` maintainer. [See the GitHub issue](https://github.com/HenrikBengtsson/parallelly/issues/62#issuecomment-880665390).
 
-# sparrpowR 0.2.2
+# sparrpowR v0.2.2
 * Removed `LazyData: true` from 'DESCRIPTION' file because the package has no data accessed via a `data()` command and has no `data/` directory (in response to CRAN NOTE: 'LazyData' is specified without a 'data' directory)
 * Changed hyperlink for Stamen basemap in 'vignette' file with a Hypertext Transfer Protocol Secure destination
 * Added 'CITATION' file
 * Deprecation badges in 'jitter_power.Rd' and 'spatial_power.Rd' files now hyperlink to `lifecycle` r-lib.org site
 
-# sparrpowR 0.2.1
+# sparrpowR v0.2.1
 * Updated vignette with appropriate hyperlinks
 
-# sparrpowR 0.2.0
+# sparrpowR v0.2.0
 * Updates to dependencies
   * Updated `spatstat` package to new subsetted packages based on feedback from the Spatstat Team (Adrian Baddeley and Ege Rubak). `spatstat.geom` and `spatstat.core` packages replace `spatstat` package in Depends
   * Imports `lifecycle` package to document deprecated argument `cascon` in `spatial_power()` and `jitter_power()` functions

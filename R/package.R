@@ -49,6 +49,6 @@ NULL
 #' @importFrom sp coordinates gridded
 #' @importFrom sparr risk
 #' @importFrom stats na.omit rnorm sd
+#' @importFrom spatstat.geom as.solist disc marks plot.anylist plot.ppp ppp rsyst shift superimpose unit.square
 #' @importFrom spatstat.random rNeymanScott rpoispp runifdisc runifpoint
-#' @import spatstat.geom 
 NULL

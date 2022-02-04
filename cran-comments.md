@@ -2,15 +2,16 @@
 
 * Actions taken since previous submission:
   * Updated dependencies `spatstat.core` and `spatstat.linnet` packages based on feedback from the Spatstat Team (Adrian Baddeley and Ege Rubak). All random generators in `spatstat.core` were moved to a new package `spatstat.random`
-    * `spatstat.geom`, `spatstat.core`, `spatstat.linnet`, and `spatstat (>=2.0-0)` are no longer Depends.
+    * `spatstat.geom`, `spatstat.core`, `spatstat.linnet`, and `spatstat (>=2.0-0)` are no longer Depends
     * `spatstat.geom` and `spatstat.random` are now Imports
-    * `spatstat.data` and `spatstat (>= 2.0-0)` are now Suggests.
-    * [See the GitHub merge pull request](https://github.com/machiela-lab/sparrpowR/commit/4df5d85343dd222c9d4b1ae30f894ed6482bcb52).
+    * `spatstat.data` is now Suggests
+    * [See the GitHub merge pull request](https://github.com/machiela-lab/sparrpowR/commit/4df5d85343dd222c9d4b1ae30f894ed6482bcb52)
+  * Fixed annotation typos in the `pval_correct()` function
 
 * Documentation for `pval_correct()` references a doi <https://doi.org/10.2307/2283989> that throws a NOTE but is a valid URL
   
 ## Test environments
-* local OS X install, R 4.1.0
+* local OS X install, R 4.1.2
 * win-builder, (devel, release, oldrelease)
 * Rhub
   * Fedora Linux, R-devel, clang, gfortran
