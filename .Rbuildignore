@@ -5,3 +5,5 @@
 ^vignette\.Rmd$
 ^dev$
 ^CRAN-RELEASE$
+^CRAN-SUBMISSION$
+^man/figures

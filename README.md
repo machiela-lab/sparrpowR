@@ -2,15 +2,15 @@ sparrpowR: Power analysis to detect spatial relative clusters <img src="man/figu
 ===================================================
 
 <!-- badges: start -->
-
-[![CRAN
-version](https://www.r-pkg.org/badges/version-ago/sparrpowR)](https://cran.r-project.org/package=sparrpowR)
-[![CRAN RStudio mirror
-downloads](https://cranlogs.r-pkg.org/badges/grand-total/sparrpowR?color=blue)](https://r-pkg.org/pkg/sparrpowR)
-![license](https://img.shields.io/badge/license-apache-yellow)
+[![CRAN status](http://www.r-pkg.org/badges/version/sparrpowR)](https://cran.r-project.org/package=sparrpowR)
+[![CRAN version](https://www.r-pkg.org/badges/version-ago/sparrpowR)](https://cran.r-project.org/package=sparrpowR)
+[![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/grand-total/sparrpowR?color=blue)](https://r-pkg.org/pkg/sparrpowR)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+![GitHub last commit](https://img.shields.io/github/last-commit/machiela-lab/sparrpowR)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5347998.svg)](https://doi.org/10.5281/zenodo.5347998)
-
 <!-- badges: end -->
+
+**Date repository last updated**: August 08, 2022
 
 <h2 id="overview">
 
@@ -76,15 +76,16 @@ Authors
 
 </h2>
 
-* **Ian D. Buller** - *Occupational and Environmental Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland* - [GitHub](https://github.com/idblr)
+* **Ian D. Buller** - *Occupational and Environmental Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland* - [GitHub](https://github.com/idblr) - [ORCID](https://orcid.org/0000-0001-9477-8582)
 
-* **Derek W. Brown** - *Integrative Tumor Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland* - [GitHub](https://github.com/derekbrown12)
+* **Derek W. Brown** - *Integrative Tumor Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland* - [GitHub](https://github.com/derekbrown12) - [ORCID](https://orcid.org/0000-0001-8393-1713)
 
 See also the list of [contributors](https://github.com/machiela-lab/sparrpowR/graphs/contributors) who participated in this package, including:
 
 * **Tim A. Myers** - *Laboratory of Genetic Susceptibility, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland* - [GitHub](https://github.com/timyers)
 
 ## Usage
+
 ``` r
 set.seed(1234) # for reproducibility
 
@@ -142,19 +143,19 @@ stats::t.test(x = foo$t_obs, mu = 1, alternative = "two.sided")
 # Statistical power for case-only clustering (one-tailed test)
 spatial_plots(foo)
 ```
+
 ![](man/figures/spatial_plots1.png)
-
 ![](man/figures/spatial_plots2.png)
-
 ![](man/figures/spatial_plots3.png)
+
 ```
 # Statistical power for case clustering and control
 clustering (two-tailed test)
 ## Only showing second and third plot
 spatial_plots(foo, cascon = TRUE)
 ```
-![](man/figures/spatial_plots4.png)
 
+![](man/figures/spatial_plots4.png)
 ![](man/figures/spatial_plots5.png)
 
 ```
@@ -186,4 +187,19 @@ median(foo$alpha) # critical p-value of 3e-6
 ## Only showing third plot
 spatial_plots(foo, cascon = TRUE)
 ```
+
 ![](man/figures/spatial_plots6.png)
+
+### Funding
+
+This package was developed while the authors were postdoctoral fellows supported by the [Cancer Prevention Fellowship Program](https://cpfp.cancer.gov/) at the [National Cancer Institute](https://www.cancer.gov/).
+
+### Acknowledgments
+
+When citing this package for publication, please follow:
+
+    citation("sparrpowR")
+
+### Questions? Feedback?
+
+For questions about the package please contact the maintainer [Dr. Ian D. Buller](mailto:ian.buller@nih.gov) or [submit a new issue](https://github.com/machiela-lab/sparrpowR/issues).
