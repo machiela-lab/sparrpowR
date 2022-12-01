@@ -53,7 +53,7 @@ spatial_data(
 
 \item{r_control}{Optional. Numeric value, or numeric vector, of radius (radii) of control cluster(s) in the units of \code{win}. Ignored if \code{samp_control != "clustered"}.}
 
-\item{s_case}{Optional. Numeric value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for case locations in the units of \code{win}.  Ignored if \code{samp_control != "MVN"}.}
+\item{s_case}{Optional. Numeric value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for case locations in the units of \code{win}. Ignored if \code{samp_control != "MVN"}.}
 
 \item{s_control}{Optional. Numeric value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for control locations in the units of \code{win}. Ignored if \code{samp_control != "MVN"}.}
 

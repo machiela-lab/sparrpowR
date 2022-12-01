@@ -1,5 +1,10 @@
 # sparrpowR (development version)
 
+# sparrpowR v0.2.6
+* Replaced `if()` conditions comparing `class()` to string with `inherits()`
+* Added `future::plan(future::multisession)` in tests to remove the files in temp directory
+* Updated maintainer contact information
+
 # sparrpowR v0.2.5
 * Updated dependencies `spatstat.core` and `spatstat.linnet` packages based on feedback from the Spatstat Team (Adrian Baddeley and Ege Rubak). All random generators in `spatstat.core` were moved to a new package `spatstat.random`
   * `spatstat.geom`, `spatstat.core`, `spatstat.linnet`, and `spatstat (>=2.0-0)` are no longer Depends.

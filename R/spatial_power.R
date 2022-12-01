@@ -217,7 +217,7 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
      }
     
     if (samp_case == "IPP") {
-      if (class(lamb) != "function") {
+      if (!inherits(lamb, "function")) {
         stop("The argument 'l_case' should be an intensity function")
        }
       win_case <- spatstat.geom::disc(radius = rad, centre = c(0.5, 0.5), ...)
@@ -253,7 +253,7 @@ spatial_power <- function(win = spatstat.geom::unit.square(),
      }
     
     if (samp_control == "IPP") {
-      if (class(lamb) != "function") {
+      if (!inherits(lamb, "function")) {
         stop("The argument 'l_control' should be an intensity function")
       }
       x <- spatstat.random::rpoispp(lambda = lamb, win = win, ...)

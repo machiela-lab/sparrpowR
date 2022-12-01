@@ -1,17 +1,17 @@
 Package: sparrpowR
 Title: Power Analysis to Detect Spatial Relative Risk Clusters
-Version: 0.2.5
-Date: 2022-02-04
+Version: 0.2.6
+Date: 2022-12-01
 Authors@R:
     c(person(given = "Ian D.",
              family = "Buller",
              role = c("aut", "cre", "cph"),
-             email = "ian.buller@nih.gov",
+             email = "ian.buller@alumni.emory.edu",
              comment = c(ORCID = "0000-0001-9477-8582")),
       person(given = "Derek W.",
              family = "Brown",
              role = c("aut", "cph"),
-             email = "derek.brown@nih.gov",
+             email = "derek9@gwmail.gwu.edu",
              comment = c(ORCID = "0000-0001-8393-1713")),
       person(given = "Mitchell J.",
              family = "Machiela",
@@ -24,18 +24,18 @@ Authors@R:
              email = "myersta@mail.nih.gov"),
       person(given = "NCI",
              role = c("cph", "fnd")))
-Maintainer: Ian D. Buller <ian.buller@nih.gov>
+Maintainer: Ian D. Buller <ian.buller@alumni.emory.edu>
 Description: Calculate the statistical power to detect clusters using kernel-based 
         spatial relative risk functions that are estimated using the 'sparr' package.
         Details about the 'sparr' package methods can be found in the tutorial: Davies
-        et al. (2018) <doi:10.1002/sim.7577>.  Details about kernel density estimation 
-        can be found in J. F. Bithell (1990) <doi:10.1002/sim.4780090616>.  More 
+        et al. (2018) <doi:10.1002/sim.7577>. Details about kernel density estimation 
+        can be found in J. F. Bithell (1990) <doi:10.1002/sim.4780090616>. More 
         information about relative risk functions using kernel density estimation can 
         be found in J. F. Bithell (1991) <doi:10.1002/sim.4780101112>.
 License: Apache License (>= 2.0)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 Depends: 
     R (>= 3.5.0),
 Imports: 

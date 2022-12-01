@@ -7,3 +7,4 @@ library(sparrpowR)
 options(parallelly.makeNodePSOCK.setup_strategy = "sequential")
 
 test_check("sparrpowR")
+future::plan(future::sequential)

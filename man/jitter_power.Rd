@@ -27,7 +27,7 @@ jitter_power(
 
 \item{samp_control}{Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), with complete spatial randomness (\code{samp_control="CSR"}), or multivariate normal (\code{samp_control="MVN"}).}
 
-\item{s_control}{Optional. Numeric value for the standard deviation of the multivariate normal distribution in the units of the \code{obs_data}.  The default value (1) assumes a unit square window. Ignored if Ignored if \code{samp_control="uniform"} or \code{samp_control="CSR"}.}
+\item{s_control}{Optional. Numeric value for the standard deviation of the multivariate normal distribution in the units of the \code{obs_data}. The default value (1) assumes a unit square window. Ignored if Ignored if \code{samp_control="uniform"} or \code{samp_control="CSR"}.}
 
 \item{alpha}{Optional. Numeric value of the critical p-value (default=0.05).}
 

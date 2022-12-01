@@ -45,3 +45,6 @@ rsconnect/
 
 # Sandboxes
 inst/doc
+
+# CRAN
+CRAN-SUBMISSION

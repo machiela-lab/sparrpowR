@@ -15,7 +15,7 @@
 #' @param y_control Numeric value, or numeric vector, of y-coordinate(s) of case cluster(s). Ignored if \code{samp_control != "MVN"}.
 #' @param r_case Optional. Numeric value, or numeric vector, of radius (radii) of case cluster(s) in the units of \code{win}. Ignored if \code{samp_case = "MVN"}.
 #' @param r_control Optional. Numeric value, or numeric vector, of radius (radii) of control cluster(s) in the units of \code{win}. Ignored if \code{samp_control != "clustered"}.
-#' @param s_case Optional. Numeric value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for case locations in the units of \code{win}.  Ignored if \code{samp_control != "MVN"}.
+#' @param s_case Optional. Numeric value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for case locations in the units of \code{win}. Ignored if \code{samp_control != "MVN"}.
 #' @param s_control Optional. Numeric value, or numeric vector, for the standard deviation(s) of the multivariate normal distribution for control locations in the units of \code{win}. Ignored if \code{samp_control != "MVN"}.
 #' @param l_case Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for case clusters. Ignored if \code{samp_control != "IPP"}.
 #' @param l_control Optional. A single positive number, a vector of positive numbers, a function(x,y, ...), or a pixel image. Intensity of the Poisson process for control clusters. Ignored if \code{samp_control = "uniform"}, \code{samp_control = "systematic"}, \code{samp_control = "MVN"}, or \code{samp_control = "CSR"}.
@@ -158,7 +158,7 @@ spatial_data <- function(win = spatstat.geom::unit.square(),
     }
     
     if (samp_case == "IPP"){
-      if (class(lamb) != "function") {
+      if (!inherits(lamb, "function")) {
         stop("The argument 'l_case' should be an intensity function")
       }
       win_case <- spatstat.geom::disc(radius = rad, centre = c(0.5, 0.5), ...)
@@ -194,7 +194,7 @@ spatial_data <- function(win = spatstat.geom::unit.square(),
     }
     
     if (samp_control == "IPP") {
-      if (class(lamb) != "function") {
+      if (!inherits(lamb, "function")) {
         stop("The argument 'l_control' should be an intensity function")
       }
       x <- spatstat.random::rpoispp(lambda = lamb, win = wind, ...)

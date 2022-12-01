@@ -5,7 +5,7 @@
 #' @param obs_data A bivariate point pattern (a multitype point pattern of object of class "ppp") with two types of points in a factor valued mark.
 #' @param sim_total Integer, specifying the number of simulation iterations to perform.
 #' @param samp_control Character string specifying whether to randomize the control locations uniformly (\code{samp_control="uniform"}), with complete spatial randomness (\code{samp_control="CSR"}), or multivariate normal (\code{samp_control="MVN"}).
-#' @param s_control Optional. Numeric value for the standard deviation of the multivariate normal distribution in the units of the \code{obs_data}.  The default value (1) assumes a unit square window. Ignored if Ignored if \code{samp_control="uniform"} or \code{samp_control="CSR"}.
+#' @param s_control Optional. Numeric value for the standard deviation of the multivariate normal distribution in the units of the \code{obs_data}. The default value (1) assumes a unit square window. Ignored if Ignored if \code{samp_control="uniform"} or \code{samp_control="CSR"}.
 #' @param alpha Optional. Numeric value of the critical p-value (default=0.05).
 #' @param p_correct Optional. Character string specifying whether to apply a correction for multiple comparisons including a False Discovery Rate \code{p_correct = "FDR"}, a Sidak correction \code{p_correct = "uncorrelated Sidak"}, and a Bonferroni correction \code{p_correct = "uncorrelated Bonferroni"}. If \code{p_correct = "none"} (the default), then no correction is applied. 
 #' @param parallel Logical. If TRUE, will execute the function in parallel. If FALSE (the default), will not execute the function in parallel.
@@ -97,7 +97,7 @@ jitter_power <- function(obs_data,
   }
   
   # Input
-  if (class(obs_data) != "ppp"){
+  if (!inherits(obs_data, "ppp")) {
     stop("Argument 'obs_data' must be of class 'ppp'")
   }
   
