@@ -1,7 +1,7 @@
 Package: sparrpowR
 Title: Power Analysis to Detect Spatial Relative Risk Clusters
-Version: 0.2.6
-Date: 2022-12-01
+Version: 0.2.7.9000
+Date: 2022-12-16
 Authors@R:
     c(person(given = "Ian D.",
              family = "Buller",
@@ -35,9 +35,9 @@ Description: Calculate the statistical power to detect clusters using kernel-bas
 License: Apache License (>= 2.0)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.2
 Depends: 
-    R (>= 3.5.0),
+    R (>= 3.5.0)
 Imports: 
     doFuture,
     doRNG,
@@ -48,16 +48,20 @@ Imports:
     grDevices,
     iterators,
     lifecycle,
-    raster,
-    sp,
     sparr,
     spatstat.geom,
     spatstat.random,
-    stats
-Suggests: 
+    stats,
+    terra
+Suggests:
+    geojsonsf,
+    ggmap,
+    ggplot2,
+    sf,
     spatstat.data,
-    testthat,
     spelling,
+    testthat,
+    tidyterra,
     R.rsp
 VignetteBuilder: R.rsp
 Language: en-US

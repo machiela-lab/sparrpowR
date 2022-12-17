@@ -1,14 +1,15 @@
-## This is the tenth resubmission
+## This is the eleventh resubmission
 
 * Actions taken since previous submission:
-  * Replaced `if()` conditions comparing `class()` to string with `inherits()`
-  * Added `future::plan(future::multisession)` in tests to remove the files in temp directory
-  * Updated maintainer contact information
+  * Migrated R-spatial dependency
+  * Replaced `raster` and `sp` in Imports with `terra` because of imminent package retirement
+  * `geojsonsf`, `ggmap`, `ggplot2`, `sf`, `tidyterra` are now Suggests because they are used in the vignette
+  * Updated vignette and documentation throughout
 
 * Documentation for `pval_correct()` references a doi <https://doi.org/10.2307/2283989> that throws a NOTE but is a valid URL
   
 ## Test environments
-* local OS X install, R 4.2.1
+* local Windows install, R 4.2.1
 * win-builder, (devel, release, oldrelease)
 * Rhub
   * Fedora Linux, R-devel, clang, gfortran

@@ -1,5 +1,12 @@
 # sparrpowR (development version)
 
+# sparrpowR v0.2.7.9000
+* Migrated R-spatial dependency
+* Replaced `raster` and `sp` in Imports with `terra` because of imminent package retirement
+* `geojsonsf`, `ggmap`, `ggplot2`, `sf`, `tidyterra` are now Suggests because they are used in the vignette
+* Updated vignette and documentation throughout
+* Added GitHub R-CMD-check
+
 # sparrpowR v0.2.6
 * Replaced `if()` conditions comparing `class()` to string with `inherits()`
 * Added `future::plan(future::multisession)` in tests to remove the files in temp directory

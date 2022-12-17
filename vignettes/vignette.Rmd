@@ -12,13 +12,12 @@ vignette: >
 ```{r setup, include = FALSE}
 library(knitr)
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, cache = FALSE, fig.width = 7, fig.height = 7, fig.show = "hold")
-options("rgdal_show_exportToProj4_warnings" = "none") # to mute warnings of possible GDAL/OSR exportToProj4() degradation
 ```
 
 Start with the necessary packages and seed for the vignette.
 
 ```{r packages}
-loadedPackages <- c("broom", "geojsonio", "ggmap", "ggplot2", "grDevices", "maptools", "raster", "rgdal", "rgeos", "sf", "sp", "sparrpowR", "spatstat.geom", "tibble")
+loadedPackages <- c("geojsonsf", "ggmap", "ggplot2", "graphics", "grDevices", "sf", "sparrpowR", "spatstat.geom", "terra", "tidyterra")
 invisible(lapply(loadedPackages, library, character.only = TRUE))
 set.seed(1234) # for reproducibility
 ```
@@ -28,28 +27,28 @@ Import data from Open Data DC [website](https://opendata.dc.gov/datasets/washing
 ```{r dc_data}
 # Washington, D.C. boundary
 gis_path1 <- "https://opendata.arcgis.com/datasets/7241f6d500b44288ad983f0942b39663_10.geojson"
-dc <- geojsonio::geojson_read(gis_path1,  what = "sp")
+dc <- geojsonsf::geojson_sf(gis_path1)
 
 # American Community Survey 2018 Census Tracts
 gis_path2 <- "https://opendata.arcgis.com/datasets/faea4d66e7134e57bf8566197f25b3a8_0.geojson"
-census <- geojsonio::geojson_read(gis_path2,  what = "sp")
+census <- geojsonsf::geojson_sf(gis_path2)
 ```
 
 We want to create a realistic boundary (i.e., polygon) of our study area. We are going to spatially clip our DC boundary by the census tracts in an attempt to remove major bodies of water where people do not reside.
 
 ```{r dc_owin}
-clipwin <- maptools::unionSpatialPolygons(census, IDs = rep(1, length(census)))
-dcc <- rgeos::gIntersection(dc, clipwin, byid = TRUE)
+clipwin <- sf::st_union(census)
+dcc <- sf::st_intersection(dc, clipwin)
 # Plot
-sp::plot(dc, main = "DC Boundary")
-sp::plot(census,  main = "American Community Survey\n2018")
-sp::plot(dcc, main = "Clipped Boundary")
+plot(sf::st_geometry(dc), main = "DC Boundary")
+plot(sf::st_geometry(census),  main = "American Community Survey\n2018")
+plot(sf::st_geometry(dcc), main = "Clipped Boundary")
 ```
 
 Our developed method, [sparrpowR](https://CRAN.R-project.org/package=sparrpowR), relies on the [spatstat](https://CRAN.R-project.org/package=spatstat) package suite to simulate data, which assumes point locations are on a planar (i.e., flat) surface. Our boundary is made up of geographical coordinates on Earth (i.e., a sphere), so we need to flatten our boundary by spatially projecting it with an appropriate spatial reference system (SRS). For the District of Columbia, we are going to use the World Geodetic System 1984 (WGS84) Universal Transverse Mercator (UTM) Zone 18N [EPSG:32619](https://epsg.io/32618). We then convert the boundary into a `owin` object required by the [spatstat.geom](https://CRAN.R-project.org/package=spatstat.geom) package.
 
 ```{r spatial_transformation}
-dcp <- sf::st_transform(sf::st_as_sf(dcc), crs = st_crs(32618))
+dcp <- sf::st_transform(sf::st_as_sf(dcc), crs = sf::st_crs(32618))
 dco <- spatstat.geom::as.owin(sf::st_geometry(dcp))
 ```
 
@@ -57,11 +56,11 @@ In this hypothetical example, we want to estimate the local power of detecting a
 
 ```{r disease_cluster}
 navy <- data.frame(lon = 326414.70444451, lat = 4304571.1539442)
-spf <- sp::SpatialPoints(coords = navy, proj4string = sp::CRS(SRS_string = "EPSG:32618"))
+spf <- sf::st_as_sf(navy, coords = c("lon", "lat"), crs = sf::st_crs(32618))
 # Plot
-sp::plot(dcp, main = "Location of Hypothetical\nDisease Cluster")
-sp::plot(spf, col = "magenta", add = T, pch = 4, cex = 2)
-legend("bottom", xpd = T, y.intersp = -1.5, legend = c("Navy Yard"), col = "magenta", pch = 4, cex = 1, bty = "n")
+plot(sf::st_geometry(dcp), main = "Location of Hypothetical\nDisease Cluster")
+plot(spf, col = "magenta", add = T, pch = 4, cex = 2)
+graphics::legend("bottom", xpd = T, y.intersp = -1.5, legend = c("Navy Yard"), col = "magenta", pch = 4, cex = 1, bty = "n")
 ```
 
 We will assume that approximately 50 cases (e.g., `n_case = 50`) were clustered around the center of the Navy Yard (e.g., `samp_case = "MVN"`) with more cases near the center and fewer cases about 1 kilometers away (e.g., `s_case = 1000`).
@@ -70,19 +69,19 @@ If we were to conduct a study, where would we be sufficiently statistically powe
 
 ```{r spatial_power}
 start_time <- Sys.time() # record start time
-sim_power <- spatial_power(x_case = navy[[1]], y_case = navy[[2]], # center of cluster
-                           x_control = navy[[1]], y_control = navy[[2]], # center of cluster
-                           n_case = 50, n_control = 950, # sample size of case/control
-                           samp_case = "MVN", samp_control = "MVN", # samplers
-                           s_case = 1000, s_control = 2000, # approximate size of clusters
-                           alpha = 0.05, # critical p-value 
-                           sim_total = 100, # number of iterations
-                           win = dco, # study area
-                           resolution = 100, # number gridded knots on x-axis
-                           edge = "diggle", # correct for edge effects
-                           adapt = FALSE, # fixed-bandwidth
-                           h0 = NULL, # automatically select bandwidth for each iteration
-                           verbose = FALSE) # no printout
+sim_power <- sparrpowR::spatial_power(x_case = navy[[1]], y_case = navy[[2]], # center of cluster
+                                      x_control = navy[[1]], y_control = navy[[2]], # center of cluster
+                                      n_case = 50, n_control = 950, # sample size of case/control
+                                      samp_case = "MVN", samp_control = "MVN", # samplers
+                                      s_case = 1000, s_control = 2000, # approximate size of clusters
+                                      alpha = 0.05, # critical p-value 
+                                      sim_total = 100, # number of iterations
+                                      win = dco, # study area
+                                      resolution = 100, # number gridded knots on x-axis
+                                      edge = "diggle", # correct for edge effects
+                                      adapt = FALSE, # fixed-bandwidth
+                                      h0 = NULL, # automatically select bandwidth for each iteration
+                                      verbose = FALSE) # no printout
 end_time <- Sys.time() # record end time
 time_srr <- end_time - start_time # Calculate run time
 ```
@@ -98,13 +97,13 @@ sizes <- c(0.5,0.5) # size of point-locations
 p_thresh <- 0.8 # 80% of iterations with statistically significant results
 
 ## Data Visualization of Input and Power
-spatial_plots(input = sim_power, # use output of above simulation
-              p_thresh = p_thresh, # power cut-off
-              cascon = FALSE, # one-tail, lower tail hypothesis test (i.e., case clustering)
-              plot_pts = TRUE, # display the points in the second plot
-              chars = chars, # case, control
-              sizes = sizes, # case, control
-              cols = cols) # colors of plot
+sparrpowR::spatial_plots(input = sim_power, # use output of above simulation
+                         p_thresh = p_thresh, # power cut-off
+                         cascon = FALSE, # one-tail, lower tail hypothesis test (i.e., case clustering)
+                         plot_pts = TRUE, # display the points in the second plot
+                         chars = chars, # case, control
+                         sizes = sizes, # case, control
+                         cols = cols) # colors of plot
 ```
 
 Now, lets overlay our results on top of a basemap. Here, we will use an open-source map from [Stamen](https://stamen.com/open-source/), that is unprojected in WGS84. We extract the rectangular box (i.e., bounding box) surrounding our polygon boundary of the District of Columbia (WGS84). 
@@ -112,59 +111,49 @@ Now, lets overlay our results on top of a basemap. Here, we will use an open-sou
 ```{r basemap}
 dcbb <- sf::st_bbox(sf::st_buffer(sf::st_as_sf(dc), dist = 0.015))
 dcbbm <- matrix(dcbb, nrow = 2)
-base_map <- ggmap::get_map(location = dcbbm, maptype = "toner", source = "stamen")
+base_map <- ggmap::get_map(location = dcbbm, maptype = "terrain", source = "stamen")
 ```
 
 Prepare the points from the first simulation for plotting in [ggplot2](https://CRAN.R-project.org/package=ggplot2) suite and prepare the original boundary for plotting in [ggplot2](https://CRAN.R-project.org/package=ggplot2) suite.
 
 ```{r ggplot_preparation}
 sim_pts <- sim_power$sim  # extract points from first iteration
-sim_pts <- maptools::as.SpatialPointsDataFrame.ppp(sim_pts) # convert to spatial data frame
-raster::crs(sim_pts) <- sp::CRS(SRS_string = "EPSG:32618") # set initial projection
-sim_pts_wgs84 <-  sp::spTransform(sim_pts, CRSobj = sp::CRS(SRS_string = "EPSG:4326")) # project to basemap
-sim_pts_df <- tibble::tibble(data.frame(sim_pts_wgs84)) # convert to tidy data frame
-
-# Original boundary
-dc_df <- broom::tidy(dcc) # convert to a tidy dataframe
-dcc$polyID <- sapply(slot(dcc, "polygons"), function(x) slot(x, "ID")) # preserve polygon id for merge
-dc_df <- merge(dc_df, dcc, by.x = "id", by.y="polyID") # merge data
+sim_pts <- sf::st_as_sf(sim_pts) # convert to simple features
+names(sim_pts)[1] <- "mark"
+sf::st_crs(sim_pts) <- sf::st_crs(32618)
+sim_pts_wgs84 <-  sf::st_transform(sim_pts, crs = sf::st_crs(4326)) # project to basemap
 ```
 
-Prepare the raster from the simulation for plotting in [ggplot2](https://CRAN.R-project.org/package=ggplot2) suite.
+Prepare the SpatRaster from the simulation for plotting in [ggplot2](https://CRAN.R-project.org/package=ggplot2) suite.
 
 ```{r output_preparation}
-pvalprop <- tibble::tibble(x = sim_power$rx, y = sim_power$ry,
-                           z = sim_power$pval_prop_cas) # extract proportion significant
+pvalprop <- data.frame(x = sim_power$rx,
+                          y = sim_power$ry,
+                          z = sim_power$pval_prop_cas) # extract proportion significant
 lrr_narm <- na.omit(pvalprop) # remove NAs
-sp::coordinates(lrr_narm) <- ~ x + y # coordinates
-gridded(lrr_narm) <- TRUE # gridded
-pvalprop_raster <- raster::raster(lrr_narm) # convert to raster
+pvalprop_raster <- terra::rast(lrr_narm) # convert to SpatRaster
 rm(pvalprop, lrr_narm) # conserve memory
-raster::crs(pvalprop_raster) <- raster::crs(dcp) # set output project (UTM 18N)
-pvalprop_raster <- raster::projectRaster(pvalprop_raster, crs = raster::crs(dc)) # unproject (WGS84)
-rtp <- raster::rasterToPolygons(pvalprop_raster) # convert to polygons
-rtp@data$id <- 1:nrow(rtp@data)   # add id column for join
-rtpFort <- broom::tidy(rtp, data = rtp@data) # convert to tibble
-rtpFortMer <- merge(rtpFort, rtp@data, by.x = 'id', by.y = 'id')  # join data
-rampcols <- grDevices::colorRampPalette(colors = c(cols[1], cols[2]), space="Lab")(length(raster::values(pvalprop_raster))) # set colorramp
+terra::crs(pvalprop_raster) <- terra::crs(dcp) # set output project (UTM 18N)
+pvalprop_raster <- terra::project(pvalprop_raster, dc) # unproject (WGS84)
+rampcols <- grDevices::colorRampPalette(colors = c(cols[1], cols[2]), space="Lab")(length(terra::values(pvalprop_raster))) # set colorramp
 ```
 
 Plot local power as a continuous outcome with point-locations using the [ggplot2](https://CRAN.R-project.org/package=ggplot2) suite.
 
 ```{r ggmap_continuous}
 ggmap::ggmap(base_map) + # basemap
-  ggplot2::geom_polygon(data = dc_df, # original boundary
-                        ggplot2::aes(x = long, y = lat, group = group),
+  ggplot2::geom_sf(data = dcc, # original boundary,
                         fill = "transparent",
-                        colour = "black") +
-  ggplot2::geom_polygon(data = rtpFortMer, # output raster as polygons
-                        ggplot2::aes(x = long, y = lat, group = group, fill = z), 
-                        size = 0, 
-                        alpha = 0.5) +
-  ggplot2::scale_fill_gradientn(colours = rampcols) + # colors for polygons
-  ggplot2::geom_point(data = sim_pts_df, # simulated point-locations
-                      ggplot2::aes(x = mx, y = my, color = marks, shape = marks),
-                      alpha = 0.8) + 
+                        colour = "black",
+                        inherit.aes = FALSE) +
+  tidyterra::geom_spatraster(data = pvalprop_raster, # output SpatRaster
+                             size = 0,
+                             alpha = 0.5) +
+  ggplot2::scale_fill_gradientn(colours = rampcols, na.value = NA) + # colors for SpatRaster
+  ggplot2::geom_sf(data = sim_pts_wgs84[-1, ], # simulated point-locations
+                  ggplot2::aes(color = mark, shape = mark),
+                      alpha = 0.8,
+                  inherit.aes = FALSE) + 
   ggplot2::scale_color_manual(values = cols[3:4]) + # fill of point-locations
   ggplot2::scale_shape_manual(values = chars) + # shape of point-locations
   ggplot2::labs(x = "", y = "", fill = "Power", color = "", shape = "") # legend labels
@@ -173,23 +162,21 @@ ggmap::ggmap(base_map) + # basemap
 Plot local power as a categorical outcome with point-locations using the [ggplot2](https://CRAN.R-project.org/package=ggplot2) suite.
 
 ```{r ggmap_categorical}
-pvalprop_reclass <- raster::cut(pvalprop_raster, c(-Inf, p_thresh, Inf))
-rtp <- raster::rasterToPolygons(pvalprop_reclass) # convert to polygons
-rtp@data$id <- 1:nrow(rtp@data)   # add id column for join
-rtpFort <- broom::tidy(rtp, data = rtp@data) # convert to tibble
-rtpFortMer <- merge(rtpFort, rtp@data, by.x = 'id', by.y = 'id')  # join data
+pvalprop_reclass <- pvalprop_raster
+terra::values(pvalprop_reclass) <- cut(terra::values(pvalprop_raster), c(-Inf, p_thresh, Inf))
 
 ggmap::ggmap(base_map) + # basemap 
-  ggplot2::geom_polygon(data = dc_df, # original boundary
-                        ggplot2::aes(x = long, y = lat, group = group),
-                        fill = "transparent",
-                        colour = "black") +
-  ggplot2::geom_polygon(data = rtpFortMer, # output raster as polygons
-                        ggplot2::aes(x = long, y = lat, group = group, fill = as.factor(layer)), 
-                        size = 0, 
-                        alpha = 0.5) +
+  ggplot2::geom_sf(data = dcc, # original boundary,
+                   fill = "transparent",
+                   colour = "black",
+                   inherit.aes = FALSE) +
+  tidyterra::geom_spatraster(data = pvalprop_reclass, # output SpatRaster
+                             size = 0,
+                             alpha = 0.5) +
   ggplot2::scale_fill_manual(values = cols[c(1,2)],
-                             labels = c("insufficient", "sufficient")) + # colors for polygons
+                             labels = c("insufficient", "sufficient"),
+                             na.translate = FALSE, 
+                             na.value = NA) + # colors for SpatRaster
   ggplot2::labs(x = "", y = "", fill = "Power") # legend labels
 ```
 
@@ -206,22 +193,22 @@ Here, we use the same example as above, conducted in parallel with a False Disco
 ```{r multiple_testing}
 set.seed(1234) # reset RNG for reproducibility with previous run
 start_time <- Sys.time() # record start time
-sim_power <- spatial_power(x_case = navy[[1]], y_case = navy[[2]], # center of cluster
-                           x_control = navy[[1]], y_control = navy[[2]], # center of cluster
-                           n_case = 50, n_control = 950, # sample size of case/control
-                           samp_case = "MVN", samp_control = "MVN", # samplers
-                           s_case = 1000, s_control = 2000, # approximate size of clusters
-                           alpha = 0.05, # critical p-value 
-                           sim_total = 100, # number of iterations
-                           win = dco, # study area
-                           resolution = 100, # number gridded knots on x-axis
-                           edge = "diggle", # correct for edge effects
-                           adapt = FALSE, # fixed-bandwidth
-                           h0 = NULL, # automatically select bandwidth for each iteration
-                           verbose = FALSE, # no printout
-                           parallel = TRUE, # Run in parallel
-                           n_core = 5, # Use 5 cores (depends on your system, default = 2)
-                           p_correct = "FDR") # use a correction for multiple testing (False Discovery Rate)
+sim_power <- sparrpowR::spatial_power(x_case = navy[[1]], y_case = navy[[2]], # center of cluster
+                                      x_control = navy[[1]], y_control = navy[[2]], # center of cluster
+                                      n_case = 50, n_control = 950, # sample size of case/control
+                                      samp_case = "MVN", samp_control = "MVN", # samplers
+                                      s_case = 1000, s_control = 2000, # approximate size of clusters
+                                      alpha = 0.05, # critical p-value 
+                                      sim_total = 100, # number of iterations
+                                      win = dco, # study area
+                                      resolution = 100, # number gridded knots on x-axis
+                                      edge = "diggle", # correct for edge effects
+                                      adapt = FALSE, # fixed-bandwidth
+                                      h0 = NULL, # automatically select bandwidth for each iteration
+                                      verbose = FALSE, # no printout
+                                      parallel = TRUE, # Run in parallel
+                                      n_core = 5, # Use 5 cores (depends on your system, default = 2)
+                                      p_correct = "FDR") # use a correction for multiple testing (False Discovery Rate)
 end_time <- Sys.time() # record end time
 time_srr <- end_time - start_time # Calculate run time
 
@@ -231,13 +218,17 @@ sizes <- c(0.5,0.5) # size of point-locations
 p_thresh <- 0.8 # 80% of iterations with statistically significant results
 
 ## Data Visualization of Input and Power
-spatial_plots(input = sim_power, # use output of above simulation
-              p_thresh = p_thresh, # power cut-off
-              cascon = FALSE, # one-tail, lower tail hypothesis test (i.e., case clustering)
-              plot_pts = FALSE, # display the points in the second plot
-              chars = chars, # case, control
-              sizes = sizes, # case, control
-              cols = cols) # colors of plot
+sparrpowR::spatial_plots(input = sim_power, # use output of above simulation
+                         p_thresh = p_thresh, # power cut-off
+                         cascon = FALSE, # one-tail, lower tail hypothesis test (i.e., case clustering)
+                         plot_pts = FALSE, # display the points in the second plot
+                         chars = chars, # case, control
+                         sizes = sizes, # case, control
+                         cols = cols) # colors of plot
 ```
 
 The process above took about `r round(time_srr, digits = 1)` minutes to run, which is shorter than the first example. The zone with sufficient power to detect a case cluster is slightly smaller than the first example, too, due to the multiple testing correction. 
+
+```{r system}
+sessionInfo()
+```

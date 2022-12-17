@@ -26,7 +26,7 @@
 #' @aliases sparrpowR-package sparrpowR
 #' @docType package
 #' 
-#' @section Dependencies: The 'sparrpowR' package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.random}}, \code{\link{spatstat.geom}}, and \code{\link{raster}} for computing the statistical power and visualizing the output. Computation can be performed in parallel using \code{\link{doFuture}}, \code{\link[future]{multisession}}, \code{\link{doRNG}}, and \code{\link[foreach]{foreach}}. Basic visualizations rely on the \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
+#' @section Dependencies: The 'sparrpowR' package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.random}}, \code{\link{spatstat.geom}}, and \code{\link{terra}} for computing the statistical power and visualizing the output. Computation can be performed in parallel using \code{\link{doFuture}}, \code{\link[future]{multisession}}, \code{\link{doRNG}}, and \code{\link[foreach]{foreach}}. Basic visualizations rely on the \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
 #' 
 #' @author Ian D. Buller\cr \emph{Occupational and Environmental Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland, USA.} \cr\cr
 #' Derek W. Brown\cr \emph{Integrative Tumor Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland, USA.}
@@ -45,10 +45,9 @@ NULL
 #' @importFrom grDevices colorRampPalette
 #' @importFrom iterators icount
 #' @importFrom lifecycle badge deprecate_warn deprecated is_present
-#' @importFrom raster raster values reclassify
-#' @importFrom sp coordinates gridded
 #' @importFrom sparr risk
 #' @importFrom stats na.omit rnorm sd
 #' @importFrom spatstat.geom as.solist disc marks plot.anylist plot.ppp ppp rsyst shift superimpose unit.square
 #' @importFrom spatstat.random rNeymanScott rpoispp runifdisc runifpoint
+#' @importFrom terra rast values
 NULL

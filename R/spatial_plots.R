@@ -23,10 +23,9 @@
 #' @importFrom fields image.plot
 #' @importFrom graphics text par
 #' @importFrom grDevices colorRampPalette
-#' @importFrom raster cut raster values
-#' @importFrom sp coordinates gridded
 #' @importFrom spatstat.geom plot.anylist plot.ppp 
 #' @importFrom stats na.omit
+#' @importFrom terra rast values
 #' @export 
 #'
 #' @examples
@@ -125,19 +124,17 @@ spatial_plots <- function(input,
   }
   
   # Plot 2: Power, Continuous
-  ## Create proportion significant raster
+  ## Create proportion significant SpatRaster
   lrr_narm <- stats::na.omit(pvalprop) # remove NAs
-  sp::coordinates(lrr_narm) <- ~ x + y # coordinates
-  sp::gridded(lrr_narm) <- TRUE # gridded
-  pvalprop_raster <- raster::raster(lrr_narm)
+  pvalprop_raster <- terra::rast(lrr_narm)
   pvalprop <- NULL # conserve memory
   lrr_narm <- NULL # conserve memory
   
-  ## Colors for raster
+  ## Colors for SpatRaster
   rampcols <- grDevices::colorRampPalette(colors = c(cols[1], cols[2]),
-                                          space = "Lab")(length(raster::values(pvalprop_raster)))
+                                          space = "Lab")(length(terra::values(pvalprop_raster)))
   rampbreaks <- seq(0, 1, 
-                    length.out = length(raster::values(pvalprop_raster)) + 1)
+                    length.out = length(terra::values(pvalprop_raster)) + 1)
   ## Continuous Output
   if (plot_pts == TRUE) {
     p2 <- spatstat.geom::plot.ppp(input$sim, 
@@ -193,13 +190,14 @@ spatial_plots <- function(input,
   }
   
   rampbreaks <- NULL # conserve memory
-  rampcols <- NULL # convserve memory
+  rampcols <- NULL # conserve memory
   
-  # Plot 2: Power, labled
+  # Plot 2: Power, labeled
   ## Reclassify raster of proportion significant
   #### Here: power = 80
-  pvalprop_reclass <- raster::cut(pvalprop_raster,
-                                  breaks = c(-Inf, p_thresh, Inf))
+  pvalprop_reclass <- pvalprop_raster
+  terra::values(pvalprop_reclass) <- cut(terra::values(pvalprop_reclass),
+                                         breaks = c(-Inf, p_thresh, Inf))
   pvalprop_raster <- NULL # conserve memory
   
   ## Categorical Output
