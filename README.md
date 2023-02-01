@@ -10,10 +10,9 @@ sparrpowR: Power analysis to detect spatial relative clusters <img src="man/figu
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 ![GitHub last commit](https://img.shields.io/github/last-commit/machiela-lab/sparrpowR)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5347997.svg)](https://doi.org/10.5281/zenodo.5347997)
-
 <!-- badges: end -->
 
-**Date repository last updated**: December 16, 2022
+**Date repository last updated**: February 01, 2023
 
 <h2 id="overview">
 
@@ -45,8 +44,8 @@ Available functions
 
 <table>
 <colgroup>
-<col width="30%" />
-<col width="70%" />
+<col width="30%"/>
+<col width="70%"/>
 </colgroup>
 <thead>
 <tr class="header">
@@ -79,9 +78,9 @@ Authors
 
 </h2>
 
-* **Ian D. Buller** - *Occupational and Environmental Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland* - [GitHub](https://github.com/idblr) - [ORCID](https://orcid.org/0000-0001-9477-8582)
+* **Ian D. Buller** - *Social & Scientific Systems, Inc., a division of DLH Corporation, Silver Spring, Maryland (current)* - *Occupational and Environmental Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland (original)* - [GitHub](https://github.com/idblr) - [ORCID](https://orcid.org/0000-0001-9477-8582)
 
-* **Derek W. Brown** - *Integrative Tumor Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland* - [GitHub](https://github.com/derekbrown12) - [ORCID](https://orcid.org/0000-0001-8393-1713)
+* **Derek W. Brown** - *Integrative Tumor Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland (original)* - [GitHub](https://github.com/derekbrown12) - [ORCID](https://orcid.org/0000-0001-8393-1713)
 
 See also the list of [contributors](https://github.com/machiela-lab/sparrpowR/graphs/contributors) who participated in this package, including:
 
@@ -195,7 +194,7 @@ sparrpowR::spatial_plots(foo, cascon = TRUE)
 
 ### Funding
 
-This package was developed while the authors were postdoctoral fellows supported by the [Cancer Prevention Fellowship Program](https://cpfp.cancer.gov/) at the [National Cancer Institute](https://www.cancer.gov/).
+This package was developed while the authors were originally postdoctoral fellows supported by the [Cancer Prevention Fellowship Program](https://cpfp.cancer.gov/) at the [National Cancer Institute](https://www.cancer.gov/). Any modifications since December 05, 2022 were made while the author I.D.B. was an employee of Social & Scientific Systems, Inc., a division of [DLH Corporation](https://www.dlhcorp.com).
 
 ### Acknowledgments
 

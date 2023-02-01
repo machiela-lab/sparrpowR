@@ -34,8 +34,7 @@ Key content of the 'sparrpowR' package include:\cr
 }
 
 \author{
-Ian D. Buller\cr \emph{Occupational and Environmental Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland, USA.} \cr\cr
-Derek W. Brown\cr \emph{Integrative Tumor Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland, USA.}
+Ian D. Buller\cr \emph{Social & Scientific Systems, Inc., a division of DLH Corporation, Silver Spring, Maryland, USA (current); Occupational and Environmental Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland, USA (original)}\cr
 
 Maintainer: I.D.B. \email{ian.buller@alumni.emory.edu.gov}
 }

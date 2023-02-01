@@ -5,6 +5,7 @@
   * Replaced `raster` and `sp` in Imports with `terra` because of imminent package retirement
   * `geojsonsf`, `ggmap`, `ggplot2`, `sf`, `tidyterra` are now Suggests because they are used in the vignette
   * Updated vignette and documentation throughout
+  * Updated citation style for CITATION file
 
 * Documentation for `pval_correct()` references a doi <https://doi.org/10.2307/2283989> that throws a NOTE but is a valid URL
   
