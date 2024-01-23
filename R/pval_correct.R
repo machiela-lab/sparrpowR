@@ -1,4 +1,4 @@
-#' Calculate p-value corrections
+#' Calculate p-value corrections for multiple testing
 #'
 #' Internal function to calculate various p-value corrections for use within the \code{\link{spatial_power}} and \code{\link{jitter_power}} functions.
 #'
@@ -24,22 +24,10 @@ pval_correct <- function(input,
                          type = c("FDR", "Sidak", "Bonferroni"),
                          alpha = 0.05,
                          nbc = NULL) {
-
-# False Discovery Rate
+  
+  # False Discovery Rate (Benjamini & Hochberg)
   if (type == "FDR") {
-  sort_pvals <- sort(as.vector(input$P$v), decreasing = TRUE)
-  
-  fdr <- function(pvals, alpha) {
-    m <- length(pvals)
-    for (i in 1:length(pvals)) {
-      if (pvals[i] <= (i/m) * alpha) { 
-        pcrit <- pvals[i]
-        return(pcrit)
-      }
-    }
-    max(pcrit, min(pvals, na.rm = TRUE))
-  }
-  
+    sort_pvals <- sort(as.vector(input$P$v))
     out_alpha <- fdr(sort_pvals, alpha)
     return(out_alpha)
   }

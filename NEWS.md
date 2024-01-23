@@ -1,5 +1,9 @@
 # sparrpowR (development version)
 
+## sparrpowR v0.2.8
+* Fixed bug in calculation of False Discovery Rate in internal `pval_correct()` function
+* Fixed 'Moved Permanently' content by replacing the old URL with the new URL
+
 ## sparrpowR v0.2.7
 * Migrated R-spatial dependency
 * Replaced `raster` and `sp` in Imports with `terra` because of imminent package retirement

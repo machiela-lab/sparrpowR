@@ -16,3 +16,15 @@ progBar <- function(kk, N, per = 1) {
     if (kk == N) cat("\r")
   }
 }
+
+# False Discovery Rate (Benjamini & Hochberg)
+fdr <- function(pvals, alpha) {
+  pcrit <- NULL
+  m <- length(pvals)
+  for (i in 1:m) {
+    if (pvals[i] <= (i/m) * alpha) { 
+      pcrit <- pvals[i]
+    }
+  }
+  return(max(pcrit, pvals[1]))
+}
