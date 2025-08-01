@@ -24,16 +24,15 @@
 #' 
 #' @name sparrpowR-package
 #' @aliases sparrpowR-package sparrpowR
-#' @docType package
 #' 
-#' @section Dependencies: The 'sparrpowR' package relies heavily upon \code{\link{sparr}}, \code{\link{spatstat.random}}, \code{\link{spatstat.geom}}, and \code{\link{terra}} for computing the statistical power and visualizing the output. Computation can be performed in parallel using \code{\link{doFuture}}, \code{\link[future]{multisession}}, \code{\link{doRNG}}, and \code{\link[foreach]{foreach}}. Basic visualizations rely on the \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
+#' @section Dependencies: The 'sparrpowR' package relies heavily upon \code{\link[sparr]{sparr-package}}, \code{\link[spatstat.random]{spatstat.random-package}}, \code{\link[spatstat.geom]{spatstat.geom-package}}, and \code{\link[terra]{terra-package}} for computing the statistical power and visualizing the output. Computation can be performed in parallel using \code{\link[doFuture]{doFuture-package}}, \code{\link[future]{multisession}}, \code{\link[doRNG]{doRNG-package}}, and \code{\link[foreach]{foreach-package}} functions. Basic visualizations rely on the \code{\link[spatstat.geom]{plot.ppp}} and \code{\link[fields]{image.plot}} functions.
 #' 
-#' @author Ian D. Buller\cr \emph{Social & Scientific Systems, Inc., a division of DLH Corporation, Silver Spring, Maryland, USA (current); Occupational and Environmental Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland, USA (original)}\cr
+#' @author Ian D. Buller\cr \emph{DLH, LLC (formerly known as Social & Scientific Systems, Inc.) Bethesda, Maryland, USA (current); Occupational and Environmental Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland, USA (original)}\cr
 #' 
 #' Maintainer: I.D.B. \email{ian.buller@@alumni.emory.edu.gov}
 #'
 #' @keywords package
-NULL
+"_PACKAGE"
 
 #' @importFrom doFuture registerDoFuture
 #' @importFrom doRNG %dorng%

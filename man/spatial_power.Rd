@@ -114,7 +114,7 @@ An object of class "list". This is a named list with the following components:
 Compute the statistical power of a spatial relative risk function using randomly generated data.
 }
 \details{
-This function computes the statistical power of the spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) for randomly generated data using various random point pattern generators from the \code{\link{spatstat.random}} package.
+This function computes the statistical power of the spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) for randomly generated data using various random point pattern generators from the \code{\link[spatstat.random]{spatstat.random}} package.
 
 The function uses the \code{\link[sparr]{risk}} function to estimate the spatial relative risk function and forces the \code{tolerate} argument to be TRUE in order to calculate asymptotic p-values.
 

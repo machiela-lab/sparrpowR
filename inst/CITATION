@@ -20,5 +20,26 @@ bibentry(bibtype = "Article",
         "International Journal of Health Geographics 20(1), 1-7.",
         "DOI 10.1186/s12942-021-00267-z."),
   
-  header         = "To cite sparrpowR in publications use:"
+  header         = 'To cite sparrpowR in publications, please cite the following: (1)'
+)
+
+bibentry(bibtype = 'manual',
+  title          = 'sparrpowR: Power Analysis to Detect Spatial Relative Risk Clusters',
+  author         = c(as.person('Ian D. Buller'),
+                     as.person('Derek W. Brown')),
+  publisher      = 'The Comprehensive R Archive Network',
+  year           = '2025',
+  number         = '0.2.9',
+  doi            = '10.32614/CRAN.package.sparrpowR',
+  url            = 'https://cran.r-project.org/package=sparrpowR',
+  
+  textVersion    = 
+  paste('Ian D. Buller & Derek W. Brown (2025).',
+        'sparrpowR: Power Analysis to Detect Spatial Relative Risk Clusters.',
+        'The Comprehensive R Archive Network.',
+        'v0.2.9.',
+        'DOI:10.32614/CRAN.package.sparrpowR',
+        'Accessed by: https://cran.r-project.org/package=sparrpowR'),
+        
+  header         = 'and (2)'
 )

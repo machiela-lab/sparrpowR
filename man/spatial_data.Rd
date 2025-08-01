@@ -72,7 +72,7 @@ An object of class "ppplist". This is a list of marked point patterns that have 
 Generate random two-group data for a spatial relative risk function.
 }
 \details{
-This function generates random data for a spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) using various random point pattern generators from the \code{\link{spatstat.random}} package to generate data.
+This function generates random data for a spatial relative risk function (nonparametric estimate of relative risk by kernel smoothing) using various random point pattern generators from the \code{\link[spatstat.random]{spatstat.random}} package to generate data.
 
 If \code{samp_case = "uniform"} the case locations are randomly generated uniformly within a disc of radius \code{r_case} (or discs of radii \code{r_case}) centered at coordinates (\code{x_case}, \code{y_case}).
 

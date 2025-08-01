@@ -1,13 +1,14 @@
-## This is the twelth resubmission
+## This is the thirteenth resubmission
 
 * Actions taken since previous submission:
-  * Fixed bug in calculation of False Discovery Rate in internal `pval_correct()` function
-  * Fixed 'Moved Permanently' content by replacing the old URL with the new URL
+  * Renamed 'package.R' to 'sparrpowR-package.R' after Roxygen (>=7.3.0) update
+  * Fixed Rd `\link{}` targets missing package within 'sparrpowR-package.Rd', 'spatial_data.Rd', and 'spatial_power.Rd'
+  * Updated CITATION
 
 * Documentation for `pval_correct()` references a doi <https://doi.org/10.2307/2283989> that throws a NOTE but is a valid URL
   
 ## Test environments
-* local Windows install, R 4.2.1
+* local Windows install, R 4.5.1
 * win-builder, (devel, release, oldrelease)
 * Rhub
   * Fedora Linux, R-devel, clang, gfortran

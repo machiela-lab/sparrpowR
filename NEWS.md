@@ -1,5 +1,10 @@
 # sparrpowR (development version)
 
+## sparrpowR v0.2.9
+* Renamed 'package.R' to 'sparrpowR-package.R' after Roxygen (>=7.3.0) update
+* Fixed Rd `\link{}` targets missing package within 'sparrpowR-package.Rd', 'spatial_data.Rd', and 'spatial_power.Rd'
+* Updated CITATION
+
 ## sparrpowR v0.2.8
 * Fixed bug in calculation of False Discovery Rate in internal `pval_correct()` function
 * Fixed 'Moved Permanently' content by replacing the old URL with the new URL

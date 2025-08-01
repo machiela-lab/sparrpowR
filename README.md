@@ -12,7 +12,7 @@ sparrpowR: Power analysis to detect spatial relative clusters <img src="man/figu
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5347997.svg)](https://doi.org/10.5281/zenodo.5347997)
 <!-- badges: end -->
 
-**Date repository last updated**: January 23, 2024
+**Date repository last updated**: August 01, 2025
 
 <h2 id="overview">
 
@@ -78,7 +78,7 @@ Authors
 
 </h2>
 
-* **Ian D. Buller** - *Social & Scientific Systems, Inc., a division of DLH Corporation, Silver Spring, Maryland (current)* - *Occupational and Environmental Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland (original)* - [GitHub](https://github.com/idblr) - [ORCID](https://orcid.org/0000-0001-9477-8582)
+* **Ian D. Buller** - *DLH, LLC (formerly Social & Scientific Systems, Inc.), Bethesda, Maryland (current)* - *Occupational and Environmental Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland (original)* - [GitHub](https://github.com/idblr) - [ORCID](https://orcid.org/0000-0001-9477-8582)
 
 * **Derek W. Brown** - *Integrative Tumor Epidemiology Branch, Division of Cancer Epidemiology and Genetics, National Cancer Institute, National Institutes of Health, Rockville, Maryland (original)* - [GitHub](https://github.com/derekbrown12) - [ORCID](https://orcid.org/0000-0001-8393-1713)
 
@@ -194,7 +194,7 @@ sparrpowR::spatial_plots(foo, cascon = TRUE)
 
 ### Funding
 
-This package was developed while the authors were originally postdoctoral fellows supported by the [Cancer Prevention Fellowship Program](https://cpfp.cancer.gov/) at the [National Cancer Institute](https://www.cancer.gov/). Any modifications since December 05, 2022 were made while the author I.D.B. was an employee of Social & Scientific Systems, Inc., a division of [DLH Corporation](https://www.dlhcorp.com).
+This package was developed while the authors were originally postdoctoral fellows supported by the [Cancer Prevention Fellowship Program](https://cpfp.cancer.gov/) at the [National Cancer Institute](https://www.cancer.gov/). Any modifications since December 05, 2022 were made while the author I.D.B. was an employee of [DLH, LLC](https://www.dlhcorp.com) (formerly Social & Scientific Systems, Inc.).
 
 ### Acknowledgments
 
