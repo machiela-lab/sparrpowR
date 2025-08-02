@@ -49,6 +49,9 @@ jobs:
         config: ${{ fromJson(needs.setup.outputs.containers) }}
     container:
       image: ${{ matrix.config.container }}
+      env:
+      - name: DISPLAY
+        value: ':99.0'
 
     steps:
       - uses: r-hub/actions/checkout@v1

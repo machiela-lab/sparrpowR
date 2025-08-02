@@ -12,14 +12,19 @@
   
 ## Test environments
 * local Windows install, R 4.5.1
-* win-builder, (devel, release, oldrelease)
-* Rhub
-  * Fedora Linux, R-devel, clang, gfortran
-  * Ubuntu Linux 20.04.1 LTS, R-release, GCC
-  * Windows Server 2022, R-devel, 64 bit
-  * Windows Server 2008 R2 SP1, R-release, 32/64 bit
-  * Oracle Solaris 10, x86, 32 bit, R-release
-  * macOS 10.13.6 High Sierra, R-release, CRAN's setup
+* win-builder (devel, release, oldrelease)
+* R-CMD-check on GitHub
+  * macos-latest (release)
+  * windows-latest (release)
+  * ubuntu-latest (devel)
+  * ubuntu-latest (release)
+  * ubuntu-latest (oldrel-1)
+* Rhub v2
+  * macos-15 on GitHub, ASAN + UBSAN on macOS (`m1-san`)
+  * macos-13 on GitHub(`macos`)
+  * Fedora Linux 40 (Container Image) (`gcc-asan`)
+  * Ubuntu 22.04.5 LTS (`ubuntu-clang`)
+  * Ubuntu 22.04.5 LTS (`ubuntu-gcc12`)
 
 ## R CMD check results
 0 errors | 0 warnings | 0 notes
