@@ -6,6 +6,9 @@
   * Updated CITATION
 
 * Documentation for `pval_correct()` references a doi <https://doi.org/10.2307/2283989> that throws a NOTE but is a valid URL
+* Two links in NEWS.md throw a NOTE but are valid URLs:
+  * <https://github.com/HenrikBengtsson/parallelly/issues/62#issuecomment-880665390>
+  * <https://github.com/HenrikBengtsson/parallelly/issues/65>
   
 ## Test environments
 * local Windows install, R 4.5.1

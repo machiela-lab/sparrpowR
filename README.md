@@ -7,12 +7,12 @@ sparrpowR: Power analysis to detect spatial relative clusters <img src="man/figu
 [![CRAN version](https://www.r-pkg.org/badges/version-ago/sparrpowR)](https://cran.r-project.org/package=sparrpowR)
 [![CRAN RStudio mirror downloads total](https://cranlogs.r-pkg.org/badges/grand-total/sparrpowR?color=blue)](https://r-pkg.org/pkg/sparrpowR)
 [![CRAN RStudio mirror downloads monthly ](http://cranlogs.r-pkg.org/badges/sparrpowR)](https://www.r-pkg.org:443/pkg/sparrpowR)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/license/apache-2-0/)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/license/apache-2-0)
 ![GitHub last commit](https://img.shields.io/github/last-commit/machiela-lab/sparrpowR)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5347997.svg)](https://doi.org/10.5281/zenodo.5347997)
+[![](https://img.shields.io/badge/DOI-10.32614/CRAN.package.sparrpowR-1f57b6?style=flat&link=https://doi.org/10.32614/CRAN.package.sparrpowR)](https://doi.org/10.32614/CRAN.package.sparrpowR)
 <!-- badges: end -->
 
-**Date repository last updated**: August 01, 2025
+**Date repository last updated**: August 02, 2025
 
 <h2 id="overview">
 

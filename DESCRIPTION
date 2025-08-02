@@ -1,7 +1,7 @@
 Package: sparrpowR
 Title: Power Analysis to Detect Spatial Relative Risk Clusters
 Version: 0.2.9
-Date: 2025-08-01
+Date: 2025-08-02
 Authors@R:
     c(person(given = "Ian D.",
              family = "Buller",
