@@ -12,7 +12,7 @@ sparrpowR: Power analysis to detect spatial relative clusters <img src="man/figu
 [![](https://img.shields.io/badge/DOI-10.32614/CRAN.package.sparrpowR-1f57b6?style=flat&link=https://doi.org/10.32614/CRAN.package.sparrpowR)](https://doi.org/10.32614/CRAN.package.sparrpowR)
 <!-- badges: end -->
 
-**Date repository last updated**: August 02, 2025
+**Date repository last updated**: August 28, 2025
 
 <h2 id="overview">
 
